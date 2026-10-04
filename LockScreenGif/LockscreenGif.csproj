@@ -1,0 +1,111 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <RootNamespace>LockscreenGif</RootNamespace>
+    <Version Condition="'$(Version)' == ''">3.0.0-local</Version>
+    <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x64</Platforms>
+    <PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WindowsPackageType>None</WindowsPackageType>
+    <PackageIcon>WindowIcon.png</PackageIcon>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
+    <WindowsSdkPackageVersion>10.0.26100.87</WindowsSdkPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Manifest Include="$(ApplicationManifest)" />
+    <!-- Captured at compile time: local Debug and Release builds always use development analytics. -->
+    <AssemblyMetadata Include="GitHubActionsBuild" Value="true" Condition="'$(GITHUB_ACTIONS)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="FFMpegCore" Version="5.4.0" />
+    <PackageReference Include="Gifski.Net" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260101001" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.2" />
+    <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
+    <PackageReference Include="WinUIEx" Version="2.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\WindowIcon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="LICENSE.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Vendor\FFMPEG\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Vendor\gifski\gifski.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Vendor\FFMPEG\" />
+    <Folder Include="Vendor\gifski\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Logger\Logger.csproj" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../LockscreenGif.Privileged.Contracts/LockscreenGif.Privileged.Contracts.csproj" />
+    <ProjectReference Include="../LockscreenGif.Privileged.Helper/LockscreenGif.Privileged.Helper.csproj" ReferenceOutputAssembly="false" Private="false" GlobalPropertiesToRemove="Platform;PublishProfile;PublishSingleFile" />
+  </ItemGroup>
+  <Target Name="CopyPrivilegedHelper" AfterTargets="Build">
+    <ItemGroup><HelperFiles Include="../LockscreenGif.Privileged.Helper/bin/$(Configuration)/net10.0-windows/win-x64/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(HelperFiles)" DestinationFiles="@(HelperFiles->'$(OutDir)Helpers/Privileged/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="PublishPrivilegedHelper" BeforeTargets="ComputeFilesToPublish" DependsOnTargets="CopyPrivilegedHelper">
+    <ItemGroup>
+      <ResolvedFileToPublish Include="@(HelperFiles)">
+        <RelativePath>Helpers/Privileged/%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+  <!-- Unpackaged WinUI build assets must also be present in the actual publish directory. -->
+  <Target Name="PublishWinUiAssets" AfterTargets="ComputeFilesToPublish">
+    <ItemGroup>
+      <_AppAsset Include="$(OutDir)Assets/**/*" />
+      <_AppXbf Include="$(OutDir)**/*.xbf" />
+      <ResolvedFileToPublish Include="@(_AppAsset)">
+        <RelativePath>Assets/%(_AppAsset.RecursiveDir)%(_AppAsset.Filename)%(_AppAsset.Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+      <ResolvedFileToPublish Include="@(_AppXbf)">
+        <RelativePath>%(_AppXbf.RecursiveDir)%(_AppXbf.Filename)%(_AppXbf.Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+</Project>

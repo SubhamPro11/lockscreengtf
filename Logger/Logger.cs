@@ -1,0 +1,103 @@
+using System.Text;
+
+public static class Logger
+{
+    private static readonly object lockObj = new();
+    private static string? logFilePath;
+
+    public static string GetLogPath()
+    {
+        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LockscreenGif");
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        return path;
+    }
+
+    private static string GetLogFilePath()
+    {
+        if (logFilePath == null)
+        {
+            var fileName = $"app_{DateTime.Now:yyyy-MM-dd}.log";
+            logFilePath = Path.Combine(GetLogPath(), fileName);
+        }
+        return logFilePath;
+    }
+
+    public static void CleanupOldLogFiles()
+    {
+        var oldFiles = new DirectoryInfo(GetLogPath()).GetFiles("app_*.log").Where(f => f.CreationTime < DateTime.Now.AddDays(-7)).ToList();
+
+        foreach (var file in oldFiles)
+        {
+            try
+            {
+                file.Delete();
+            }
+            catch (Exception ex)
+            {
+                Error("Failed to delete log file", ex);
+            }
+        }
+    }
+
+    public static void Info(string? message)
+    {
+        if (message != null)
+        {
+            Log("INFO", message);
+        }
+    }
+
+    public static void Warn(string message)
+    {
+        Log("WARN", message);
+    }
+
+    public static void Error(string? message)
+    {
+        if (message != null)
+        {
+            Error(message, null);
+        }
+    }
+
+    public static void Error(string message, Exception? ex = null)
+    {
+        var logMessage = new StringBuilder(message);
+        if (ex != null)
+        {
+            logMessage.AppendLine(); // Ensure the exception starts on a new line
+            logMessage.AppendLine($"Exception: {ex.GetType().FullName} (HRESULT 0x{ex.HResult:X8}): {ex.Message}");
+            logMessage.AppendLine($"StackTrace: {ex.StackTrace}");
+        }
+
+        Log("ERROR", logMessage.ToString());
+    }
+
+    public static void Fatal(string message, Exception? ex = null)
+    {
+        var logMessage = new StringBuilder(message);
+        if (ex != null)
+        {
+            logMessage.AppendLine(); // Ensure the exception starts on a new line
+            logMessage.AppendLine($"Exception: {ex.GetType().FullName} (HRESULT 0x{ex.HResult:X8}): {ex.Message}");
+            logMessage.AppendLine($"StackTrace: {ex.StackTrace}");
+        }
+        Log("FATAL", logMessage.ToString());
+    }
+
+    private static void Log(string level, string message)
+    {
+        try
+        {
+            lock (lockObj)
+            {
+                using var sw = new StreamWriter(GetLogFilePath(), true, Encoding.UTF8);
+                sw.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{level}] {message}");
+            }
+        }
+        catch { }
+    }
+}
