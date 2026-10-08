@@ -1,5 +1,3 @@
-<div align="center">
-
 # 🎬 LockscreenGif
 
 **Bring your Windows 11 lock screen to life with fluid, high-definition animated GIFs and videos.**
@@ -10,18 +8,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE.txt)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/SubhamPro11/lockscreengtf/dotnet-desktop.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/SubhamPro11/lockscreengtf/actions)
 
-<p align="center">
-  <a href="#-key-features">Features</a> •
-  <a href="#-demos">Demos</a> •
-  <a href="#-how-it-works">How It Works</a> •
-  <a href="#-system-requirements">Requirements</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-diagnostics--troubleshooting">Troubleshooting</a> •
-  <a href="#-building-from-source">Build from Source</a>
-</p>
-
-</div>
+[Features](#-key-features) •
+[Demos](#-demos) •
+[How It Works](#-how-it-works) •
+[Requirements](#-system-requirements) •
+[Installation](#-installation) •
+[Quick Start](#-quick-start) •
+[Troubleshooting](#-diagnostics--troubleshooting) •
+[Build from Source](#-building-from-source)
 
 ---
 
@@ -45,7 +39,8 @@ See LockscreenGif in action below:
 | [![Video File Input Demo](https://img.shields.io/badge/Watch-Video_Input_Demo-0078D4?style=for-the-badge&logo=youtube)](https://github.com/user-attachments/assets/1dc4ec39-2f38-42c6-8216-3c911f6d8bc9) | [![GIF File Input Demo](https://img.shields.io/badge/Watch-GIF_Input_Demo-107C41?style=for-the-badge&logo=youtube)](https://github.com/Leapward-Koex/LockscreenGif/assets/30615050/7448e59f-9767-4509-8ce3-721cf1783faa) |
 | *Turn any MP4, MKV, or WEBM into a looped lockscreen animation.* | *Select any high-resolution GIF file and apply it instantly.* |
 
-*Direct video streams:*
+Direct video streams:
+
 - 📹 [Video Input & Trimming Walkthrough (MP4)](https://github.com/user-attachments/assets/1dc4ec39-2f38-42c6-8216-3c911f6d8bc9)
 - 🖼️ [Direct GIF Application Walkthrough (MP4)](https://github.com/Leapward-Koex/LockscreenGif/assets/30615050/7448e59f-9767-4509-8ce3-721cf1783faa)
 
@@ -54,32 +49,38 @@ See LockscreenGif in action below:
 ## ✨ Key Features
 
 ### 🎞️ Frame-Accurate Video Trimming
+
 - **Interactive Filmstrip Timeline:** Scrub through your video with live frame preview rendering.
 - **Microsecond Boundary Snapping:** Set exact Start and End points (`mm:ss.fff` or frame index).
 - **Fine Adjustment Controls:** Jump directly to boundaries or nudge by `−1 frame` / `+1 frame` with dedicated repeat buttons.
 - **Seamless Looping Preview:** Preview the selected loop continuously before committing.
 
 ### ⚡ Studio-Grade GIF Conversion Engine
+
 - **FFmpeg & Gifski Pipeline:** Preserves crisp color fidelity, optimal dithering, and custom color palettes without banding.
 - **Variable Frame Rate & Timestamp Handling:** Retains exact source frame timing and fractional delays.
 - **Custom Output Presets:** Configure target output resolution, scaling, and target FPS (from original rate down to custom intervals).
 - **Export to Disk:** Use **Save GIF…** to export your converted animation anywhere on your PC for reuse.
 
 ### 🛡️ Least-Privilege Helper Architecture
+
 - **Non-Admin Main UI:** The WinUI 3 front-end runs unelevated under standard user privileges.
 - **Authenticated Privileged Helper:** Cache updates and ACL maintenance are delegated to a dedicated helper process (`LockscreenGif.Privileged.Helper`) via secure Named Pipe IPC.
 - **Atomic Cache Updates:** Writes are verified byte-for-byte to prevent cache corruption.
 
 ### 🧩 Windows 11 24H2 & 25H2+ Compatibility
+
 - **Automated Prerequisite Checks:** Real-time validation of Windows Lock Screen mode (Picture Mode) and local cache accessibility.
 - **NT Feature Management Override:** Built-in override support for Windows image-loading feature ID `38943831` (`RtlSetFeatureConfigurations`), restoring animated GIF playback on Windows 11 25H2 (Build 26200+) without patching OS binaries. Learn more in [docs/windows-image-feature.md](docs/windows-image-feature.md).
 
 ### 🩺 Deep Diagnostics & ETW Tracing
+
 - **Real-Time ETW Tracing:** Monitors disk and file I/O events to verify lock screen cache read operations.
-- **Automated Test Cycle:** 5-second countdown to automatic lock screen test (<kbd>Win</kbd> + <kbd>L</kbd>) with immediate post-unlock findings verification.
+- **Automated Test Cycle:** 5-second countdown to automatic lock screen test (`Win` + `L`) with immediate post-unlock findings verification.
 - **One-Click Diagnostic ZIP Export:** Generates sanitized reports with zero personal paths or credentials for easy troubleshooting. See [docs/diagnostics.md](docs/diagnostics.md).
 
 ### 🔒 Privacy by Design
+
 - **Zero Tracking of Personal Files:** Filenames, file paths, media content, and Windows account credentials are never logged or transmitted.
 - **Optional Anonymous Telemetry:** Bounded reliability metrics (PostHog EU) can be toggled off at any time in Settings. See [docs/analytics.md](docs/analytics.md).
 
@@ -111,7 +112,7 @@ flowchart TD
 2. **High-Definition Encoding:** FFmpeg decodes exact PTS presentation timestamps, while Gifski creates an optimized palette and animated GIF.
 3. **Privileged Delegation:** The application requests an authenticated IPC call to `LockscreenGif.Privileged.Helper`.
 4. **Cache Injection & Verification:** The helper updates the user's specific Windows Lock Screen cache under `SystemData` and verifies the written hash.
-5. **Playback:** Windows `LogonUI` reads the updated cache file when you lock your computer (<kbd>Win</kbd> + <kbd>L</kbd>) and plays the looping animation.
+5. **Playback:** Windows `LogonUI` reads the updated cache file when you lock your computer (`Win` + `L`) and plays the looping animation.
 
 ---
 
@@ -157,28 +158,26 @@ Choose your preferred installation method:
 
 LockscreenGif uses a streamlined 4-step workflow:
 
-```
+```text
 [ 1 · Choose ]  ──▶  [ 2 · Edit ]  ──▶  [ 3 · Set ]  ──▶  [ ✓ Applied ]
 ```
 
-```markdown
-1. Choose Your Media
+1. **Choose Your Media**
    - Select "Choose video" to import MP4, MKV, or WEBM.
    - Or select "Choose GIF" to use an existing animated image.
 
-2. Trim & Customize (Videos only)
+2. **Trim & Customize** (Videos only)
    - Use the timeline handles or nudge buttons (−1 / +1 frame) to select your clip.
    - Adjust Output Settings (resolution & FPS) if desired.
    - Click Continue to generate the GIF preview.
 
-3. Preview & Apply
+3. **Preview & Apply**
    - Verify the generated animation in the preview card.
    - Optionally click "Save GIF…" to keep a standalone copy.
    - Click "Set lock screen".
 
-4. Lock and Enjoy!
-   - Press Win + L to lock your computer and admire your new animated lock screen!
-```
+4. **Lock and Enjoy!**
+   - Press `Win` + `L` to lock your computer and admire your new animated lock screen!
 
 ---
 
@@ -200,6 +199,7 @@ LockscreenGif includes an integrated diagnostics panel accessible via **Diagnost
 ### Exporting Diagnostic Bundles
 
 If you run into an unexpected issue:
+
 1. Open the **Diagnostics** tab.
 2. Select your GIF (or check *Use bundled reference animation*).
 3. Click **Start test** and let the 5-second countdown lock your screen.
@@ -211,6 +211,7 @@ If you run into an unexpected issue:
 ## 🧑‍💻 Building from Source
 
 ### Prerequisites
+
 - **Windows 11 (x64)** (Build 26100 or later)
 - **[.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)** (matches `global.json`)
 - **Visual Studio 2022 / 2025** (with *.NET Desktop Development* workload) or **VS Code** with C# Dev Kit
@@ -219,23 +220,27 @@ If you run into an unexpected issue:
 ### Build Steps
 
 1. **Clone the repository:**
+
    ```powershell
    git clone https://github.com/SubhamPro11/lockscreengtf.git
    cd lockscreengtf
    ```
 
 2. **Restore dependencies & tools:**
+
    ```powershell
    dotnet restore
    dotnet tool restore
    ```
 
 3. **Build the solution:**
+
    ```powershell
    dotnet build LockscreenGif.sln -c Release
    ```
 
 4. **Run regression tests:**
+
    ```powershell
    Get-ChildItem Tests -Recurse -Filter *.csproj | ForEach-Object {
        dotnet run --project $_.FullName -c Release
@@ -243,16 +248,21 @@ If you run into an unexpected issue:
    ```
 
 5. **Publish the desktop application:**
+
    ```powershell
    dotnet publish LockScreenGif/LockscreenGif.csproj -c Release -p:PublishProfile=FolderProfile
    ```
+
    *Compiled binaries will be created in `artifacts/app/`.*
 
 6. **Format C# code before committing:**
+
    ```powershell
    ./scripts/Format-CSharp.ps1
    ```
+
    *To verify formatting in CI without modifying files:*
+
    ```powershell
    ./scripts/Format-CSharp.ps1 -Check
    ```
@@ -288,6 +298,7 @@ LockscreenGif/
 ## 🤝 Contributing
 
 Contributions, bug reports, and feature requests are welcome!
+
 - Please check existing [Issues](https://github.com/SubhamPro11/lockscreengtf/issues) before opening a new one.
 - Ensure all code conforms to repository code style rules via `./scripts/Format-CSharp.ps1`.
 - Verify tests pass cleanly using `dotnet test` or running the test suites under `Tests/`.
@@ -299,6 +310,7 @@ Contributions, bug reports, and feature requests are welcome!
 This project is licensed under the [MIT License](LICENSE.txt).
 
 Third-party dependencies:
+
 - **[FFmpeg](https://www.ffmpeg.org/)** — Licensed under LGPL / GPL.
 - **[Gifski](https://gif.ski/)** — High-quality GIF encoder library.
 - **[WinUI 3 / Windows App SDK](https://github.com/microsoft/WindowsAppSDK)** — Licensed under the MIT License.
