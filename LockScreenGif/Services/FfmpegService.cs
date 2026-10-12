@@ -1,6 +1,4 @@
-using System.Reflection;
 using FFMpegCore;
-using FFMpegCore.Enums;
 
 namespace LockscreenGif.Services;
 

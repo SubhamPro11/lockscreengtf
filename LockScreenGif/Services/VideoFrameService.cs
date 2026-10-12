@@ -86,22 +86,23 @@ public static partial class VideoFrameService
         var lastDuration = 1 / nominalFps;
         var progressClock = Stopwatch.StartNew();
         await RunAsync(
-            [
-                "-i",
-                input,
-                "-map",
-                "0:v:0",
-                "-vf",
-                "showinfo=checksum=0",
-                "-an",
-                "-sn",
-                "-dn",
-                "-fps_mode",
-                "passthrough",
-                "-f",
-                "null",
-                "-",
-            ],
+            (string[])
+                [
+                    "-i",
+                    input,
+                    "-map",
+                    "0:v:0",
+                    "-vf",
+                    "showinfo=checksum=0",
+                    "-an",
+                    "-sn",
+                    "-dn",
+                    "-fps_mode",
+                    "passthrough",
+                    "-f",
+                    "null",
+                    "-",
+                ],
             line =>
             {
                 timeBase = ReadTimeBase(line, timeBase);
@@ -147,26 +148,27 @@ public static partial class VideoFrameService
 
         using var output = new MemoryStream();
         await RunAsync(
-            [
-                "-i",
-                input,
-                "-map",
-                "0:v:0",
-                "-vf",
-                $"trim=start_frame={start}:end_frame={end},scale=560:-2",
-                "-frames:v",
-                (end - start).ToString(CultureInfo.InvariantCulture),
-                "-an",
-                "-sn",
-                "-dn",
-                "-fps_mode",
-                "passthrough",
-                "-c:v",
-                "png",
-                "-f",
-                "image2pipe",
-                "pipe:1",
-            ],
+            (string[])
+                [
+                    "-i",
+                    input,
+                    "-map",
+                    "0:v:0",
+                    "-vf",
+                    $"trim=start_frame={start}:end_frame={end},scale=560:-2",
+                    "-frames:v",
+                    (end - start).ToString(CultureInfo.InvariantCulture),
+                    "-an",
+                    "-sn",
+                    "-dn",
+                    "-fps_mode",
+                    "passthrough",
+                    "-c:v",
+                    "png",
+                    "-f",
+                    "image2pipe",
+                    "pipe:1",
+                ],
             null,
             cancellationToken,
             output
@@ -191,26 +193,27 @@ public static partial class VideoFrameService
         var select = string.Join('+', frames.Select(n => $"eq(n\\,{n})"));
         using var output = new MemoryStream();
         await RunAsync(
-            [
-                "-i",
-                input,
-                "-map",
-                "0:v:0",
-                "-vf",
-                $"select={select},scale=160:-2",
-                "-frames:v",
-                frames.Length.ToString(CultureInfo.InvariantCulture),
-                "-an",
-                "-sn",
-                "-dn",
-                "-fps_mode",
-                "passthrough",
-                "-c:v",
-                "png",
-                "-f",
-                "image2pipe",
-                "pipe:1",
-            ],
+            (string[])
+                [
+                    "-i",
+                    input,
+                    "-map",
+                    "0:v:0",
+                    "-vf",
+                    $"select={select},scale=160:-2",
+                    "-frames:v",
+                    frames.Length.ToString(CultureInfo.InvariantCulture),
+                    "-an",
+                    "-sn",
+                    "-dn",
+                    "-fps_mode",
+                    "passthrough",
+                    "-c:v",
+                    "png",
+                    "-f",
+                    "image2pipe",
+                    "pipe:1",
+                ],
             null,
             cancellationToken,
             output
@@ -290,24 +293,25 @@ public static partial class VideoFrameService
         var times = new List<double>();
         var duration = index.TimeAt(end) - index.TimeAt(start);
         await RunAsync(
-            [
-                "-i",
-                input,
-                "-map",
-                "0:v:0",
-                "-vf",
-                ExportFilter(start, end, width, maximumFps),
-                "-frames:v",
-                (end - start).ToString(CultureInfo.InvariantCulture),
-                "-an",
-                "-sn",
-                "-dn",
-                "-fps_mode",
-                "passthrough",
-                "-c:v",
-                "png",
-                Path.Combine(directory, "frame_%06d.png"),
-            ],
+            (string[])
+                [
+                    "-i",
+                    input,
+                    "-map",
+                    "0:v:0",
+                    "-vf",
+                    ExportFilter(start, end, width, maximumFps),
+                    "-frames:v",
+                    (end - start).ToString(CultureInfo.InvariantCulture),
+                    "-an",
+                    "-sn",
+                    "-dn",
+                    "-fps_mode",
+                    "passthrough",
+                    "-c:v",
+                    "png",
+                    Path.Combine(directory, "frame_%06d.png"),
+                ],
             line =>
             {
                 timeBase = ReadTimeBase(line, timeBase);
@@ -331,7 +335,7 @@ public static partial class VideoFrameService
     }
 
     internal static async Task RunAsync(
-        IEnumerable<string> arguments,
+        string[] arguments,
         Action<string>? onLine,
         CancellationToken cancellationToken,
         Stream? output = null
@@ -348,7 +352,7 @@ public static partial class VideoFrameService
         // an exact preview are decoding at the same time.
         var threads = Math.Clamp(Environment.ProcessorCount / 2, 1, 4).ToString(CultureInfo.InvariantCulture);
         var args = arguments.ToList();
-        args.InsertRange(args.Count - 1, ["-threads", threads]); // Output encoder.
+        args.InsertRange(args.Count - 1, (string[])["-threads", threads]); // Output encoder.
         foreach (
             var arg in new[]
             {

@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using LockscreenGif.Contracts.Services;
 using LockscreenGif.Helpers;
 using LockscreenGif.Models;
@@ -9,12 +8,10 @@ using LockscreenGif.Services.Analytics;
 using LockscreenGif.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Media.Core;
 using Windows.Media.Editing;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using WinRT;
 
 namespace LockscreenGif.Views;
 
