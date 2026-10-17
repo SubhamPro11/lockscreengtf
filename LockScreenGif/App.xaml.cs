@@ -227,6 +227,12 @@ public partial class App : Application
         }
     }
 
+    static partial void CleanupMediaTempDirectories()
+    {
+        FfmpegService.CleanupTempDirectories();
+        GifSkiService.CleanupTempDirectories();
+    }
+
     private static void ShowDialog(Exception ex)
     {
         const uint MB_ICONERROR = 0x00000010u;

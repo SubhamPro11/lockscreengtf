@@ -1,5 +1,4 @@
 using LockscreenGif.Contracts.Services;
-using LockscreenGif.Services;
 using LockscreenGif.Services.Analytics;
 using LockscreenGif.Services.Diagnostics;
 using LockscreenGif.Services.Lockscreen;
@@ -72,10 +71,11 @@ public partial class App
             await GetService<WindowsImageFeatureService>().WaitForIdleAsync();
             StopAnalytics();
             GetService<WindowsSessionMonitor>().Dispose();
-            FfmpegService.CleanupTempDirectories();
-            GifSkiService.CleanupTempDirectories();
+            CleanupMediaTempDirectories();
             MainWindow.AppWindow.Closing -= MainWindow_Closing;
             MainWindow.Close();
         }
     }
+
+    static partial void CleanupMediaTempDirectories();
 }
