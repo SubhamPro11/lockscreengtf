@@ -103,7 +103,7 @@ internal static class PermissionScopeTests
                 "Invalid scopes never execute a native tool or change bytes"
             );
             var link = Path.Combine(root, "LockScreen_Link");
-            Directory.CreateSymbolicLink(link, folder);
+            LockscreenGif.Tests.ProtectedCacheFixture.CreateReparsePoint(link, folder);
             try
             {
                 try

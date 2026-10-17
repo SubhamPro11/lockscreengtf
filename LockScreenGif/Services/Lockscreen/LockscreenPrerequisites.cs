@@ -79,7 +79,7 @@ internal static class LockscreenPrerequisites
             return new(
                 true,
                 false,
-                description + "Not required on this version of Windows. This prerequisite applies to Windows 11 25H2 and later."
+                description + "Not required on this version of Windows. This prerequisite applies to Windows 11 25H2, 26H2, and later."
             );
         }
         var evaluation = WindowsImageFeature.Evaluate(feature);

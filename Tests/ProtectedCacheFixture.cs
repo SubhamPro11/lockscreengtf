@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
@@ -17,6 +18,25 @@ internal sealed class ProtectedCacheFixture : IDisposable
     public string Link { get; }
     public string Source { get; }
 
+    public static void CreateReparsePoint(string path, string target)
+    {
+        try
+        {
+            Directory.CreateSymbolicLink(path, target);
+        }
+        catch (IOException)
+        {
+            using var process = Process.Start(
+                new ProcessStartInfo("cmd.exe", $"/c mklink /J \"{path}\" \"{target}\"") { CreateNoWindow = true, UseShellExecute = false }
+            );
+            process?.WaitForExit();
+            if (!Directory.Exists(path) || (File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0)
+            {
+                throw;
+            }
+        }
+    }
+
     public ProtectedCacheFixture()
     {
         SystemData = Path.Combine(_base, "SystemData");
@@ -31,7 +51,7 @@ internal sealed class ProtectedCacheFixture : IDisposable
         File.WriteAllBytes(Source, Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"));
         try
         {
-            Directory.CreateSymbolicLink(Link, Root);
+            CreateReparsePoint(Link, Root);
             foreach (var path in new[] { SystemData, Parent, Root, Folder, Image })
             {
                 var directory = path != Image;

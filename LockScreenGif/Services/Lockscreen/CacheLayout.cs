@@ -93,16 +93,38 @@ internal sealed class CacheLayout(string directory, CachePermissions permissions
             try
             {
                 var entries = new List<string>();
-                foreach (var folder in ReadFolders())
+                string[] folders;
+                try
+                {
+                    folders = await FindFoldersAsync(progress, cancellationToken);
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    folders = [];
+                }
+
+                foreach (var folder in folders)
                 {
                     permissions.ValidatePath(folder);
-                    foreach (var path in Directory.GetFiles(folder))
+                    string[] files;
+                    try
+                    {
+                        files = Directory.GetFiles(folder);
+                    }
+                    catch (Exception ex) when (CachePermissions.IsAccessDenied(ex))
+                    {
+                        await permissions.GrantAsync(folder, false, progress, cancellationToken);
+                        files = Directory.GetFiles(folder);
+                    }
+
+                    foreach (var path in files)
                     {
                         permissions.ValidatePath(path);
                         var info = new FileInfo(path);
                         entries.Add($"{path}|{info.Length}|{info.LastWriteTimeUtc.Ticks}");
                     }
                 }
+
                 var current = string.Join("\n", entries.Order(StringComparer.OrdinalIgnoreCase));
                 stableSamples = current == previous ? stableSamples + 1 : 0;
                 previous = current;
@@ -118,6 +140,7 @@ internal sealed class CacheLayout(string directory, CachePermissions permissions
                 return;
             }
         }
+
         progress.Report("WindowsApi", "The cache did not settle within five seconds; rediscovering destinations.", severity: "Warning");
     }
 }
