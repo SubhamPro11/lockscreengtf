@@ -145,6 +145,9 @@ try
     Directory.CreateDirectory(Path.Combine(root, "LockScreen_A"));
     Check(LockscreenPrerequisites.CountCacheFolders(root) == 1, "An immediate lock-screen cache folder is detected");
     Check(LockscreenPrerequisites.CountCacheFolders(Path.Combine(root, "missing")) == 0, "A missing cache is not ready");
+    Check(LockscreenPrerequisites.CountCacheFolders("") == 0, "An empty cache path returns zero");
+    Check(LockscreenPrerequisites.CountCacheFolders("   ") == 0, "A whitespace cache path returns zero");
+    Check(!LockscreenPrerequisites.Read("").PictureAndCache.Satisfied, "An empty cache path safely evaluates to unsatisfied");
 }
 finally
 {

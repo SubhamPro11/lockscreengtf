@@ -20,7 +20,8 @@ internal static class LockscreenPrerequisites
         {
             folders = CountCacheFolders(cacheDirectory);
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        catch (Exception ex)
+            when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException or ArgumentException)
         {
             // No access repair or elevation during a prerequisite read.
         }
@@ -29,13 +30,28 @@ internal static class LockscreenPrerequisites
 
     internal static int CountCacheFolders(string cacheDirectory)
     {
+        if (string.IsNullOrWhiteSpace(cacheDirectory))
+        {
+            return 0;
+        }
+
         try
         {
             return Directory
                 .EnumerateDirectories(cacheDirectory, "LockScreen*", SearchOption.TopDirectoryOnly)
-                .Count(path => (File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0);
+                .Count(path =>
+                {
+                    try
+                    {
+                        return (File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                });
         }
-        catch (DirectoryNotFoundException)
+        catch (Exception ex) when (ex is DirectoryNotFoundException or ArgumentException)
         {
             return 0;
         }

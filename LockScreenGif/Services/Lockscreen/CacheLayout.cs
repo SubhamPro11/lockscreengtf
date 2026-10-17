@@ -120,8 +120,18 @@ internal sealed class CacheLayout(string directory, CachePermissions permissions
                     foreach (var path in files)
                     {
                         permissions.ValidatePath(path);
-                        var info = new FileInfo(path);
-                        entries.Add($"{path}|{info.Length}|{info.LastWriteTimeUtc.Ticks}");
+                        try
+                        {
+                            var info = new FileInfo(path);
+                            if (info.Exists)
+                            {
+                                entries.Add($"{path}|{info.Length}|{info.LastWriteTimeUtc.Ticks}");
+                            }
+                        }
+                        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                        {
+                            entries.Add($"{path}|locked");
+                        }
                     }
                 }
 
