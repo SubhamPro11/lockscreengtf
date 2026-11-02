@@ -31,7 +31,7 @@
     <PackageReference Include="FFMpegCore" Version="5.5.0" />
     <PackageReference Include="Gifski.Net" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260804001" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.14" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
@@ -94,6 +94,11 @@
     </ItemGroup>
   </Target>
   <!-- Unpackaged WinUI build assets must also be present in the actual publish directory. -->
+  <Target Name="ExcludeUnusedAiCapabilities" AfterTargets="ComputeFilesToPublish">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(Filename)%(Extension)' == 'Microsoft.Windows.AI.AICapabilities.dll'" />
+    </ItemGroup>
+  </Target>
   <Target Name="PublishWinUiAssets" AfterTargets="ComputeFilesToPublish">
     <ItemGroup>
       <_AppAsset Include="$(OutDir)Assets/**/*" />
