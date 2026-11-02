@@ -232,7 +232,7 @@ public sealed partial class MainPage
             {
                 if (!LockscreenPrerequisites.Is25H2OrLater(Environment.OSVersion.Version))
                 {
-                    DiagnosticsActionLog.Record("DisableWindowsImageFeature", "NotRequired", "Windows is earlier than 25H2.");
+                    DiagnosticsActionLog.Record("DisableWindowsImageFeature", "NotRequired", "Windows is earlier than 25H2/26H2.");
                     return;
                 }
                 var result = await App.GetService<WindowsImageFeatureService>().SetEnabledAsync(false);

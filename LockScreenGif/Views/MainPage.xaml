@@ -120,7 +120,7 @@
                                             <FontIcon x:Name="FeaturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
                                                       Glyph="&#xE7BA;" FontSize="20" VerticalAlignment="Top" Margin="0,3,0,0" />
                                             <StackPanel Grid.Column="1" Spacing="4">
-                                                <TextBlock Text="Animated GIF support on Windows 11 25H2 or later" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                <TextBlock Text="Animated GIF support on Windows 11 25H2, 26H2, or later" FontWeight="SemiBold" TextWrapping="Wrap" />
                                                 <TextBlock x:Name="FeaturePrerequisiteDetail" Text="Checking the Windows lock-screen feature…" TextWrapping="Wrap" />
                                             </StackPanel>
                                             <Button x:Name="DisableWindowsImageFeatureButton" Grid.Column="2" Content="Disable Windows feature"

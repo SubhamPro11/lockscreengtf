@@ -75,7 +75,7 @@
                                TextWrapping="Wrap" />
                     <InfoBar IsOpen="True" IsClosable="False" Severity="Warning"
                              Title="This will break animated GIF lockscreens"
-                             Message="Enabling this feature will break animated GIF lockscreens on Windows 11 25H2 or later. Keep it disabled to use animated GIFs." />
+                             Message="Enabling this feature will break animated GIF lockscreens on Windows 11 25H2, 26H2, or later. Keep it disabled to use animated GIFs." />
                     <TextBlock x:Name="FeatureStateText" Text="Reading the current Windows feature state…" TextWrapping="Wrap" />
                     <Button x:Name="EnableWindowsImageFeatureButton" Content="Enable Windows lock-screen feature"
                             Click="EnableWindowsImageFeature_Click" IsEnabled="False" />

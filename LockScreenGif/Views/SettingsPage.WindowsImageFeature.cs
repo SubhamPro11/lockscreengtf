@@ -264,7 +264,7 @@ public sealed partial class SettingsPage
                 : $"Windows feature {result.FeatureId} was not enabled";
             FeatureActionStatus.Message = success
                 ? result.FeatureId == WindowsImageFeature.DefaultFeatureId
-                    ? "Animated GIF lockscreens will no longer work on Windows 11 25H2 or later. Disable the feature in Prerequisites to use them again."
+                    ? "Animated GIF lockscreens will no longer work on Windows 11 25H2, 26H2, or later. Disable the feature in Prerequisites to use them again."
                     : "The selected feature is enabled. A custom feature ID requires separate verification of lock-screen behavior."
                 : result.Error ?? "The setting could not be changed. Run a diagnostic test for details.";
             if (success)

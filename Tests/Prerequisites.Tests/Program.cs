@@ -104,15 +104,19 @@ foreach (
         "An existing cache alone never establishes Picture mode"
     );
 }
+Check(!LockscreenPrerequisites.Is25H2OrLater(new Version(10, 0, 26100)), "Build 26100 (24H2) is before 25H2");
+Check(LockscreenPrerequisites.Is25H2OrLater(new Version(10, 0, 26200)), "Build 26200 (25H2) is 25H2 or later");
+Check(LockscreenPrerequisites.Is25H2OrLater(new Version(10, 0, 26300)), "Build 26300 (26H2) is 25H2 or later");
+Check(LockscreenPrerequisites.Is25H2OrLater(new Version(10, 0, 28000)), "Build 28000 (26H1) is 25H2 or later");
 Check(
     LockscreenPrerequisites.ImageFeature(new Version(10, 0, 26100), enabled) is { Satisfied: true, CanAct: false },
     "Windows 24H2 does not require disabling the feature"
 );
-foreach (var version in new[] { current, new Version(10, 0, 28000), new Version(11, 0, 100) })
+foreach (var version in new[] { new Version(10, 0, 26200), new Version(10, 0, 26300), new Version(10, 0, 28000), new Version(11, 0, 100) })
 {
     Check(
         LockscreenPrerequisites.ImageFeature(version, enabled) is { Satisfied: false, CanAct: true },
-        "Windows 25H2 and later offer the disable action for an enabled feature"
+        "Windows 25H2, 26H2, and later offer the disable action for an enabled feature"
     );
 }
 Check(
