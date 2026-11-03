@@ -39,4 +39,7 @@ assert(readme.includes('WinUI 3'), 'README.md missing WinUI 3');
 assert(readme.includes('Diagnostics'), 'README.md missing Diagnostics');
 assert(readme.includes('CommunityToolkit.Mvvm'), 'README.md missing CommunityToolkit.Mvvm');
 
+// 4. Verify local assets
+assert(fs.existsSync('assets/overhead-desk-workstation.jpg'), 'Missing overhead-desk-workstation.jpg asset');
+
 console.log('ALL CHECKS PASSED!');

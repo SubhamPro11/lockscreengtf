@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>LockscreenGif — Windows 11 Lock Screen Animation Utility (v1.2 Manual)</title>
+<meta content="Technical documentation and distribution manual for LockscreenGif. Native WinUI 3 and .NET 10 utility that writes animated GIF and video frame buffers into the Windows 11 lock screen pipeline." name="description"/>
+<meta content="#151514" name="theme-color"/>
+<!-- Open Graph -->
+<meta content="website" property="og:type"/>
+<meta content="LockscreenGif — System Manual &amp; Binary Distribution" property="og:title"/>
+<meta content="Zero-daemon animated lock screen engine for Windows 11. Injects into SystemData cache with zero battery drain." property="og:description"/>
+<!-- Fonts: Newsreader (Editorial Serif) + Inter + JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#151514",
+            "surface": "#1c1c1a",
+            "surface-dim": "#131312",
+            "surface-card": "#21211e",
+            "surface-subtle": "#282824",
+            "primary": "#ffb4a2",
+            "accent-terracotta": "#c2593f",
+            "accent-terracotta-hover": "#d96b4f",
+            "accent-amber": "#d9822b",
+            "parchment": "#ece7df",
+            "parchment-muted": "#b8b2a7",
+            "parchment-faint": "#858077",
+            "border-line": "#2f2e2a",
+            "border-faint": "#252422"
+          },
+          fontFamily: {
+            serif: ["Newsreader", "Georgia", "serif"],
+            mono: ["JetBrains Mono", "Cascadia Code", "monospace"],
+            sans: ["Inter", "-apple-system", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Organic studio tactile paper grain / stipple texture */
+    body {
+      background-color: #151514;
+      color: #ece7df;
+      font-family: 'Inter', sans-serif;
+      background-image: 
+        radial-gradient(circle at 18% 12%, rgba(194, 89, 63, 0.035) 0%, transparent 45%),
+        radial-gradient(circle at 85% 65%, rgba(217, 130, 43, 0.025) 0%, transparent 50%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.007) 0px, rgba(255,255,255,0.007) 1px, transparent 1px, transparent 4px);
+    }
+
+    ::selection {
+      background-color: #c2593f;
+      color: #ffffff;
+    }
+
+    /* Subtle custom details marker */
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Monospace subtle glow & accents */
+    .font-feature-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Frame pulse */
+    @keyframes gentleFrameShift {
+      0%, 100% { opacity: 0.88; }
+      50% { opacity: 0.98; }
+    }
+    .animate-gentle {
+      animation: gentleFrameShift 8s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-[14.5px] leading-relaxed antialiased selection:bg-accent-terracotta selection:text-white">
+<!-- TOP DISCREET STUDIO BAR -->
+<aside aria-label="System metadata bar" class="border-b border-border-faint bg-[#121211] text-[11px] font-mono text-parchment-faint tracking-wide">
+<div class="max-w-[1140px] mx-auto px-5 py-2 flex flex-wrap justify-between items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-accent-amber/80"></span>
+<span class="text-parchment-muted font-medium">SYSINTERNALS CLASS ENGINE</span>
+<span class="text-border-line">::</span>
+<span>WinUI 3 · .NET 10.0 x64</span>
+<span class="text-border-line">::</span>
+<span class="hidden sm:inline">SystemData Cache Injection (Zero Battery)</span>
+</div>
+<div class="flex items-center gap-3">
+<span>RELEASE 1.2 · 2025.03.11</span>
+<span class="text-border-line">/</span>
+<a class="text-parchment-muted hover:text-accent-terracotta transition-colors underline decoration-border-line underline-offset-4" href="https://github.com/SubhamPro11/lockscreengtf" rel="noopener noreferrer" target="_blank">subhampro11/lockscreengtf</a>
+</div>
+</div>
+</aside>
+<!-- NAVIGATION -->
+<header class="border-b border-border-faint/80 bg-[#151514]/90 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1140px] mx-auto px-5 h-14 flex items-center justify-between">
+<a class="flex items-baseline gap-2.5 group text-decoration-none" href="#">
+<span class="font-serif text-lg font-normal tracking-tight text-parchment group-hover:text-white transition-colors">LockscreenGif</span>
+<span class="font-mono text-[10px] px-2 py-0.5 border border-border-line bg-surface text-accent-amber/90 rounded-full">v1.2</span>
+</a>
+<nav aria-label="Primary" class="hidden md:flex items-center gap-6 font-mono text-[12px] text-parchment-muted">
+<a class="hover:text-parchment transition-colors" href="#pipeline">01. Pipeline</a>
+<a class="hover:text-parchment transition-colors" href="#photograph">02. Craft</a>
+<a class="hover:text-parchment transition-colors" href="#matrix">03. Matrix &amp; Binaries</a>
+<a class="hover:text-parchment transition-colors" href="#troubleshooting">04. Diagnostics</a>
+<a class="hover:text-parchment transition-colors" href="#architecture">05. Source Build</a>
+</nav>
+<div class="flex items-center gap-3">
+<a class="font-mono text-[12px] text-parchment-muted hover:text-parchment px-2.5 py-1 transition-colors" href="https://github.com/SubhamPro11/lockscreengtf/releases" rel="noopener noreferrer" target="_blank">
+          Releases
+        </a>
+<a class="font-mono text-[11px] font-medium tracking-wide bg-accent-terracotta hover:bg-accent-terracotta-hover text-white px-3.5 py-1.5 rounded-full transition-colors shadow-sm" href="https://github.com/SubhamPro11/lockscreengtf/releases/latest" rel="noopener noreferrer" target="_blank">
+          Get v1.2 (.msi)
+        </a>
+</div>
+</div>
+</header>
+<main class="max-w-[1140px] mx-auto px-5" id="main-content">
+<!-- HERO SECTION: ASYMMETRICAL 68 / 32 SPLIT -->
+<section aria-labelledby="hero-title" class="pt-12 pb-16 border-b border-border-faint">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+<!-- Left: Dramatic Editorial Typography & Direct Technical Synopsis (68%) -->
+<div class="lg:col-span-8 pr-0 lg:pr-4">
+<div class="font-mono text-[11px] text-parchment-faint uppercase tracking-widest mb-3.5 flex items-center gap-2">
+<span class="text-accent-amber">[Technical Manual]</span>
+<span class="text-border-line">/</span>
+<span>Windows 11 24H2+ Workstation Utility</span>
+</div>
+<h1 class="font-serif text-3xl sm:text-4xl lg:text-[42px] font-normal leading-[1.18] tracking-tight text-parchment mb-5" id="hero-title">
+            LockscreenGif <span class="text-parchment-muted font-light italic">— Animated lock screen video &amp; GIF engine for Windows 11.</span>
+</h1>
+<p class="text-parchment-muted text-[15px] leading-relaxed max-w-[58ch] mb-7 font-sans font-light">
+            Windows Settings artificially clamps the lock screen to static photos or web slideshows. LockscreenGif injects pre-rendered frame caches directly into the OS <code class="font-mono text-[12.5px] px-1 py-0.5 bg-surface text-parchment rounded-[2px]">SystemData</code> pipeline without background daemons, process hooks, or battery drainage.
+          </p>
+<!-- Tactile Actions Row (No loud neon buttons) -->
+<div class="flex flex-wrap items-center gap-3.5 mb-7">
+<a class="inline-flex items-center gap-2 font-mono text-[12px] font-medium bg-accent-terracotta hover:bg-accent-terracotta-hover text-white px-4 py-2 rounded-full transition-colors shadow-sm" href="https://github.com/SubhamPro11/lockscreengtf/releases/latest" rel="noopener noreferrer" target="_blank">
+<span>Download v1.2</span>
+<span class="text-white/70 text-[11px] font-normal">(.msi, 14.2 MB)</span>
+</a>
+<a class="inline-flex items-center gap-2 font-mono text-[12px] bg-surface-card hover:bg-surface-subtle text-parchment border border-border-line px-3.5 py-2 rounded-full transition-colors" href="https://github.com/SubhamPro11/lockscreengtf/releases/latest" rel="noopener noreferrer" target="_blank">
+<span>Portable .zip archive</span>
+<span class="text-parchment-faint text-[11px]">(12.8 MB)</span>
+</a>
+<a class="font-mono text-[12px] text-parchment-muted hover:text-accent-terracotta px-2 py-1 transition-colors underline decoration-border-line underline-offset-4" href="#pipeline">
+              Inspect Pipeline ↓
+            </a>
+</div>
+<!-- Micro prerequisite ribbon -->
+<div class="border-l-2 border-accent-amber/60 bg-surface/80 px-3.5 py-2.5 rounded-r-[2px] font-mono text-[11.5px] text-parchment-muted leading-relaxed max-w-[62ch]">
+<span class="text-accent-amber font-semibold">PREREQUISITE:</span> Windows 11 24H2+ (Build 26100+) on x64 architecture with the unbundled .NET 10 Desktop Runtime. MIT Permissive License.
+          </div>
+</div>
+<!-- Right: COMPACT TACTILE INSET PREVIEW (32%) - Shrunk down dramatically -->
+<div class="lg:col-span-4 mt-2 lg:mt-0">
+<div class="border border-border-line bg-surface rounded-[3px] p-2.5 shadow-xl relative">
+<!-- Inset Header -->
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-border-faint font-mono text-[10px] text-parchment-faint">
+<span class="flex items-center gap-1.5 text-parchment-muted">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500/70"></span>
+                DWM_DIRECT_BUFFER
+              </span>
+<span>DISPLAY_0</span>
+</div>
+<!-- Compact Lockscreen Frame (Tasteful preview inset) -->
+<div class="relative aspect-[16/10] bg-[#0c0d0e] border border-border-faint rounded-[2px] overflow-hidden flex flex-col justify-between p-3 select-none">
+<!-- Dark atmospheric ambient canvas -->
+<div class="absolute inset-0 bg-gradient-to-tr from-[#141210] via-[#1a1c1d] to-[#0e1114] opacity-90"></div>
+<!-- Subtle raster motion shimmer -->
+<div class="absolute -inset-1/2 bg-[radial-gradient(circle_at_center,rgba(194,89,63,0.15)_0,transparent_60%)] animate-gentle"></div>
+<!-- Fine subtle grid lines -->
+<div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+<!-- HUD Elements -->
+<div class="relative z-10 flex justify-between items-start text-[9.5px] font-mono text-parchment-faint">
+<span class="px-1 py-0.5 bg-black/40 border border-white/5 rounded-[2px]">WIN + L ACTIVE</span>
+<span>60 FPS BUFFER</span>
+</div>
+<div class="relative z-10 text-center my-auto">
+<div class="font-serif text-3xl font-light tracking-tight text-white/95" id="liveLockClock">08:47</div>
+<div class="font-mono text-[9.5px] tracking-wide text-parchment-faint mt-0.5" id="liveLockDate">Tuesday, October 26</div>
+</div>
+<div class="relative z-10 flex items-center justify-between font-mono text-[8.5px] text-parchment-faint pt-1 border-t border-white/5">
+<span class="truncate max-w-[140px] text-parchment-muted">\SystemData\0\</span>
+<span>STATE: EXITED</span>
+</div>
+</div>
+<!-- Inset Caption Note -->
+<div class="mt-2.5 pt-2 border-t border-border-faint font-mono text-[10.5px] text-parchment-faint flex justify-between items-center">
+<span>Raster target: 3840×2160</span>
+<span class="text-accent-amber/90">0 MB background ram</span>
+</div>
+</div>
+<div class="mt-2.5 text-right font-mono text-[10px] text-parchment-faint">
+<span class="italic font-sans text-parchment-muted/80">"Inject once, execute via Windows DWM directly."</span>
+</div>
+</div>
+</div>
+</section>
+<!-- REAL PHOTOGRAPHY / WORKSTATION CRAFTSMANSHIP GROUNDING -->
+<section aria-labelledby="craft-h2" class="py-14 border-b border-border-faint" id="photograph">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<!-- Authentic Photograph Frame -->
+<div class="lg:col-span-7">
+<div class="relative border border-border-line bg-surface p-1.5 rounded-2xl overflow-hidden shadow-lg group">
+<img alt="Overhead desk photo of a software developer workstation, warm dim desk lamp lighting, mechanical keyboard, tactile notebook with handwritten code notes, matte monitor screen showing Windows 11 lock screen" class="w-full h-auto object-cover rounded-xl filter contrast-[1.02] brightness-[0.98]" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA83R-MN7uV6hwy0rc-avWS_unPqti5v5358w-5c8GWWnLaUudllpg14sB-uvJ1gm4fchO55yJuMJCYd4OYMbbAlpoloxK0qGnqzpvyk3lyEQwHndxiRdiZOBcwIV_UaupWfNOxcfARLcovZ6O3G5QHvSkBEZK9A9lIzzLy_TCcaEbZaMR6BluFhLfheplXDbk9pCwxN2DlJPBORoTte2xncMIwTalEoEshB-7W9Sw"/>
+<div class="absolute bottom-3 right-4 font-mono text-[10px] bg-[#121211]/85 backdrop-blur-sm border border-border-line px-3 py-1 rounded-full text-parchment-muted">
+              CANDID WORKSTATION BENCH · WINUI 3 / DWM DIRECT
+            </div>
+</div>
+</div>
+<!-- Asymmetrical Editorial Story Column -->
+<div class="lg:col-span-5 lg:pl-4">
+<span class="font-mono text-[11px] text-accent-terracotta tracking-wider uppercase block mb-1">02 / CRAFT &amp; PHILOSOPHY</span>
+<h2 class="font-serif text-2xl sm:text-[26px] font-normal tracking-tight text-parchment mb-3.5" id="craft-h2">
+            Engineered for physical workstations, not telemetry servers.
+          </h2>
+<p class="text-parchment-muted text-[13.5px] leading-relaxed mb-4 font-light">
+            Modern desktop software has surrendered to bloated electron webview shells that chew hundreds of megabytes just to display an animation loop. LockscreenGif was built with classical Win32 and native WinUI 3 discipline: compile small, utilize the operating system’s existing caching subsystems, and terminate the moment the task is complete.
+          </p>
+<div class="border-t border-border-faint pt-3.5 mt-2 space-y-2.5 font-mono text-[11px]">
+<div class="flex items-baseline justify-between text-parchment-muted">
+<span>Working Set Memory at Idle:</span>
+<strong class="text-parchment font-semibold">0.0 MB (Process Dead)</strong>
+</div>
+<div class="flex items-baseline justify-between text-parchment-muted">
+<span>Battery Drain Attribution:</span>
+<strong class="text-parchment font-semibold">0% (Handled by OS Display Sleep)</strong>
+</div>
+<div class="flex items-baseline justify-between text-parchment-muted">
+<span>Installation Package Size:</span>
+<strong class="text-parchment font-semibold">&lt; 15 MB Total</strong>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 01: STAGGERED AUTHENTIC TECHNICAL PIPELINE -->
+<section aria-labelledby="pipeline-h2" class="py-14 border-b border-border-faint" id="pipeline">
+<div class="max-w-[760px] mb-10">
+<span class="font-mono text-[11px] text-accent-terracotta tracking-wider uppercase block mb-1">01 / EXECUTION PIPELINE</span>
+<h2 class="font-serif text-2xl sm:text-3xl font-normal tracking-tight text-parchment mb-2.5" id="pipeline-h2">
+          Native subsystem frame injection sequence
+        </h2>
+<p class="text-parchment-muted text-[14px] font-light">
+          Unlike live desktop wallpaper managers that keep chromium instances permanently looping in memory, LockscreenGif populates the native Windows lockscreen frame buffer and cleans up.
+        </p>
+</div>
+<!-- Staggered Sequence (Relaxed asymmetrical flow instead of identical rigid blocks) -->
+<div class="space-y-6">
+<!-- Stage 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start pb-6 border-b border-border-faint/60">
+<div class="md:col-span-3 font-mono">
+<span class="text-accent-amber text-[11px] font-semibold tracking-wider">STAGE 01</span>
+<h3 class="text-parchment text-[15px] font-medium mt-0.5">Input &amp; Ingestion</h3>
+<span class="text-[11px] text-parchment-faint">Accept raw files</span>
+</div>
+<div class="md:col-span-9">
+<p class="text-parchment-muted text-[13.5px] leading-relaxed mb-2.5">
+              Directly ingest animated GIF or video containers (<code class="font-mono text-[11px] bg-surface px-1 py-0.5 border border-border-line text-parchment rounded-[2px]">.mp4</code>, <code class="font-mono text-[11px] bg-surface px-1 py-0.5 border border-border-line text-parchment rounded-[2px]">.webm</code>, <code class="font-mono text-[11px] bg-surface px-1 py-0.5 border border-border-line text-parchment rounded-[2px]">.avi</code>, <code class="font-mono text-[11px] bg-surface px-1 py-0.5 border border-border-line text-parchment rounded-[2px]">.mov</code>, <code class="font-mono text-[11px] bg-surface px-1 py-0.5 border border-border-line text-parchment rounded-[2px]">.mkv</code>). Native GIF files bypass transcoding completely to preserve original palette quantization; video inputs route into an internal FFmpeg demuxer.
+            </p>
+<div class="flex flex-wrap gap-2 font-mono text-[11px] text-parchment-faint">
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Direct GIF Parse</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Zero Transcode Loss</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">FFmpeg Demuxer</span>
+</div>
+</div>
+</div>
+<!-- Stage 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start pb-6 border-b border-border-faint/60">
+<div class="md:col-span-3 font-mono">
+<span class="text-accent-amber text-[11px] font-semibold tracking-wider">STAGE 02</span>
+<h3 class="text-parchment text-[15px] font-medium mt-0.5">Trim &amp; Frame Prep</h3>
+<span class="text-[11px] text-parchment-faint">Color quantization</span>
+</div>
+<div class="md:col-span-9">
+<p class="text-parchment-muted text-[13.5px] leading-relaxed mb-2.5">
+              Video streams are processed via <strong class="text-parchment font-medium">Gifski</strong> by Kornel Lesiński for per-frame color quantization. The editor normalizes frame rate (FPS), rasters precisely to the active display aspect ratio, and clamps loop durations under 10 seconds for minimal disk footprint.
+            </p>
+<div class="flex flex-wrap gap-2 font-mono text-[11px] text-parchment-faint">
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Gifski Quantizer</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Native Display Aspect Lock</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Sub-10s Loop Target</span>
+</div>
+</div>
+</div>
+<!-- Stage 3 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start pb-6 border-b border-border-faint/60">
+<div class="md:col-span-3 font-mono">
+<span class="text-accent-amber text-[11px] font-semibold tracking-wider">STAGE 03</span>
+<h3 class="text-parchment text-[15px] font-medium mt-0.5">Elevation &amp; Injection</h3>
+<span class="text-[11px] text-parchment-faint">Single UAC transaction</span>
+</div>
+<div class="md:col-span-9">
+<p class="text-parchment-muted text-[13.5px] leading-relaxed mb-2.5">
+              The main WinUI 3 process runs as a standard unprivileged user. When “Set Lock Screen” is confirmed, a micro-helper executable triggers a single UAC prompt, writes the authored frame array into the protected Windows <code class="font-mono text-[11px] bg-surface px-1 py-0.5 border border-border-line text-parchment rounded-[2px]">\ProgramData\Microsoft\Windows\SystemData</code> directory, and exits immediately.
+            </p>
+<div class="flex flex-wrap gap-2 font-mono text-[11px] text-parchment-faint">
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Single UAC Helper</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">SystemData Target</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">Unprivileged UI Shell</span>
+</div>
+</div>
+</div>
+<!-- Stage 4 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+<div class="md:col-span-3 font-mono">
+<span class="text-accent-amber text-[11px] font-semibold tracking-wider">STAGE 04</span>
+<h3 class="text-parchment text-[15px] font-medium mt-0.5">OS Subsystem Takeover</h3>
+<span class="text-[11px] text-parchment-faint">0 MB active footprint</span>
+</div>
+<div class="md:col-span-9">
+<p class="text-parchment-muted text-[13.5px] leading-relaxed mb-2.5">
+              With the disk write verified, all LockscreenGif tasks terminate. The native Desktop Window Manager (DWM) lock subsystem cycles the cached frames automatically whenever the session locks (<strong class="text-parchment font-medium">Win + L</strong>). Zero background services, zero telemetry daemons, zero battery impact.
+            </p>
+<div class="flex flex-wrap gap-2 font-mono text-[11px] text-parchment-faint">
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">0 Background Daemons</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">0 MB Working Set</span>
+<span class="border border-border-line px-2 py-0.5 bg-surface/50 rounded-[2px]">DWM Native Cycle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Human Tone Advisories (Warm studio tones, not loud alerts) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10 pt-6 border-t border-border-faint">
+<!-- Spec Advisory -->
+<div class="border border-border-line bg-surface/70 p-4 rounded-[3px]">
+<div class="flex items-center gap-2 mb-2 font-mono text-[11px]">
+<span class="px-1.5 py-0.5 border border-border-line bg-surface-card text-accent-terracotta rounded-[2px] font-semibold">[SPEC ADVISORY]</span>
+<span class="text-parchment font-medium">“Applied” confirms disk write, not playback</span>
+</div>
+<p class="text-parchment-muted text-[12.5px] leading-relaxed">
+            The status confirms that raster frames and cache descriptors have been written to the NTFS volume without error. Windows does not render the sequence while your user session is unlocked. Press <strong class="text-parchment">Win + L</strong> to test. If the image is frozen, ensure Windows <em>Animation effects</em> is enabled in Accessibility settings.
+          </p>
+</div>
+<!-- Quirk Advisory -->
+<div class="border border-border-line bg-surface/70 p-4 rounded-[3px]">
+<div class="flex items-center gap-2 mb-2 font-mono text-[11px]">
+<span class="px-1.5 py-0.5 border border-border-line bg-surface-card text-accent-amber rounded-[2px] font-semibold">[BUILD 26200+ QUIRK]</span>
+<span class="text-parchment font-medium">Feature ID 38943831 on 25H2</span>
+</div>
+<p class="text-parchment-muted text-[12.5px] leading-relaxed">
+            In Windows 11 25H2 preview builds, an internal Microsoft testing flag pauses progression on custom lockscreen buffers. LockscreenGif includes a hardware switch under <em>Settings &gt; 25H2 Compatibility Mode</em> that patches this flag in the staging table. Toggle it and restart your machine.
+          </p>
+</div>
+</div>
+</section>
+<!-- SECTION 03: ASYMMETRICAL 70/30 REQUIREMENTS MATRIX & DOWNLOADS -->
+<section aria-labelledby="matrix-h2" class="py-14 border-b border-border-faint" id="matrix">
+<div class="max-w-[760px] mb-8">
+<span class="font-mono text-[11px] text-accent-terracotta tracking-wider uppercase block mb-1">03 / SPECIFICATIONS &amp; DISTRIBUTION</span>
+<h2 class="font-serif text-2xl sm:text-3xl font-normal tracking-tight text-parchment mb-2.5" id="matrix-h2">
+          System constraints &amp; verified distribution packages
+        </h2>
+<p class="text-parchment-muted text-[14px] font-light">
+          Binary checksums and hardware parameters for production workstations. Run portable or install with start menu shortcuts.
+        </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left: Dense System Matrix (70%) -->
+<div class="lg:col-span-8 border border-border-line bg-surface rounded-[3px] overflow-hidden">
+<div class="px-4 py-3 bg-surface-card border-b border-border-line font-mono text-[11px] text-parchment-faint uppercase tracking-wider flex justify-between items-center">
+<span>Subsystem Compatibility Matrix</span>
+<span class="text-accent-amber">x64 Architecture Only</span>
+</div>
+<div class="divide-y divide-border-faint text-[13px]">
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">OS Version</span>
+<span class="sm:col-span-8 text-parchment-muted">
+<strong class="text-parchment font-medium">Windows 11 24H2+</strong> (Build 26100.x or newer workstation build)
+              </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">Processor Architecture</span>
+<span class="sm:col-span-8 font-mono text-parchment-muted text-[12px]">x86-64 / AMD64 (ARM64 emulation unsupported)</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">Runtime Dependency</span>
+<div class="sm:col-span-8 text-parchment-muted">
+<a class="text-accent-terracotta hover:underline" href="https://dotnet.microsoft.com/download/dotnet/10.0" rel="noopener noreferrer" target="_blank">.NET 10 Desktop Runtime</a>
+<span class="block text-[11px] font-mono text-parchment-faint mt-0.5">(Unbundled to keep distribution package under 15 MB)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">Lock Screen Mode</span>
+<span class="sm:col-span-8 text-parchment-muted">
+                Settings &gt; Personalization &gt; Lock screen &gt; <strong class="text-parchment font-medium">Picture</strong>
+</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">Animation Toggle</span>
+<span class="sm:col-span-8 text-parchment-muted">
+                Settings &gt; Accessibility &gt; Visual effects &gt; <strong class="text-parchment font-medium">Animation effects = ON</strong>
+</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">Security Boundary</span>
+<span class="sm:col-span-8 text-parchment-muted">Standard user privilege + one-time elevated UAC worker process</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-12 p-3.5 hover:bg-surface-subtle/30 transition-colors">
+<span class="sm:col-span-4 font-mono text-parchment text-[12px] font-medium">Multi-Display Scaling</span>
+<span class="sm:col-span-8 text-parchment-muted">Frames raster to primary pixel dimensions; re-export if display setup changes</span>
+</div>
+</div>
+</div>
+<!-- Right: Tactile Downloads & Verification (30%) -->
+<div class="lg:col-span-4 space-y-4">
+<!-- MSI Download -->
+<div class="border border-border-line bg-surface p-4 rounded-[3px]">
+<div class="flex justify-between items-baseline mb-1 font-mono text-[11px]">
+<span class="font-semibold text-parchment">MSI Installer</span>
+<span class="text-accent-amber">v1.2 · 14.2 MB</span>
+</div>
+<p class="text-parchment-muted text-[12px] mb-3 leading-snug">
+              Installs start menu shortcuts and cleanly registers into Windows Apps &amp; Features uninstaller.
+            </p>
+<a class="block text-center font-mono text-[11.5px] font-medium bg-accent-terracotta hover:bg-accent-terracotta-hover text-white py-2 px-3 rounded-xl transition-colors" href="https://github.com/SubhamPro11/lockscreengtf/releases" rel="noopener noreferrer" target="_blank">
+              Download LockscreenGif-v1.2-x64.msi
+            </a>
+</div>
+<!-- ZIP Download -->
+<div class="border border-border-line bg-surface p-4 rounded-[3px]">
+<div class="flex justify-between items-baseline mb-1 font-mono text-[11px]">
+<span class="font-semibold text-parchment">Portable Zip</span>
+<span class="text-accent-amber">v1.2 · 12.8 MB</span>
+</div>
+<p class="text-parchment-muted text-[12px] mb-3 leading-snug">
+              Self-contained executable folder. Leaves zero registry footprints; requires external .NET 10 desktop runtime.
+            </p>
+<a class="block text-center font-mono text-[11.5px] bg-surface-card hover:bg-surface-subtle text-parchment border border-border-line py-2 px-3 rounded-xl transition-colors" href="https://github.com/SubhamPro11/lockscreengtf/releases" rel="noopener noreferrer" target="_blank">
+              Download LockscreenGif-v1.2-x64.zip
+            </a>
+</div>
+<!-- Checksum Verification Terminal -->
+<div class="border border-border-line bg-[#111110] p-3 rounded-[3px] font-mono text-[11px]">
+<div class="flex justify-between items-center text-parchment-faint text-[10px] mb-2 pb-1 border-b border-border-faint">
+<span>SHA256 CHECKSUM VERIFICATION</span>
+<span class="text-accent-amber">POWERSHELL</span>
+</div>
+<div class="flex items-center justify-between gap-2 overflow-x-auto py-1">
+<code class="text-parchment text-[11px] truncate" id="psVerifyCmd">Get-FileHash .\LockscreenGif-*-x64.msi -Algorithm SHA256</code>
+<button class="border border-border-line bg-surface-card hover:bg-surface text-parchment text-[10px] px-2.5 py-1 rounded-lg shrink-0 transition-colors" id="btnCopyHash">
+                Copy
+              </button>
+</div>
+</div>
+<!-- Unsigned Binary Transparency Note -->
+<div class="p-3 border border-border-faint bg-surface/50 rounded-[2px] text-[11.5px] text-parchment-faint leading-relaxed">
+<strong class="text-parchment-muted font-medium">Unsigned Binary Disclosure:</strong> As an open-source utility, binaries are not signed with a commercial EV certificate. If Windows SmartScreen prompts, verify checksums against <a class="text-accent-terracotta underline" href="https://github.com/SubhamPro11/lockscreengtf/releases" rel="noopener noreferrer" target="_blank">SHA256SUMS</a> and select <em>More info &gt; Run anyway</em>.
+          </div>
+</div>
+</div>
+</section>
+<!-- SECTION 04: TROUBLESHOOTING & DIAGNOSTICS ACCORDION -->
+<section aria-labelledby="diag-h2" class="py-14 border-b border-border-faint" id="troubleshooting">
+<div class="max-w-[760px] mb-8">
+<span class="font-mono text-[11px] text-accent-terracotta tracking-wider uppercase block mb-1">04 / DIAGNOSTICS &amp; ERRATA</span>
+<h2 class="font-serif text-2xl sm:text-3xl font-normal tracking-tight text-parchment mb-2.5" id="diag-h2">
+          Workstation troubleshooting &amp; diagnostic procedures
+        </h2>
+<p class="text-parchment-muted text-[14px] font-light">
+          Detailed checklist for resolution of frame freezes, docking station aspect switches, and elevated security boundaries.
+        </p>
+</div>
+<div class="border border-border-line bg-surface rounded-[3px] divide-y divide-border-faint">
+<!-- Accordion Item 1 -->
+<details class="group" open="">
+<summary class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none text-[14px] font-medium text-parchment hover:text-white transition-colors">
+<span>The lock screen shows a single static image without animation. What is the fault?</span>
+<span class="font-mono text-accent-terracotta text-sm ml-4 group-open:rotate-45 transition-transform duration-150">+</span>
+</summary>
+<div class="px-5 pb-4 pt-1 text-[13px] text-parchment-muted leading-relaxed border-t border-border-faint/50 bg-[#171715]">
+<p class="mb-2">Verify this three-point failure checklist:</p>
+<ol class="list-decimal pl-5 space-y-1.5 text-parchment-muted">
+<li><strong class="text-parchment">Animation effects disabled:</strong> Open <code class="font-mono text-[11px] bg-surface px-1 py-0.5 text-parchment rounded-[2px]">Settings &gt; Accessibility &gt; Visual effects</code> and confirm <strong>Animation effects</strong> is switched to <strong>ON</strong>. If toggled off, Windows halts all frame ticks on the lock screen.</li>
+<li><strong class="text-parchment">Mode mismatch:</strong> Open <code class="font-mono text-[11px] bg-surface px-1 py-0.5 text-parchment rounded-[2px]">Settings &gt; Personalization &gt; Lock screen</code> and ensure the background is set strictly to <strong>Picture</strong> (not Windows Spotlight or Slideshow).</li>
+<li><strong class="text-parchment">25H2 Flag:</strong> If your system is running Build 26200+, check the in-app <em>Feature ID 38943831 fix</em> toggle and restart your machine.</li>
+</ol>
+</div>
+</details>
+<!-- Accordion Item 2 -->
+<details class="group">
+<summary class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none text-[14px] font-medium text-parchment hover:text-white transition-colors">
+<span>Does this process consume battery, memory, or GPU compute while unlocked?</span>
+<span class="font-mono text-accent-terracotta text-sm ml-4 group-open:rotate-45 transition-transform duration-150">+</span>
+</summary>
+<div class="px-5 pb-4 pt-1 text-[13px] text-parchment-muted leading-relaxed border-t border-border-faint/50 bg-[#171715]">
+<p>No. LockscreenGif is completely dead during normal workstation use. It does not spawn background services, tray daemons, or polling workers. Once the cache write completes, the LockscreenGif process exits.</p>
+<p class="mt-2">During active lock screen display, the Windows Desktop Window Manager (DWM) natively cycles the frames with GPU acceleration, which stops completely when monitors enter display sleep.</p>
+</div>
+</details>
+<!-- Accordion Item 3 -->
+<details class="group">
+<summary class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none text-[14px] font-medium text-parchment hover:text-white transition-colors">
+<span>Why does applying a GIF trigger a User Account Control (UAC) prompt?</span>
+<span class="font-mono text-accent-terracotta text-sm ml-4 group-open:rotate-45 transition-transform duration-150">+</span>
+</summary>
+<div class="px-5 pb-4 pt-1 text-[13px] text-parchment-muted leading-relaxed border-t border-border-faint/50 bg-[#171715]">
+<p>The OS lock screen cache resides in <code class="font-mono text-[11px] bg-surface px-1 py-0.5 text-parchment rounded-[2px]">C:\ProgramData\Microsoft\Windows\SystemData</code>, which is protected by default Windows ACLs. The main LockscreenGif user interface runs unprivileged. When “Set” is clicked, an isolated helper binary requests elevation to write the frames into this folder, then exits immediately.</p>
+</div>
+</details>
+<!-- Accordion Item 4 -->
+<details class="group">
+<summary class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none text-[14px] font-medium text-parchment hover:text-white transition-colors">
+<span>How do I remove the animation and revert to factory lock screen behavior?</span>
+<span class="font-mono text-accent-terracotta text-sm ml-4 group-open:rotate-45 transition-transform duration-150">+</span>
+</summary>
+<div class="px-5 pb-4 pt-1 text-[13px] text-parchment-muted leading-relaxed border-t border-border-faint/50 bg-[#171715]">
+<p>Within LockscreenGif, click <strong>Settings &gt; Purge Cache &amp; Revert</strong>. Alternatively, simply open Windows <strong>Settings &gt; Personalization &gt; Lock screen</strong> and select any default static photo or Windows Spotlight.</p>
+</div>
+</details>
+<!-- Accordion Item 5 -->
+<details class="group">
+<summary class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none text-[14px] font-medium text-parchment hover:text-white transition-colors">
+<span>Black bars or stretched frames appear after switching monitors or docking.</span>
+<span class="font-mono text-accent-terracotta text-sm ml-4 group-open:rotate-45 transition-transform duration-150">+</span>
+</summary>
+<div class="px-5 pb-4 pt-1 text-[13px] text-parchment-muted leading-relaxed border-t border-border-faint/50 bg-[#171715]">
+<p>Frame sequences are rasterized specifically to the active resolution of your primary display at export time. When plugging into an external monitor or docking station with different dimensions, open LockscreenGif and re-click “Set lock screen” to re-generate the frame buffer for your new resolution.</p>
+</div>
+</details>
+<!-- Accordion Item 6 -->
+<details class="group">
+<summary class="px-5 py-3.5 flex items-center justify-between cursor-pointer select-none text-[14px] font-medium text-parchment hover:text-white transition-colors">
+<span>How does the built-in Diagnostics capture test work?</span>
+<span class="font-mono text-accent-terracotta text-sm ml-4 group-open:rotate-45 transition-transform duration-150">+</span>
+</summary>
+<div class="px-5 pb-4 pt-1 text-[13px] text-parchment-muted leading-relaxed border-t border-border-faint/50 bg-[#171715]">
+<p>Under the app’s <strong>Diagnostics</strong> tab, clicking <strong>Start Test</strong> starts a 5-second countdown and locks your workstation via <code class="font-mono text-[11px] bg-surface px-1 py-0.5 text-parchment rounded-[2px]">LockWorkStation()</code>. When you log back in, it inspects whether the cache was loaded by DWM and exports an archive of debug telemetry you can attach directly to GitHub issues.</p>
+</div>
+</details>
+</div>
+</section>
+<!-- SECTION 05: SOURCE BUILD & ARCHITECTURAL DOSSIER -->
+<section aria-labelledby="arch-h2" class="py-14" id="architecture">
+<div class="max-w-[760px] mb-8">
+<span class="font-mono text-[11px] text-accent-terracotta tracking-wider uppercase block mb-1">05 / SOURCE BUILD &amp; HERITAGE</span>
+<h2 class="font-serif text-2xl sm:text-3xl font-normal tracking-tight text-parchment mb-2.5" id="arch-h2">
+          Heritage &amp; local compilation
+        </h2>
+<p class="text-parchment-muted text-[14px] font-light">
+          Free software under the MIT License. Developed in WinUI 3 with Windows App SDK and .NET 10.
+        </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Heritage Credits -->
+<div class="lg:col-span-5 border border-border-line bg-surface p-5 rounded-[3px]">
+<div class="font-mono text-[11px] text-accent-amber font-semibold uppercase tracking-wider mb-2">
+            Core Dependencies &amp; Architecture
+          </div>
+<p class="text-parchment-muted text-[13px] leading-relaxed mb-4">
+            Maintained by <strong class="text-parchment font-medium">SubhamPro11</strong>, built upon original architecture concepts by <strong class="text-parchment font-medium">Leapward-Koex</strong>. Zero proprietary analytics, zero network pinging.
+          </p>
+<div class="space-y-2 border-t border-border-faint pt-3 text-[12px] font-mono">
+<div class="flex justify-between items-baseline">
+<span class="text-parchment font-medium">WinUI 3 / WinAppSDK</span>
+<span class="text-parchment-faint">Native Fluent presentation layer</span>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-parchment font-medium">CommunityToolkit.Mvvm</span>
+<span class="text-parchment-faint">State and messaging pipeline</span>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-parchment font-medium">FFmpeg Demuxer</span>
+<span class="text-parchment-faint">Video stream extraction</span>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-parchment font-medium">Gifski (Kornel Lesiński)</span>
+<span class="text-parchment-faint">Quantization &amp; frame encoding</span>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-parchment font-medium">Microsoft .NET 10</span>
+<span class="text-parchment-faint">Runtime engine (x64)</span>
+</div>
+</div>
+</div>
+<!-- Terminal Compilation Commands -->
+<div class="lg:col-span-7 border border-border-line bg-[#111110] p-4 rounded-[3px] font-mono text-[12px]">
+<div class="flex justify-between items-center pb-2 mb-3 border-b border-border-faint text-parchment-faint text-[11px]">
+<span>POWERSHELL / CMD CLI</span>
+<button class="border border-border-line bg-surface-card hover:bg-surface text-parchment text-[10px] px-2.5 py-1 rounded-lg transition-colors" id="btnCopyBuild">
+              Copy Commands
+            </button>
+</div>
+<pre class="text-parchment leading-relaxed overflow-x-auto" id="buildCodeSnippet"><span class="text-parchment-faint"># 1. Clone repository and submodules</span>
+git clone https://github.com/SubhamPro11/lockscreengtf.git
+cd lockscreengtf
+
+<span class="text-parchment-faint"># 2. Restore dependencies and compile WinUI 3 targets</span>
+dotnet restore
+dotnet build -c Release -p:Platform=x64
+
+<span class="text-parchment-faint"># 3. Publish single-directory binaries</span>
+dotnet publish -c Release -r win-x64 --no-self-contained</pre>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-border-faint bg-[#121211] py-10 mt-8 text-[12px] text-parchment-faint font-mono">
+<div class="max-w-[1140px] mx-auto px-5">
+<div class="flex flex-wrap justify-between items-center gap-4 pb-6 border-b border-border-faint">
+<div class="flex items-center gap-2 text-parchment">
+<strong class="font-serif text-[15px] font-normal tracking-tight">LockscreenGif</strong>
+<span class="text-border-line">/</span>
+<span class="text-parchment-muted">v1.2 (STABLE)</span>
+<span class="text-border-line">/</span>
+<span class="text-parchment-faint">Windows 11 Workstation Engine</span>
+</div>
+<ul class="flex flex-wrap gap-5 text-parchment-muted">
+<li><a class="hover:text-parchment transition-colors" href="https://github.com/SubhamPro11/lockscreengtf" rel="noopener noreferrer" target="_blank">GitHub Project</a></li>
+<li><a class="hover:text-parchment transition-colors" href="https://github.com/Leapward-Koex/LockscreenGif" rel="noopener noreferrer" target="_blank">Upstream Core</a></li>
+<li><a class="hover:text-parchment transition-colors" href="https://github.com/SubhamPro11/lockscreengtf/issues" rel="noopener noreferrer" target="_blank">Issue Tracker</a></li>
+<li><a class="hover:text-parchment transition-colors" href="https://github.com/SubhamPro11/lockscreengtf/blob/main/LICENSE" rel="noopener noreferrer" target="_blank">MIT License</a></li>
+</ul>
+</div>
+<div class="pt-6 space-y-1.5 text-[11px] leading-relaxed">
+<p>Released under the terms of the MIT Permissive License. Copyright © <span id="yearSlot">2025</span> SubhamPro11 and community contributors.</p>
+<p class="text-parchment-faint/80">
+          Disclaimer: LockscreenGif is an independent open-source software project and is not affiliated with, endorsed by, or sponsored by Microsoft Corporation. Windows, WinUI, and Windows 11 are registered trademarks of Microsoft Corporation.
+        </p>
+</div>
+</div>
+</footer>
+<!-- SCRIPT -->
+<script>
+    // Live clock update on the compact preview
+    function refreshLiveClock() {
+      const now = new Date();
+      const clockElem = document.getElementById('liveLockClock');
+      const dateElem = document.getElementById('liveLockDate');
+
+      if (clockElem) {
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        clockElem.textContent = `${hh}:${mm}`;
+      }
+
+      if (dateElem) {
+        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+        dateElem.textContent = now.toLocaleDateString('en-US', dateOptions);
+      }
+    }
+    refreshLiveClock();
+    setInterval(refreshLiveClock, 1000);
+
+    // Year slot
+    const yr = document.getElementById('yearSlot');
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    // Clipboard copy handler
+    function setupCopy(buttonId, contentId) {
+      const btn = document.getElementById(buttonId);
+      const target = document.getElementById(contentId);
+      if (!btn || !target) return;
+
+      btn.addEventListener('click', async () => {
+        const text = target.innerText || target.textContent;
+        try {
+          await navigator.clipboard.writeText(text.trim());
+          const orig = btn.textContent;
+          btn.textContent = 'Copied';
+          btn.style.color = '#ffb4a2';
+          setTimeout(() => {
+            btn.textContent = orig;
+            btn.style.color = '';
+          }, 1800);
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    }
+
+    setupCopy('btnCopyHash', 'psVerifyCmd');
+    setupCopy('btnCopyBuild', 'buildCodeSnippet');
+  </script>
+</body></html>
