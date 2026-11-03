@@ -23,7 +23,7 @@
 
 By default, Windows natively restricts lock screen customization to static wallpaper images. Even if you rename an animated `.gif` or select a dynamic media file in Windows Settings, Windows either freezes playback on the first frame or fails to display it.
 
-**LockscreenGif** changes that. Built from the ground up for **Windows 11 24H2 and 25H2+**, LockscreenGif bypasses OS-level limitations by safely managing the system lock screen image cache. It features a frame-accurate video editor, a high-fidelity conversion pipeline powered by **FFmpeg** and **Gifski**, an out-of-process privileged helper service, and a built-in diagnostic and ETW tracing suite.
+**LockscreenGif** changes that. Built from the ground up for **Windows 11 24H2 (26100) or later, including 25H2 and 26H2**, LockscreenGif bypasses OS-level limitations by safely managing the system lock screen image cache. It features a frame-accurate video editor, a high-fidelity conversion pipeline powered by **FFmpeg** and **Gifski**, an out-of-process privileged helper service, and a built-in diagnostic and ETW tracing suite.
 
 > [!TIP]
 > LockscreenGif is fully reversible at any time with a single click in Settings, returning your lock screen to its standard Windows background.
@@ -68,10 +68,10 @@ Direct video streams:
 - **Authenticated Privileged Helper:** Cache updates and ACL maintenance are delegated to a dedicated helper process (`LockscreenGif.Privileged.Helper`) via secure Named Pipe IPC.
 - **Atomic Cache Updates:** Writes are verified byte-for-byte to prevent cache corruption.
 
-### 🧩 Windows 11 24H2 & 25H2+ Compatibility
+### 🧩 Windows 11 24H2, 25H2 & 26H2 Compatibility
 
 - **Automated Prerequisite Checks:** Real-time validation of Windows Lock Screen mode (Picture Mode) and local cache accessibility.
-- **NT Feature Management Override:** Built-in override support for Windows image-loading feature ID `38943831` (`RtlSetFeatureConfigurations`), restoring animated GIF playback on Windows 11 25H2 (Build 26200+) without patching OS binaries. Learn more in [docs/windows-image-feature.md](docs/windows-image-feature.md).
+- **NT Feature Management Override:** Built-in override support for Windows image-loading feature ID `38943831` (`RtlSetFeatureConfigurations`), restoring animated GIF playback on Windows 11 25H2 and 26H2 (Build 26200+) without patching OS binaries. Learn more in [docs/windows-image-feature.md](docs/windows-image-feature.md).
 
 ### 🩺 Deep Diagnostics & ETW Tracing
 
@@ -120,7 +120,7 @@ flowchart TD
 
 | Component | Minimum Requirement | Notes |
 | :--- | :--- | :--- |
-| **Operating System** | **Windows 11 64-bit (x64)** | Build 26100 (24H2) or later (including 25H2+) |
+| **Operating System** | **Windows 11 64-bit (x64 only)** | Build 26100 (24H2) or later, including 25H2 and 26H2. The app is x64-only (Arm64 is not supported). |
 | **Runtime** | **Microsoft .NET 10 Desktop Runtime (x64)** | Required. Must be installed prior to running the app. |
 | **Privileges** | **Administrator Rights** | Required during initial install / helper service authorization. |
 | **Lock Screen Mode** | **Picture Mode** | Lock screen mode in Windows Settings must be set to *Picture* (not *Windows Spotlight* or *Slideshow*). |
@@ -190,7 +190,7 @@ LockscreenGif includes an integrated diagnostics panel accessible via **Diagnost
 | Issue | Cause | Recommended Solution |
 | :--- | :--- | :--- |
 | **Animation is static / does not move** | Windows Spotlight or Slideshow is active | Open **Windows Settings > Personalization > Lock screen** and set the background to **Picture**. |
-| **Animation is still on Windows 11 25H2+** | Windows image feature restricts GIF loading | Open LockscreenGif **Prerequisites** or **Settings**, click **Disable Windows feature** (Feature ID `38943831`), and restart your PC. See [docs/windows-image-feature.md](docs/windows-image-feature.md). |
+| **Animation is still on Windows 11 25H2 or 26H2** | Windows image feature restricts GIF loading | Open LockscreenGif **Prerequisites** or **Settings**, click **Disable Windows feature** (Feature ID `38943831`), and restart your PC. See [docs/windows-image-feature.md](docs/windows-image-feature.md). |
 | **Screen stays black or still** | Windows visual animation effects are turned off | Enable **Settings > Accessibility > Visual effects > Animation effects**. |
 | **Permission or cache access error** | Windows protected lock screen cache permissions | Click **Check again** in prerequisites or start a Diagnostic run. Grant the UAC elevation prompt when the helper repairs cache access. |
 | **Black borders or stretching after display change** | Primary display resolution was modified | Open LockscreenGif and re-apply your animation so the cache matches the new display dimensions. |

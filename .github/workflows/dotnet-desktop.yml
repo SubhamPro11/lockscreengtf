@@ -162,7 +162,7 @@ jobs:
               printf 'Changes since [%s](%s/%s/compare/%s...%s):\n\n' "$previous_tag" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$previous_tag" "$GITHUB_SHA"
             fi
             git log "$commit_range" --first-parent --pretty=format:'- %s (`%h`)'
-            printf '\n\n### Downloads\n\nRequires Windows 11 24H2 (build 26100) or later, x64, and the .NET 10 Desktop Runtime.\n\n- Windows x64 MSI installer\n- Windows x64 app ZIP\n- SHA256SUMS for verification\n'
+            printf '\n\n### Downloads\n\nRequires Windows 11 24H2 (26100) or later, including 25H2 and 26H2, x64, and the .NET 10 Desktop Runtime.\n\n- Windows x64 MSI installer\n- Windows x64 app ZIP\n- SHA256SUMS for verification\n'
             printf '\nThe app logs its version, commit and build attempt at startup and displays them on the Diagnostics screen.\n'
           } > "$notes"
           (cd release-assets && sha256sum *.zip *.msi > SHA256SUMS)

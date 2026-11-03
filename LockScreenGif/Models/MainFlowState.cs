@@ -15,6 +15,13 @@ public enum MainFlowSource
     Video,
 }
 
+public enum DroppedMediaKind
+{
+    Unsupported,
+    Gif,
+    Video,
+}
+
 public enum MainFlowOperation
 {
     None,
@@ -324,5 +331,22 @@ public sealed class MainFlowState
         LastApplyOutcome = MainFlowApplyOutcome.None;
         LastApplyChangedFiles = false;
         LastApplyError = null;
+    }
+
+    public static DroppedMediaKind ClassifyDroppedExtension(string? fileExtensionOrPath)
+    {
+        if (string.IsNullOrWhiteSpace(fileExtensionOrPath))
+        {
+            return DroppedMediaKind.Unsupported;
+        }
+
+        var ext = fileExtensionOrPath.StartsWith('.') ? fileExtensionOrPath : Path.GetExtension(fileExtensionOrPath);
+
+        return ext.ToLowerInvariant() switch
+        {
+            ".gif" => DroppedMediaKind.Gif,
+            ".mp4" or ".mkv" or ".webm" => DroppedMediaKind.Video,
+            _ => DroppedMediaKind.Unsupported,
+        };
     }
 }

@@ -5,6 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:LockscreenGif.CustomControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    AllowDrop="True"
+    DragOver="MainPage_DragOver"
+    Drop="MainPage_Drop"
     mc:Ignorable="d">
     <Page.Resources>
         <Style x:Key="PrerequisitesReadyStyle" TargetType="Border">
@@ -105,7 +108,7 @@
                                             <FontIcon x:Name="PicturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
                                                       Glyph="&#xE7BA;" FontSize="20" VerticalAlignment="Top" Margin="0,3,0,0" />
                                             <StackPanel Grid.Column="1" Spacing="4">
-                                                <TextBlock Text="Picture lock screen and image cache" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                <TextBlock Text="Step 1: Picture lock screen and image cache" FontWeight="SemiBold" TextWrapping="Wrap" />
                                                 <TextBlock x:Name="PicturePrerequisiteDetail" Text="Checking Picture mode and the lock-screen cache…" TextWrapping="Wrap" />
                                             </StackPanel>
                                             <Button x:Name="OpenLockscreenSettingsButton" Grid.Column="2" Content="Open lock-screen settings"
@@ -120,17 +123,31 @@
                                             <FontIcon x:Name="FeaturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
                                                       Glyph="&#xE7BA;" FontSize="20" VerticalAlignment="Top" Margin="0,3,0,0" />
                                             <StackPanel Grid.Column="1" Spacing="4">
-                                                <TextBlock Text="Animated GIF support on Windows 11 25H2 or later" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                <TextBlock Text="Step 2: Animated GIF support on Windows 11 25H2, 26H2, or later" FontWeight="SemiBold" TextWrapping="Wrap" />
                                                 <TextBlock x:Name="FeaturePrerequisiteDetail" Text="Checking the Windows lock-screen feature…" TextWrapping="Wrap" />
                                             </StackPanel>
                                             <Button x:Name="DisableWindowsImageFeatureButton" Grid.Column="2" Content="Disable Windows feature"
                                                     Click="DisableWindowsImageFeature_Click" VerticalAlignment="Center" IsEnabled="False" />
                                         </Grid>
+                                        <Grid ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon Glyph="&#xE946;" FontSize="20" VerticalAlignment="Top" Margin="0,3,0,0"
+                                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            <TextBlock Grid.Column="1" Text="Note: Windows Animation effects must be turned on in Accessibility &gt; Visual effects. If your GIF already animates, you can continue."
+                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                        </Grid>
                                     </StackPanel>
                                 </Expander>
                             </Border>
                             <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Padding="20"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    ToolTipService.ToolTip="Choose video (Ctrl+O)" AutomationProperties.Name="Choose video">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -139,13 +156,17 @@
                                     <FontIcon Glyph="&#xE714;" VerticalAlignment="Center" />
                                     <StackPanel Grid.Column="1" Spacing="4">
                                         <TextBlock Text="Choose video" Style="{ThemeResource BodyStrongTextBlockStyle}" />
-                                        <TextBlock Text="Trim an MP4 or MKV video and turn it into a GIF."
+                                        <TextBlock Text="Trim an MP4, MKV, or WEBM video and turn it into a GIF."
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Grid>
                             </Button>
                             <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Padding="20"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    ToolTipService.ToolTip="Choose GIF (Ctrl+Shift+O)" AutomationProperties.Name="Choose GIF">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
+                                </Button.KeyboardAccelerators>
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -311,7 +332,10 @@
                                      Message="Windows may be using Slideshow or Spotlight. Choose Picture in Windows Settings before setting your animation." />
                             <StackPanel x:Name="SaveGeneratedGifPanel" Spacing="6" Visibility="Collapsed">
                                 <Button x:Name="SaveGeneratedGifButton" Click="SaveGeneratedGifButton_Click"
-                                        ToolTipService.ToolTip="Save a copy of the generated GIF to a folder you choose">
+                                        ToolTipService.ToolTip="Save GIF (Ctrl+Shift+S)" AutomationProperties.Name="Save GIF">
+                                    <Button.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="S" Modifiers="Control,Shift" />
+                                    </Button.KeyboardAccelerators>
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xE74E;" FontSize="16" />
                                         <TextBlock Text="Save GIF…" />
@@ -351,9 +375,19 @@
                             <Button x:Name="ContinueSelectionButton" Content="Continue" Click="ContinueSelection_Click"
                                     Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}" />
                             <Button x:Name="GenerateButton" Content="Continue" Click="GenerateButton_Click" IsEnabled="False"
-                                    Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}" />
+                                    Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}"
+                                    ToolTipService.ToolTip="Continue to preview (Ctrl+Enter)" AutomationProperties.Name="Continue to preview">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Enter" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
                             <Button x:Name="ApplyButton" Content="Set lock screen" Click="SetLockscreenButton_click" IsEnabled="False"
-                                    Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}" />
+                                    Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}"
+                                    ToolTipService.ToolTip="Set lock screen (Ctrl+S)" AutomationProperties.Name="Set lock screen">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="S" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
                         </StackPanel>
                         <Button x:Name="HelpButton" Grid.Column="2" Width="32" Height="32" Padding="0"
                                 ToolTipService.ToolTip="Lock-screen help" AutomationProperties.Name="Lock-screen help">

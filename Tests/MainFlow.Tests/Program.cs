@@ -21,6 +21,7 @@ internal static class Program
         ApplyRecoveryMessages();
         ResetReadiness();
         InvalidOperationTokens();
+        DroppedFileValidation();
         Console.WriteLine($"All {_checks} main flow checks passed. No files, native APIs, or analytics transports were used.");
     }
 
@@ -493,6 +494,23 @@ internal static class Program
     {
         Check(flow.TryBeginOperation(operation, out var token), "begin " + operation);
         return token;
+    }
+
+    private static void DroppedFileValidation()
+    {
+        Check(MainFlowState.ClassifyDroppedExtension(".gif") == DroppedMediaKind.Gif, "classify .gif as Gif");
+        Check(MainFlowState.ClassifyDroppedExtension(".GIF") == DroppedMediaKind.Gif, "classify .GIF case-insensitively as Gif");
+        Check(MainFlowState.ClassifyDroppedExtension("sample.gif") == DroppedMediaKind.Gif, "classify sample.gif filename as Gif");
+        Check(MainFlowState.ClassifyDroppedExtension(".mp4") == DroppedMediaKind.Video, "classify .mp4 as Video");
+        Check(MainFlowState.ClassifyDroppedExtension(".mkv") == DroppedMediaKind.Video, "classify .mkv as Video");
+        Check(MainFlowState.ClassifyDroppedExtension(".webm") == DroppedMediaKind.Video, "classify .webm as Video");
+        Check(MainFlowState.ClassifyDroppedExtension(".WEBM") == DroppedMediaKind.Video, "classify .WEBM case-insensitively as Video");
+        Check(MainFlowState.ClassifyDroppedExtension("test.webm") == DroppedMediaKind.Video, "classify test.webm filename as Video");
+        Check(MainFlowState.ClassifyDroppedExtension(".avi") == DroppedMediaKind.Unsupported, "reject .avi");
+        Check(MainFlowState.ClassifyDroppedExtension(".png") == DroppedMediaKind.Unsupported, "reject .png");
+        Check(MainFlowState.ClassifyDroppedExtension(".exe") == DroppedMediaKind.Unsupported, "reject .exe");
+        Check(MainFlowState.ClassifyDroppedExtension("") == DroppedMediaKind.Unsupported, "reject empty string");
+        Check(MainFlowState.ClassifyDroppedExtension(null) == DroppedMediaKind.Unsupported, "reject null");
     }
 
     private static LockscreenApplyResult Success() => new() { Success = true, Files = [new() { Copied = true, Verified = true }] };

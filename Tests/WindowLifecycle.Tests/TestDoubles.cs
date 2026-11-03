@@ -56,6 +56,19 @@ namespace LockscreenGif.Contracts.Services
     }
 }
 
+namespace LockscreenGif.Services
+{
+    public static class FfmpegService
+    {
+        public static void CleanupTempDirectories() { }
+    }
+
+    public static class GifSkiService
+    {
+        public static void CleanupTempDirectories() { }
+    }
+}
+
 namespace LockscreenGif.Services.Diagnostics
 {
     public sealed class DiagnosticsSessionService
