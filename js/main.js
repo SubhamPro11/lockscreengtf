@@ -107,6 +107,16 @@ function initCopyCommand() {
   });
 }
 
+function isSafeReleaseUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && 
+      (parsed.hostname === 'github.com' || parsed.hostname.endsWith('.github.com') || parsed.hostname === 'objects.githubusercontent.com');
+  } catch {
+    return false;
+  }
+}
+
 async function fetchLiveReleaseData() {
   try {
     const res = await fetch('https://api.github.com/repos/SubhamPro11/lockscreengtf/releases/latest');
@@ -115,14 +125,14 @@ async function fetchLiveReleaseData() {
     if (!release?.assets) return;
 
     const msi = release.assets.find(a => a.name.endsWith('.msi'))?.browser_download_url;
-    if (msi) {
+    if (msi && isSafeReleaseUrl(msi)) {
       ['hero-btn-download', 'nav-download-btn', 'req-btn-msi'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.href = msi;
       });
     }
     const zip = release.assets.find(a => a.name.endsWith('.zip'))?.browser_download_url;
-    if (zip) {
+    if (zip && isSafeReleaseUrl(zip)) {
       ['hero-btn-zip', 'req-btn-zip'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.href = zip;
