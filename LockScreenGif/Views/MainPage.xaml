@@ -370,10 +370,10 @@
                                                          TextChanged="TimeTextBox_TextChanged" LostFocus="TimeTextBox_LostFocus" KeyDown="TimeTextBox_KeyDown" PlaceholderText="Seconds or mm:ss.fff" />
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <RepeatButton x:Name="StartBackButton" Content="−1 frame" Tag="StartBack" Click="NudgeBoundary_Click"
-                                                                  Style="{StaticResource GlassButtonStyle}"
+                                                                  Style="{StaticResource GlassRepeatButtonStyle}"
                                                                   AutomationProperties.Name="Move start one frame earlier" ToolTipService.ToolTip="Move start exactly one frame earlier" />
                                                     <RepeatButton x:Name="StartForwardButton" Content="+1 frame" Tag="StartForward" Click="NudgeBoundary_Click"
-                                                                  Style="{StaticResource GlassButtonStyle}"
+                                                                  Style="{StaticResource GlassRepeatButtonStyle}"
                                                                   AutomationProperties.Name="Move start one frame later" ToolTipService.ToolTip="Move start exactly one frame later" />
                                                 </StackPanel>
                                                 <Button Click="StartHere_Click" Style="{StaticResource GlassButtonStyle}" ToolTipService.ToolTip="Use the current preview frame as the first included frame">
@@ -398,10 +398,10 @@
                                                          TextChanged="TimeTextBox_TextChanged" LostFocus="TimeTextBox_LostFocus" KeyDown="TimeTextBox_KeyDown" PlaceholderText="Seconds or mm:ss.fff" />
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <RepeatButton x:Name="EndBackButton" Content="−1 frame" Tag="EndBack" Click="NudgeBoundary_Click"
-                                                                  Style="{StaticResource GlassButtonStyle}"
+                                                                  Style="{StaticResource GlassRepeatButtonStyle}"
                                                                   AutomationProperties.Name="Move end one frame earlier" ToolTipService.ToolTip="Move end exactly one frame earlier" />
                                                     <RepeatButton x:Name="EndForwardButton" Content="+1 frame" Tag="EndForward" Click="NudgeBoundary_Click"
-                                                                  Style="{StaticResource GlassButtonStyle}"
+                                                                  Style="{StaticResource GlassRepeatButtonStyle}"
                                                                   AutomationProperties.Name="Move end one frame later" ToolTipService.ToolTip="Move end exactly one frame later" />
                                                 </StackPanel>
                                                 <Button Click="EndHere_Click" Style="{StaticResource GlassButtonStyle}" ToolTipService.ToolTip="Include the current preview frame as the last frame">
