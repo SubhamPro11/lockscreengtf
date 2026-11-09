@@ -49,7 +49,7 @@ public static class HumanErrorTranslator
                 5 => "Access was denied by Windows security permissions.",
                 112 => "There is not enough free disk space to finish. Free space on your drive and try again.",
                 32 => "The file is locked because another program is using it. Close other media apps and try again.",
-                _ => $"Windows system error ({w32.NativeErrorCode}): {CleanMessage(w32.Message)}"
+                _ => $"Windows system error ({w32.NativeErrorCode}): {CleanMessage(w32.Message)}",
             };
         }
 
@@ -120,4 +120,3 @@ public static class HumanErrorTranslator
         return raw;
     }
 }
-

@@ -44,7 +44,8 @@ internal sealed class DiagnosticLockDialog
 
         var description = new TextBlock
         {
-            Text = "Your PC will lock in 5 seconds so you can verify that Windows plays the animation on your lock screen.\n\nOnce locked, check the playback, then enter your PIN or password to return to LockscreenGif.",
+            Text =
+                "Your PC will lock in 5 seconds so you can verify that Windows plays the animation on your lock screen.\n\nOnce locked, check the playback, then enter your PIN or password to return to LockscreenGif.",
             TextWrapping = TextWrapping.Wrap,
             FontSize = 13,
             HorizontalAlignment = HorizontalAlignment.Center,

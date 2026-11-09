@@ -59,4 +59,3 @@ public static class EnvironmentValidator
         return new EnvironmentValidationResult(isSupportedOS, isX64, missing, warning);
     }
 }
-

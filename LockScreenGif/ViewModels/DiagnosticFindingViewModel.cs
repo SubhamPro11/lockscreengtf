@@ -19,7 +19,10 @@ public sealed class DiagnosticFindingViewModel : ObservableObject
         WarningVisibility = warning ? Visibility.Visible : Visibility.Collapsed;
         InformationVisibility = !warning && finding.Severity != "Success" ? Visibility.Visible : Visibility.Collapsed;
 
-        BadgeText = warning ? "ATTENTION" : finding.Severity == "Success" ? "PASS" : "INFO";
+        BadgeText =
+            warning ? "ATTENTION"
+            : finding.Severity == "Success" ? "PASS"
+            : "INFO";
 
         var status =
             warning ? "Needs attention"
@@ -46,9 +49,8 @@ public sealed class DiagnosticFindingViewModel : ObservableObject
             {
                 SummaryText = finding.Detail;
                 // If it looks like technical telemetry (hashes, GUIDs, paths), offer it as collapsible raw detail
-                TechnicalDetail = finding.Detail.Length > 80 || finding.Detail.Contains('{') || finding.Detail.Contains('\\')
-                    ? finding.Detail
-                    : "";
+                TechnicalDetail =
+                    finding.Detail.Length > 80 || finding.Detail.Contains('{') || finding.Detail.Contains('\\') ? finding.Detail : "";
             }
         }
     }

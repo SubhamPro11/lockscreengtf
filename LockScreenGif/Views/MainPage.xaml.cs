@@ -302,7 +302,10 @@ public sealed partial class MainPage : Page
         if (QualityValueText != null)
         {
             var q = (int)e.NewValue;
-            var label = q >= 95 ? "Maximum" : q >= 80 ? "High" : "Balanced";
+            var label =
+                q >= 95 ? "Maximum"
+                : q >= 80 ? "High"
+                : "Balanced";
             QualityValueText.Text = $"{label} ({q})";
         }
         UpdateTelemetry();
@@ -568,7 +571,13 @@ public sealed partial class MainPage : Page
 
     private void UpdateTelemetry()
     {
-        if (TelemetryDurationText is null || TelemetryFramesText is null || TelemetryFpsText is null || TelemetrySizeText is null || TelemetryImpactText is null)
+        if (
+            TelemetryDurationText is null
+            || TelemetryFramesText is null
+            || TelemetryFpsText is null
+            || TelemetrySizeText is null
+            || TelemetryImpactText is null
+        )
         {
             return;
         }
@@ -578,9 +587,8 @@ public sealed partial class MainPage : Page
 
         var fpsTag = (ComboFps?.SelectedItem as ComboBoxItem)?.Tag as double?;
         var fps = fpsTag ?? _videoFps ?? 0;
-        var frameCount = fps <= 0
-            ? Math.Max(0, _endFrame - _startFrame)
-            : (int)Math.Min(_endFrame - _startFrame, Math.Ceiling(durationSec * fps) + 1);
+        var frameCount =
+            fps <= 0 ? Math.Max(0, _endFrame - _startFrame) : (int)Math.Min(_endFrame - _startFrame, Math.Ceiling(durationSec * fps) + 1);
 
         TelemetryFramesText.Text = $"{frameCount:N0} frames";
 
@@ -602,9 +610,7 @@ public sealed partial class MainPage : Page
         {
             targetWidth = 1280;
         }
-        var targetHeight = _videoWidth > 0
-            ? (int)Math.Round(targetWidth * (double)_videoHeight / _videoWidth)
-            : 720;
+        var targetHeight = _videoWidth > 0 ? (int)Math.Round(targetWidth * (double)_videoHeight / _videoWidth) : 720;
 
         var quality = QualitySlider != null ? (uint)QualitySlider.Value : 85;
 
@@ -616,7 +622,7 @@ public sealed partial class MainPage : Page
         {
             CacheImpactLevel.Safe => "InstrumentGaugeGreenBrush",
             CacheImpactLevel.Moderate => "InstrumentAccentBrassBrush",
-            _ => "InstrumentAlertRedBrush"
+            _ => "InstrumentAlertRedBrush",
         };
 
         if (Application.Current.Resources.TryGetValue(brushKey, out var brushObj) && brushObj is Brush brush)

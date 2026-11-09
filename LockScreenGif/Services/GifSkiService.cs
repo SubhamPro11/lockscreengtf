@@ -89,73 +89,76 @@ public class GifSkiService
     {
         Logger.Info($"Going to create gif with {inputDirectory}, duration {duration}, quality {quality}");
 
-        return await Task.Run(() =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var frames = Directory
-                .EnumerateFiles(inputDirectory, "frame_*.png")
-                .Select(path =>
-                {
-                    var name = Path.GetFileNameWithoutExtension(path);
-                    // e.g. name = "frame_000123"
-                    var numPart = name.Substring(name.LastIndexOf('_') + 1);
-                    return new { Path = path, Index = int.TryParse(numPart, out var n) ? n : 0 };
-                })
-                .OrderBy(x => x.Index)
-                .ToArray();
-
-            if (frames.Length == 0)
+        return await Task.Run(
+            () =>
             {
-                throw new InvalidOperationException("No frames found in " + inputDirectory);
-            }
+                cancellationToken.ThrowIfCancellationRequested();
 
-            if (frames.Length != presentationTimes.Count || duration <= presentationTimes[^1])
-            {
-                throw new InvalidDataException("Extracted frame timing does not match the selected clip.");
-            }
-
-            var (width, height) = ReadPngDimensions(frames[0].Path);
-            var gifskiDll = EnsureLibraryLoaded();
-            var outputFile = Path.Combine(CreateTempDirectory(), "output.gif");
-            using var gifski = Gifski.Create(
-                gifskiDll,
-                settings =>
-                {
-                    // FFmpeg has already applied the selected resolution. Gifski's
-                    // unspecified dimensions automatically shrink large images.
-                    settings.Width = width;
-                    settings.Height = height;
-                    settings.Quality = (byte)Math.Clamp(quality, 10, 100);
-                    settings.Extra = true;
-                }
-            );
-
-            SubmitAndFinish(
-                () =>
-                {
-                    ThrowIfFailed(gifski.SetFileOutput(outputFile), "set output");
-
-                    // Gifski uses a positive first timestamp as the final frame delay.
-                    // Offset every PTS equally to retain all intermediate (including VFR) delays.
-                    var finalDelay = duration - presentationTimes[^1];
-
-                    for (var i = 0; i < frames.Length; i++)
+                var frames = Directory
+                    .EnumerateFiles(inputDirectory, "frame_*.png")
+                    .Select(path =>
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        var timestamp = presentationTimes[i] + finalDelay;
-                        ThrowIfFailed(
-                            gifski.AddFramePngFile(frameNumber: (uint)i, presentationTimestamp: timestamp, filePath: frames[i].Path),
-                            "add frame"
-                        );
-                        onPercentageProgress(((double)i / frames.Length) * 100);
-                    }
-                },
-                gifski.Finish
-            );
+                        var name = Path.GetFileNameWithoutExtension(path);
+                        // e.g. name = "frame_000123"
+                        var numPart = name.Substring(name.LastIndexOf('_') + 1);
+                        return new { Path = path, Index = int.TryParse(numPart, out var n) ? n : 0 };
+                    })
+                    .OrderBy(x => x.Index)
+                    .ToArray();
 
-            return outputFile;
-        }, cancellationToken);
+                if (frames.Length == 0)
+                {
+                    throw new InvalidOperationException("No frames found in " + inputDirectory);
+                }
+
+                if (frames.Length != presentationTimes.Count || duration <= presentationTimes[^1])
+                {
+                    throw new InvalidDataException("Extracted frame timing does not match the selected clip.");
+                }
+
+                var (width, height) = ReadPngDimensions(frames[0].Path);
+                var gifskiDll = EnsureLibraryLoaded();
+                var outputFile = Path.Combine(CreateTempDirectory(), "output.gif");
+                using var gifski = Gifski.Create(
+                    gifskiDll,
+                    settings =>
+                    {
+                        // FFmpeg has already applied the selected resolution. Gifski's
+                        // unspecified dimensions automatically shrink large images.
+                        settings.Width = width;
+                        settings.Height = height;
+                        settings.Quality = (byte)Math.Clamp(quality, 10, 100);
+                        settings.Extra = true;
+                    }
+                );
+
+                SubmitAndFinish(
+                    () =>
+                    {
+                        ThrowIfFailed(gifski.SetFileOutput(outputFile), "set output");
+
+                        // Gifski uses a positive first timestamp as the final frame delay.
+                        // Offset every PTS equally to retain all intermediate (including VFR) delays.
+                        var finalDelay = duration - presentationTimes[^1];
+
+                        for (var i = 0; i < frames.Length; i++)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            var timestamp = presentationTimes[i] + finalDelay;
+                            ThrowIfFailed(
+                                gifski.AddFramePngFile(frameNumber: (uint)i, presentationTimestamp: timestamp, filePath: frames[i].Path),
+                                "add frame"
+                            );
+                            onPercentageProgress(((double)i / frames.Length) * 100);
+                        }
+                    },
+                    gifski.Finish
+                );
+
+                return outputFile;
+            },
+            cancellationToken
+        );
     }
 
     internal static void SubmitAndFinish(Action submit, Func<GifskiError> finish)

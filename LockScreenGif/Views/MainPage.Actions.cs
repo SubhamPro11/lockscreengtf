@@ -159,7 +159,8 @@ public sealed partial class MainPage
                 "The administrator elevation prompt was cancelled. No files or system settings were modified. Your animation is preserved and ready whenever you want to try again.",
             MainFlowApplyOutcome.Partial when Flow.LastApplyError is not null =>
                 $"Some lock-screen files were updated, but the operation did not finish. {Flow.LastApplyError}",
-            MainFlowApplyOutcome.Partial => "Some lock-screen files were updated, but the operation did not finish. Try again or restore default lock screen.",
+            MainFlowApplyOutcome.Partial =>
+                "Some lock-screen files were updated, but the operation did not finish. Try again or restore default lock screen.",
             _ => Flow.LastApplyError ?? "Windows could not update the lock screen. Check Diagnostics or try again.",
         };
         OperationStatus.Severity =
@@ -183,7 +184,8 @@ public sealed partial class MainPage
             Title = "Restore Default Lock Screen?",
             Content = new TextBlock
             {
-                Text = "This will remove the animated loop from the Windows lock-screen cache and revert your lock screen to standard Windows static imagery.",
+                Text =
+                    "This will remove the animated loop from the Windows lock-screen cache and revert your lock screen to standard Windows static imagery.",
                 TextWrapping = TextWrapping.Wrap,
             },
             PrimaryButtonText = "Restore Defaults",
@@ -289,7 +291,8 @@ public sealed partial class MainPage
         else
         {
             OperationStatus.Title = "Unsupported format";
-            OperationStatus.Message = $"'{file.Name}' has an unsupported extension. Supported formats: .mp4, .webm, .mov, .mkv, .avi, .gif.";
+            OperationStatus.Message =
+                $"'{file.Name}' has an unsupported extension. Supported formats: .mp4, .webm, .mov, .mkv, .avi, .gif.";
             OperationStatus.Severity = InfoBarSeverity.Error;
             OperationStatus.IsOpen = true;
         }
@@ -426,7 +429,8 @@ public sealed partial class MainPage
             if (basicProps.Size > 1024L * 1024L * 1024L)
             {
                 OperationStatus.Title = "Large video file";
-                OperationStatus.Message = $"'{file.Name}' is {basicProps.Size / (1024.0 * 1024.0):F0} MB. Reading frames may take some time.";
+                OperationStatus.Message =
+                    $"'{file.Name}' is {basicProps.Size / (1024.0 * 1024.0):F0} MB. Reading frames may take some time.";
                 OperationStatus.Severity = InfoBarSeverity.Warning;
                 OperationStatus.IsOpen = true;
             }
@@ -581,9 +585,7 @@ public sealed partial class MainPage
                 }
             );
             OperationStatus.Title = "Video loading cancelled";
-            OperationStatus.Message = _videoFile is null
-                ? "Choose a video when you're ready."
-                : "Your previous selection has been kept.";
+            OperationStatus.Message = _videoFile is null ? "Choose a video when you're ready." : "Your previous selection has been kept.";
             OperationStatus.IsOpen = true;
         }
         catch (Exception ex)
@@ -598,11 +600,7 @@ public sealed partial class MainPage
                 }
             );
             Logger.Error($"Video loading failed at {stage}", ex);
-            ShowMediaFailure(
-                "Video could not be opened",
-                ex,
-                "The video could not be read or decoded. Try a local copy or another video."
-            );
+            ShowMediaFailure("Video could not be opened", ex, "The video could not be read or decoded. Try a local copy or another video.");
         }
         finally
         {

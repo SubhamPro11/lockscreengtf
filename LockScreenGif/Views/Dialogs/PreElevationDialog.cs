@@ -43,20 +43,20 @@ internal static class PreElevationDialog
 
         var detailsStack = new StackPanel { Spacing = 10 };
 
-        detailsStack.Children.Add(CreatePoint(
-            "Target location",
-            "%ProgramData%\\Microsoft\\Windows\\SystemData (protected lock screen cache)"
-        ));
+        detailsStack.Children.Add(
+            CreatePoint("Target location", "%ProgramData%\\Microsoft\\Windows\\SystemData (protected lock screen cache)")
+        );
 
-        detailsStack.Children.Add(CreatePoint(
-            "One-time operation",
-            "Zero background processes. Windows plays the loop natively with no ongoing CPU or battery overhead. The app can be closed once applied."
-        ));
+        detailsStack.Children.Add(
+            CreatePoint(
+                "One-time operation",
+                "Zero background processes. Windows plays the loop natively with no ongoing CPU or battery overhead. The app can be closed once applied."
+            )
+        );
 
-        detailsStack.Children.Add(CreatePoint(
-            "Reversible anytime",
-            "You can restore your default Windows lock screen at any time with a single click."
-        ));
+        detailsStack.Children.Add(
+            CreatePoint("Reversible anytime", "You can restore your default Windows lock screen at any time with a single click.")
+        );
 
         detailsBorder.Child = detailsStack;
         panel.Children.Add(detailsBorder);
@@ -120,4 +120,3 @@ internal static class PreElevationDialog
         return item;
     }
 }
-

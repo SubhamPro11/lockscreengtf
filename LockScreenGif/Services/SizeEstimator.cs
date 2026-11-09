@@ -2,17 +2,12 @@ namespace LockscreenGif.Services;
 
 public enum CacheImpactLevel
 {
-    Safe,       // < 35 MB
-    Moderate,   // 35 - 70 MB
-    Heavy       // > 70 MB
+    Safe, // < 35 MB
+    Moderate, // 35 - 70 MB
+    Heavy, // > 70 MB
 }
 
-public sealed record SizeEstimateResult(
-    long EstimatedBytes,
-    string FormattedSize,
-    CacheImpactLevel ImpactLevel,
-    string ImpactDescription
-);
+public sealed record SizeEstimateResult(long EstimatedBytes, string FormattedSize, CacheImpactLevel ImpactLevel, string ImpactDescription);
 
 public static class SizeEstimator
 {
@@ -74,4 +69,3 @@ public static class SizeEstimator
         return $"{bytes / (1024.0 * 1024.0):F1} MB";
     }
 }
-
