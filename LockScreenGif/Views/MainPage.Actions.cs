@@ -76,7 +76,7 @@ public sealed partial class MainPage
                 return;
             }
             OperationStatus.Title = "The action could not be completed";
-            OperationStatus.Message = $"{ex.GetType().Name}: {ex.Message}";
+            OperationStatus.Message = HumanErrorTranslator.Translate(ex);
             OperationStatus.Severity = InfoBarSeverity.Error;
             OperationStatus.IsOpen = true;
             if (operation == MainFlowOperation.Applying)
@@ -224,7 +224,7 @@ public sealed partial class MainPage
         {
             Logger.Error("Failed to restore default lock screen", ex);
             OperationStatus.Title = "Error restoring lock screen";
-            OperationStatus.Message = ex.Message;
+            OperationStatus.Message = HumanErrorTranslator.Translate(ex);
             OperationStatus.Severity = InfoBarSeverity.Error;
         }
         finally

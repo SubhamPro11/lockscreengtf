@@ -142,6 +142,7 @@
                             <!-- Modern Drag and Drop Target Card -->
                             <Border x:Name="DropTargetCard" Style="{StaticResource InstrumentCardStyle}"
                                     AllowDrop="True" DragOver="DropTarget_DragOver" DragLeave="DropTarget_DragLeave" Drop="DropTarget_Drop"
+                                    AutomationProperties.Name="Drop zone for video or GIF file"
                                     Padding="32,24" HorizontalAlignment="Stretch">
                                 <StackPanel Spacing="14" HorizontalAlignment="Center">
                                     <FontIcon Glyph="&#xE8B9;" FontSize="40" Foreground="{ThemeResource InstrumentAccentBrassBrush}" HorizontalAlignment="Center" />
@@ -152,13 +153,15 @@
                                                    Foreground="{ThemeResource InstrumentTextMutedBrush}" TextAlignment="Center" FontSize="12" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,6,0,0">
-                                        <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Style="{ThemeResource AccentButtonStyle}" Padding="16,10">
+                                        <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Style="{ThemeResource AccentButtonStyle}" Padding="16,10"
+                                                AutomationProperties.Name="Choose video file to animate">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <FontIcon Glyph="&#xE714;" FontSize="16" />
                                                 <TextBlock Text="Choose Video…" FontWeight="SemiBold" />
                                             </StackPanel>
                                         </Button>
-                                        <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Padding="16,10">
+                                        <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Padding="16,10"
+                                                AutomationProperties.Name="Choose existing GIF file to animate">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <FontIcon Glyph="&#xE8B9;" FontSize="16" />
                                                 <TextBlock Text="Choose GIF…" />
@@ -354,8 +357,10 @@
                                                 <ColumnDefinition Width="1.4*" />
                                             </Grid.ColumnDefinitions>
                                             <ComboBox x:Name="ComboResolution" Header="Resolution" HorizontalAlignment="Stretch"
+                                                      AutomationProperties.Name="Target resolution"
                                                       SelectionChanged="ComboResolution_SelectionChanged" />
                                             <ComboBox x:Name="ComboFps" Grid.Column="1" Header="Frame rate" HorizontalAlignment="Stretch"
+                                                      AutomationProperties.Name="Target frame rate"
                                                       SelectionChanged="ComboResolution_SelectionChanged" />
                                             <StackPanel Grid.Column="2" Spacing="4">
                                                 <Grid>
@@ -503,6 +508,7 @@
                                                Style="{StaticResource InstrumentReadoutTextStyle}" />
                                 </StackPanel>
                                 <Button x:Name="CancelConversionButton" Grid.Column="1" Content="Cancel"
+                                        AutomationProperties.Name="Cancel animation conversion"
                                         Click="CancelGenerate_Click" VerticalAlignment="Center" />
                             </Grid>
                             <ProgressBar x:Name="GenerateLoading" Value="0" HorizontalAlignment="Stretch"
@@ -515,13 +521,17 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="BackButton" Content="Back" Click="Back_Click" Visibility="Collapsed" />
+                        <Button x:Name="BackButton" Content="Back" Click="Back_Click" Visibility="Collapsed"
+                                AutomationProperties.Name="Return to previous stage" />
                         <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Right">
                             <Button x:Name="ContinueSelectionButton" Content="Continue" Click="ContinueSelection_Click"
+                                    AutomationProperties.Name="Continue to editor"
                                     Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}" />
                             <Button x:Name="GenerateButton" Content="Continue" Click="GenerateButton_Click" IsEnabled="False"
+                                    AutomationProperties.Name="Generate lock screen animation"
                                     Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}" />
                             <Button x:Name="ApplyButton" Content="Set lock screen" Click="SetLockscreenButton_click" IsEnabled="False"
+                                    AutomationProperties.Name="Set animated GIF as lock screen"
                                     Visibility="Collapsed" Style="{ThemeResource AccentButtonStyle}" />
                         </StackPanel>
                         <Button x:Name="HelpButton" Grid.Column="2" Width="32" Height="32" Padding="0"

@@ -24,8 +24,10 @@
                 <StackPanel Spacing="16">
                     <TextBlock TextWrapping="Wrap" Text="Open the application logs or save a ZIP copy for troubleshooting." />
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <Button x:Name="OpenLogFolderButton" Content="Open log folder" Click="OpenLogFolder_Click" />
-                        <Button x:Name="SaveLogsButton" Content="Save logs as ZIP…" Click="SaveLogs_Click" />
+                        <Button x:Name="OpenLogFolderButton" Content="Open log folder" Click="OpenLogFolder_Click"
+                                AutomationProperties.Name="Open application log folder in File Explorer" />
+                        <Button x:Name="SaveLogsButton" Content="Save logs as ZIP…" Click="SaveLogs_Click"
+                                AutomationProperties.Name="Save application logs as ZIP file" />
                     </StackPanel>
                     <StackPanel x:Name="LogExportProgress" Orientation="Horizontal" Spacing="12" Visibility="Collapsed">
                         <ProgressRing x:Name="LogExportRing" Width="20" Height="20" IsActive="False" />
@@ -59,9 +61,11 @@
                     <TextBox x:Name="FeatureIdInput" Header="Feature ID" InputScope="Number"
                              MaxWidth="300" HorizontalAlignment="Left" MinWidth="220" />
                     <TextBlock x:Name="DefaultFeatureIdText" TextWrapping="Wrap" />
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <Button x:Name="SaveFeatureIdButton" Content="Save ID" Click="SaveFeatureId_Click" />
-                        <Button x:Name="ResetFeatureIdButton" Content="Reset to default" Click="ResetFeatureId_Click" />
+                     <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button x:Name="SaveFeatureIdButton" Content="Save ID" Click="SaveFeatureId_Click"
+                                AutomationProperties.Name="Save Windows lock-screen feature ID" />
+                        <Button x:Name="ResetFeatureIdButton" Content="Reset to default" Click="ResetFeatureId_Click"
+                                AutomationProperties.Name="Reset Windows lock-screen feature ID to default" />
                     </StackPanel>
                     <TextBlock Text="Saving or resetting the ID updates which feature the app checks and controls. It does not enable, disable, or restore any Windows feature."
                                TextWrapping="Wrap" />
@@ -78,7 +82,8 @@
                              Message="Enabling this feature will break animated GIF lockscreens on Windows 11 25H2 or later. Keep it disabled to use animated GIFs." />
                     <TextBlock x:Name="FeatureStateText" Text="Reading the current Windows feature state…" TextWrapping="Wrap" />
                     <Button x:Name="EnableWindowsImageFeatureButton" Content="Enable Windows lock-screen feature"
-                            Click="EnableWindowsImageFeature_Click" IsEnabled="False" />
+                            Click="EnableWindowsImageFeature_Click" IsEnabled="False"
+                            AutomationProperties.Name="Enable Windows lock-screen feature" />
                     <InfoBar x:Name="FeatureActionStatus" IsOpen="False" />
                 </StackPanel>
             </Border>
@@ -96,7 +101,8 @@
                         TextWrapping="Wrap" />
                 </StackPanel>
                 <Button x:Name="RemoveLockscreenButton" Grid.Column="1" VerticalAlignment="Center"
-                    Click="RemoveLockscreen_Click" Content="Remove" />
+                    Click="RemoveLockscreen_Click" Content="Remove"
+                    AutomationProperties.Name="Remove animated lock screen from Windows" />
             </Grid>
             <InfoBar x:Name="RemovalStatus" IsOpen="False" IsClosable="True" />
             <TextBlock Text="About" Style="{StaticResource SubtitleTextBlockStyle}" />

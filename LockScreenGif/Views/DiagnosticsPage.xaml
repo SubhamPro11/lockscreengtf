@@ -13,41 +13,54 @@
             <Setter Property="Padding" Value="20" />
         </Style>
         <DataTemplate x:Key="FindingHeaderTemplate" x:DataType="vm:DiagnosticFindingViewModel">
-            <Grid Margin="0,4,0,8" ColumnSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid VerticalAlignment="Top" Margin="0,2,0,0">
-                    <FontIcon
-                        FontSize="20"
-                        Glyph="&#xE73E;"
-                        Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                        Visibility="{x:Bind SuccessVisibility}"
-                        AutomationProperties.Name="{x:Bind AccessibleStatus}" />
-                    <FontIcon
-                        FontSize="20"
-                        Glyph="&#xE7BA;"
-                        Foreground="{ThemeResource SystemFillColorCautionBrush}"
-                        Visibility="{x:Bind WarningVisibility}"
-                        AutomationProperties.Name="{x:Bind AccessibleStatus}" />
-                    <FontIcon
-                        FontSize="20"
-                        Glyph="&#xE946;"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Visibility="{x:Bind InformationVisibility}"
-                        AutomationProperties.Name="{x:Bind AccessibleStatus}" />
+            <Border Style="{StaticResource InstrumentCardStyle}" Padding="14,10" Margin="0,3,0,6">
+                <Grid RowSpacing="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid VerticalAlignment="Center" Margin="0,0,10,0">
+                        <FontIcon FontSize="18" Glyph="&#xE73E;" Foreground="{ThemeResource InstrumentGaugeGreenBrush}"
+                                  Visibility="{x:Bind SuccessVisibility}" AutomationProperties.Name="{x:Bind AccessibleStatus}" />
+                        <FontIcon FontSize="18" Glyph="&#xE7BA;" Foreground="{ThemeResource InstrumentAlertRedBrush}"
+                                  Visibility="{x:Bind WarningVisibility}" AutomationProperties.Name="{x:Bind AccessibleStatus}" />
+                        <FontIcon FontSize="18" Glyph="&#xE946;" Foreground="{ThemeResource InstrumentAccentBrassBrush}"
+                                  Visibility="{x:Bind InformationVisibility}" AutomationProperties.Name="{x:Bind AccessibleStatus}" />
+                    </Grid>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" TextWrapping="Wrap" FontSize="13" />
+                        <TextBlock FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}"
+                                   Text="{x:Bind StatusDescription}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                    </StackPanel>
+
+                    <Border Grid.Column="2" VerticalAlignment="Center" CornerRadius="4" Padding="6,2"
+                            Background="{ThemeResource InstrumentBorderBrush}">
+                        <TextBlock Text="{x:Bind BadgeText}" FontFamily="{StaticResource InstrumentMonoFont}"
+                                   FontSize="10" FontWeight="Bold" Foreground="{ThemeResource InstrumentTextPrimaryBrush}" />
+                    </Border>
+
+                    <!-- Plain Language Summary -->
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="28,2,0,0"
+                               Text="{x:Bind SummaryText}" TextWrapping="Wrap" FontSize="12" />
+
+                    <!-- Collapsible Raw Detail ("one click deeper") -->
+                    <Expander Grid.Row="2" Grid.ColumnSpan="3" Margin="28,4,0,0"
+                              Header="Technical details" Visibility="{x:Bind TechnicalDetailVisibility}"
+                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <TextBlock Text="{x:Bind TechnicalDetail}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                                   FontFamily="{StaticResource InstrumentMonoFont}" FontSize="11"
+                                   Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                    </Expander>
                 </Grid>
-                <StackPanel Grid.Column="1" Spacing="4">
-                    <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" TextWrapping="Wrap" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="{x:Bind StatusDescription}"
-                        TextWrapping="Wrap" />
-                    <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Detail}" TextWrapping="Wrap" />
-                </StackPanel>
-            </Grid>
+            </Border>
         </DataTemplate>
     </Page.Resources>
     <Grid>
@@ -76,7 +89,10 @@
                                 Text="{x:Bind ViewModel.SourceDescription, Mode=OneWay}"
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton HorizontalAlignment="Left" Padding="0" Click="ChooseSource_Click" Content="Choose or convert a GIF on Lockscreen" IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
+                        <HyperlinkButton HorizontalAlignment="Left" Padding="0" Click="ChooseSource_Click"
+                                         Content="Choose or convert a GIF on Lockscreen"
+                                         AutomationProperties.Name="Select source animation on Lockscreen page"
+                                         IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
                         <CheckBox
                             Content="Use the bundled reference animation"
                             IsChecked="{x:Bind ViewModel.UseReference, Mode=TwoWay}"
@@ -131,6 +147,7 @@
                             HorizontalAlignment="Stretch"
                             Click="Start_Click"
                             Content="Start test and apply"
+                            AutomationProperties.Name="Start diagnostic test and apply animation"
                             IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
                             Style="{StaticResource AccentButtonStyle}" />
                     </StackPanel>
@@ -159,8 +176,8 @@
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.SessionDescription, Mode=OneWay}" TextWrapping="Wrap" />
                         <TextBlock Text="{x:Bind ViewModel.ProgressDescription, Mode=OneWay}" TextWrapping="Wrap" />
                         <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.RunningVisibility, Mode=OneWay}">
-                            <Button Click="Lock_Click" Content="Lock now" IsEnabled="{x:Bind ViewModel.CanLock, Mode=OneWay}" />
-                            <Button Click="Stop_Click" Content="Stop test" IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}" />
+                            <Button Click="Lock_Click" Content="Lock now" AutomationProperties.Name="Lock computer now for testing" IsEnabled="{x:Bind ViewModel.CanLock, Mode=OneWay}" />
+                            <Button Click="Stop_Click" Content="Stop test" AutomationProperties.Name="Stop active diagnostic test" IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -201,34 +218,68 @@
             Grid.Row="1"
             MaxWidth="920"
             Margin="24,0,24,16"
-            Padding="16"
-            Style="{StaticResource DiagnosticCard}">
-            <StackPanel Spacing="10">
+            Padding="18,16"
+            Style="{StaticResource InstrumentCardStyle}">
+            <StackPanel Spacing="12">
                 <InfoBar
                     Title="Diagnostics"
                     IsClosable="False"
                     IsOpen="{x:Bind ViewModel.HasNotice, Mode=OneWay}"
                     Message="{x:Bind ViewModel.Notice, Mode=OneWay}"
-                    Severity="Informational" />
+                    Severity="Informational"
+                    AutomationProperties.LiveSetting="Polite" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="EXPORT SANITIZED DIAGNOSTIC REPORT"
+                                   FontFamily="{StaticResource InstrumentMonoFont}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                        <TextBlock Text="Generates an inspectable .zip archive for troubleshooting lock-screen issues."
+                                   FontSize="12" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" FontSize="11" FontFamily="{StaticResource InstrumentMonoFont}"
+                               Foreground="{ThemeResource InstrumentTextMutedBrush}" VerticalAlignment="Center"
+                               Text="{x:Bind AppVersion}" />
+                </Grid>
+
+                <Grid ColumnSpacing="16" Margin="0,2,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource InstrumentCardStyle}" Padding="12,8" Background="{ThemeResource InstrumentBackgroundBrush}">
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="✓ INCLUDED IN REPORT" FontFamily="{StaticResource InstrumentMonoFont}" FontSize="10"
+                                       FontWeight="Bold" Foreground="{ThemeResource InstrumentGaugeGreenBrush}" />
+                            <TextBlock Text="• Windows build, edition, and feature ID configuration" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                            <TextBlock Text="• Lock-screen cache verification timestamps and hashes" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                            <TextBlock Text="• Recent application event logs (usernames and local paths redacted)" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource InstrumentCardStyle}" Padding="12,8" Background="{ThemeResource InstrumentBackgroundBrush}">
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="✗ EXCLUDED FOR PRIVACY" FontFamily="{StaticResource InstrumentMonoFont}" FontSize="10"
+                                       FontWeight="Bold" Foreground="{ThemeResource InstrumentAccentBrassBrush}" />
+                            <TextBlock Text="• No source videos or user GIFs included" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                            <TextBlock Text="• No screen captures or lock-screen images" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                            <TextBlock Text="• No passwords, tokens, or memory dumps" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
                 <Button
                     HorizontalAlignment="Stretch"
                     Click="Export_Click"
-                    Content="Export report"
+                    Content="Export Sanitized Report (ZIP)…"
                     IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}"
-                    ToolTipService.ToolTip="Export the timeline, file checks, app details, and recent application logs as a ZIP report." />
-                <TextBlock
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Includes recent application logs. Personal paths are redacted. Source media and screenshots are excluded. Review the report before sharing it."
-                    TextWrapping="Wrap" />
-                <TextBlock
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    HorizontalAlignment="Right"
-                    IsTextSelectionEnabled="True"
-                    Text="{x:Bind AppVersion}"
-                    TextWrapping="Wrap" />
+                    Padding="14,10"
+                    AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
+                    ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
             </StackPanel>
         </Border>
     </Grid>

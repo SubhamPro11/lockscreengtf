@@ -280,7 +280,7 @@ public sealed class DiagnosticsViewModel : ObservableObject
             AnalyticsErrorContext.DiagnosticsAction,
             new AnalyticsProperties { Workflow = AnalyticsWorkflow.Diagnostics }
         );
-        Notice = $"{error.GetType().Name}: {error.Message}";
+        Notice = HumanErrorTranslator.Translate(error);
     }
 
     private async Task RunAsync(Func<Task> action)

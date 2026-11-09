@@ -1,5 +1,6 @@
 using LockscreenGif.Contracts.Services;
 using LockscreenGif.Helpers;
+using LockscreenGif.Services;
 using LockscreenGif.Services.Analytics;
 using LockscreenGif.Services.Diagnostics;
 using Microsoft.UI.Xaml;
@@ -107,7 +108,7 @@ public sealed partial class SettingsPage
         {
             _analytics?.CaptureException(ex, AnalyticsErrorContext.LockscreenRemoval);
             Logger.Error("Settings lockscreen removal failed", ex);
-            ShowRemovalStatus("Could not remove the animated lockscreen", ex.Message, InfoBarSeverity.Error);
+            ShowRemovalStatus("Could not remove the animated lockscreen", HumanErrorTranslator.Translate(ex), InfoBarSeverity.Error);
         }
         finally
         {
