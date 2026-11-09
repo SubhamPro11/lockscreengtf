@@ -2,5 +2,14 @@
   <PropertyGroup>
     <!-- Enforce the explicit code-style severities from .editorconfig in builds. -->
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Unified branding & assembly metadata -->
+    <Product>LockscreenGif</Product>
+    <Authors>SubhamPro11</Authors>
+    <Company>SubhamPro11</Company>
+    <Copyright>© 2026 Subham Kumar (SubhamPro11). Forked from Leapward-Koex/LockscreenGif (MIT).</Copyright>
+    <PackageProjectUrl>https://lockscreen-gtf-web.morbius.workers.dev</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SubhamPro11/lockscreengtf</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 </Project>

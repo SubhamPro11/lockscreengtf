@@ -42,4 +42,12 @@ public sealed partial class SettingsPage : Page
         AnalyticsSettingsError.IsOpen = !_analytics.SetEnabled(AnalyticsToggle.IsOn);
         RefreshPreference();
     }
+
+    private async void ViewLicenses_Click(object sender, RoutedEventArgs args)
+    {
+        if (XamlRoot is not null)
+        {
+            await Dialogs.LicensesDialog.ShowAsync(XamlRoot);
+        }
+    }
 }

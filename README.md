@@ -1,72 +1,87 @@
-# Lockscreen Gif
-A simple application to set your windows lockscreen to a video or a GIF image.
-You cannot set a GIF as a lockscreen using the normal windows settings even when using file extension spoofing but with some Windows system image cache modifications you can trick Windows into using a GIF on your lockscreen.
+# LockscreenGif
 
-# Video file input demo
+A modern Windows 11 (24H2+) utility that turns GIFs and video loops (`.gif`, `.mp4`, `.webm`, `.avi`, `.mov`, `.mkv`) into smooth animated lock screens, styled with a fluid **Liquid Glass** visual interface.
 
-https://github.com/user-attachments/assets/1dc4ec39-2f38-42c6-8216-3c911f6d8bc9
+**Maintained & developed by [SubhamPro11](https://github.com/SubhamPro11)** · **[Website](https://lockscreen-gtf-web.morbius.workers.dev)** · **[Releases](https://github.com/SubhamPro11/lockscreengtf/releases)**
 
-# Gif file input demo
+---
 
+## Features
 
-https://github.com/Leapward-Koex/LockscreenGif/assets/30615050/7448e59f-9767-4509-8ce3-721cf1783faa
+- **Liquid Glass Design Language**: Softly translucent, layered surfaces with specular edge highlights, concentric radii, and full dynamic adaptation across Windows Light, Dark, and High Contrast themes.
+- **Video & GIF Conversion**: Direct input of high-resolution video clips or animated GIFs. Frame-accurate start and end boundary trimming with real-time frame previews.
+- **Studio-Quality Conversion Engine**: Integrated [FFmpeg](https://ffmpeg.org/) and [Gifski](https://gif.ski/) pipeline producing high-fps, dithered GIF animations matched to your monitor's display resolution.
+- **Safe One-Time Elevation**: Transparent pre-elevation security dialog explaining the system cache write process before standard Windows User Account Control (UAC) elevation.
+- **Live Lock Screen Smoke Test**: Trigger a 5-second live test simulation directly from the app to verify animation smoothness without manually logging out.
+- **One-Click Restoration**: Revert back to the Windows default static lock screen anytime with full cleanup of cached animated frames.
+- **Comprehensive Diagnostics**: In-app ETW tracing, lock screen cache permission verification, and sanitized ZIP export for bug reporting.
 
+---
 
-# Notes
-ONLY real .GIF files are supported.
-Videos cannot work and will never work directly, please use the video option to dynamically create a gif to use.
-GIFs created through the video option are created with [FFMPEG](https://www.ffmpeg.org/) and [Gifski](https://gif.ski/) to produce high quality, video like gifs.
+## Lineage & Attribution
 
-# Logs
+LockscreenGif is actively developed and maintained by **Subham Kumar ([SubhamPro11](https://github.com/SubhamPro11))**.
 
-Open **Settings > Logs** to open the log folder or choose **Save logs as ZIP…**
-and select a destination. The ZIP contains the app's `app_*.log` files, including
-the current log. Export runs in the background and leaves the original logs in
-place. These are copies of the original logs, not the redacted Diagnostics report;
-crash dumps, analytics settings, and other files in the folder are not included.
+The project originated as an enhanced fork of the original [LockscreenGif by Leapward-Koex](https://github.com/Leapward-Koex/LockscreenGif), which is licensed under the MIT License. The original architectural concept for the elevated lock-screen cache writer is preserved and credited. Full third-party notices, license texts, and source availability information are documented in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and inside the app via **Settings > About > Open-source licenses**.
 
-**Diagnostics > Export report** also includes recent application logs, redacted
-alongside the diagnostic evidence. Its `logs/manifest.json` lists unavailable or
-shortened attachments. See [diagnostics documentation](docs/diagnostics.md).
+---
 
-# Analytics
+## System Requirements
 
-Usage analytics are enabled on first launch, with a notice and an opt-out under
-**Settings > Analytics**. Events go to PostHog in the EU; filenames, media, and
-diagnostic logs are excluded. See [analytics documentation](docs/analytics.md)
-for events, delivery limits, configuration, and testing.
+- **Operating System**: Windows 11 24H2 (Build 26100 or later), 64-bit (x64).
+- **Runtime**: [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (x64).
+- **Windows App SDK**: 1.8+ (bundled with the application).
 
-# C# formatting
+---
 
-Run `dotnet tool restore`, then `./scripts/Format-CSharp.ps1` from the repository
-root on Windows to add required braces and format all C# source. Use
-`./scripts/Format-CSharp.ps1 -Check` to verify both rules without changing files.
-See [the code style guide](docs/code-style.md) for the shared rules and Visual
-Studio format-on-save setup.
+## Installation
 
-# Automated prereleases
+Download the latest release from the [GitHub Releases](https://github.com/SubhamPro11/lockscreengtf/releases) page:
+- **`LockscreenGif-*.msi`**: Recommended Windows Installer package with Start menu integration.
+- **`LockscreenGif-*-win-x64.zip`**: Portable application archive.
 
-Builds use .NET 10 LTS and require Windows 11 24H2 (build 26100) or later, x64.
-Install the **x64 .NET 10 Desktop Runtime** before running either distribution;
-the MSI currently does not install it for you. The Windows App SDK is bundled.
+---
 
-The .NET SDK is selected by `global.json`. The Windows .NET reference package is
-10.0.26100.87; the existing minimum Windows build remains 26100. Newer Windows
-builds are not excluded by the installer.
+## Building from Source
 
-Successful master builds publish a `build-<workflow run number>` GitHub prerelease
-with an x64 MSI, app ZIP, checksums, and commit changelog. Pull requests build and
-test with read-only permissions; only the master release job can publish.
+1. Clone the repository:
+   ```powershell
+   git clone https://github.com/SubhamPro11/lockscreengtf.git
+   cd lockscreengtf
+   ```
+2. Restore tools and dependencies:
+   ```powershell
+   dotnet tool restore
+   dotnet restore
+   ```
+3. Build the application in Release mode:
+   ```powershell
+   dotnet build LockScreenGif/LockscreenGif.csproj -c Release -p:Platform=x64
+   ```
+4. Run regression check suite:
+   ```powershell
+   dotnet run --project Tests/MainFlow.Tests/MainFlow.Tests.csproj -c Release
+   ```
+5. Format C# sources:
+   ```powershell
+   ./scripts/Format-CSharp.ps1
+   ```
 
-The installer and app share version `3.<run / 65535 rounded down>.<run modulo 65535>`.
-For example, run 42 is `3.0.42`. Epoch 3 sorts after older `2.1.N` installers;
-the rollover respects MSI and .NET version limits. Do not reset the workflow
-counter without advancing the epoch. Counters above 16,776,959 fail explicitly.
+---
 
-Reruns keep their version and tag, while the embedded informational version
-records the commit and attempt (for example `3.0.42-ci+<commit>.attempt.2`).
-Stale reruns cannot replace releases after master advances. Local builds display
-`3.0.0-local` (plus the source revision supplied by the .NET SDK).
-The informational version appears in startup logs and the Diagnostics footer.
+## Diagnostics & Privacy
 
-Run `./Tests/BuildVersion.Tests.ps1` to check version boundaries and reruns.
+- **Logs**: Open **Settings > Logs** to inspect active logs or export all recent application logs as a ZIP file.
+- **Diagnostic Reports**: Access **Diagnostics > Export report** to generate a sanitized diagnostic bundle containing system health checks, ETW session traces, and environment verification.
+- **Analytics**: Usage analytics (event outcomes, feature usage) are sent via PostHog in the EU to help improve reliability. No filenames, media, screenshots, or personal paths are ever collected. Analytics can be disabled anytime under **Settings > Analytics**. See [docs/analytics.md](docs/analytics.md).
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE.txt).
+
+```
+Copyright (c) 2026 Subham Kumar (SubhamPro11)
+Copyright (c) 2026 Leapward-Koex
+```

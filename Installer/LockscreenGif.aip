@@ -9,9 +9,9 @@
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
     <ROW Property="ARPPRODUCTICON" Value="LockscreenGif.exe" Type="8"/>
-    <ROW Property="ARPURLINFOABOUT" Value="https://github.com/Leapward-Koex/LockscreenGif"/>
+    <ROW Property="ARPURLINFOABOUT" Value="https://github.com/SubhamPro11/lockscreengtf"/>
     <ROW Property="CTRLS" Value="2"/>
-    <ROW Property="Manufacturer" Value="Leapward-Koex"/>
+    <ROW Property="Manufacturer" Value="SubhamPro11"/>
     <ROW Property="ProductCode" Value="1033:{D7A1CECE-E9A0-4E7C-8388-12C706F4AAA5} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Lockscreen Gif"/>

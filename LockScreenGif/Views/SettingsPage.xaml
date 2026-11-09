@@ -176,14 +176,71 @@
             <!-- About Section -->
             <TextBlock Text="About" Style="{StaticResource SubtitleTextBlockStyle}"
                        Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-            <Border Style="{StaticResource GlassCardStyle}" Padding="24">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="{x:Bind helpers:BuildInfo.DisplayVersion, Mode=OneTime}"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                               TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                    <HyperlinkButton Content="GitHub repository" HorizontalAlignment="Left" Padding="0"
-                                     Foreground="{ThemeResource GlassAccentBrassBrush}"
-                                     NavigateUri="https://github.com/Leapward-Koex/LockscreenGif" />
+            <Border Style="{StaticResource GlassCardElevatedStyle}" Padding="24">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                        <Image Source="ms-appx:///Assets/WindowIcon.png" Width="40" Height="40" VerticalAlignment="Center" />
+                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <TextBlock Text="LockscreenGif"
+                                           FontWeight="SemiBold"
+                                           FontSize="18"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                        BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind helpers:BuildInfo.DisplayVersion, Mode=OneTime}"
+                                               FontFamily="{StaticResource GlassFontMonospace}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource GlassTextMonospaceBrush}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="Maintained &amp; developed by Subham Kumar (SubhamPro11)"
+                                       FontSize="13"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="A modern Windows 11 utility for turning animated GIFs and video loops into lock screens with a fluid Liquid Glass UI."
+                               Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                               FontSize="13"
+                               TextWrapping="Wrap" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <HyperlinkButton Content="Website"
+                                         Padding="10,4"
+                                         Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                         NavigateUri="https://lockscreen-gtf-web.morbius.workers.dev"
+                                         AutomationProperties.Name="Visit LockscreenGif website" />
+                        <HyperlinkButton Content="GitHub Repository"
+                                         Padding="10,4"
+                                         Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                         NavigateUri="https://github.com/SubhamPro11/lockscreengtf"
+                                         AutomationProperties.Name="View source code on GitHub" />
+                        <HyperlinkButton Content="Report an Issue"
+                                         Padding="10,4"
+                                         Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                         NavigateUri="https://github.com/SubhamPro11/lockscreengtf/issues"
+                                         AutomationProperties.Name="Report an issue on GitHub" />
+                    </StackPanel>
+
+                    <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource GlassBorderRimBrush}" Margin="0,4,0,4" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                        <Button x:Name="ViewLicensesButton"
+                                Click="ViewLicenses_Click"
+                                Style="{StaticResource GlassButtonStyle}"
+                                Content="Open-source licenses"
+                                AutomationProperties.Name="View open-source software licenses" />
+                        <TextBlock Text="Forked from Leapward-Koex/LockscreenGif (MIT)"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </StackPanel>
