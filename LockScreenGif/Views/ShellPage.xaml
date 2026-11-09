@@ -2,28 +2,82 @@
     x:Class="LockscreenGif.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Grid>
         <Grid.RowDefinitions>
+            <!-- Custom Title Bar -->
             <RowDefinition Height="Auto" />
+            <!-- Analytics Notification -->
             <RowDefinition Height="Auto" />
+            <!-- Lockscreen Verification Status -->
+            <RowDefinition Height="Auto" />
+            <!-- Navigation and Content -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <InfoBar x:Name="AnalyticsNotice" Margin="24,12,24,0" IsOpen="False" Severity="Informational"
-            Title="Usage analytics are enabled"
-            Message="Lockscreen Gif shares feature use and operation outcomes with PostHog in the EU to help improve the app. You can opt out in Settings > Analytics. Filenames, media, and diagnostic logs are never included.">
+
+        <!-- Custom Glass Title Bar (Drag Region & Window Branding) -->
+        <Border Grid.Row="0"
+                x:Name="AppTitleBar"
+                Height="44"
+                Background="Transparent"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top">
+            <Grid Margin="16,0,16,0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Image Source="ms-appx:///Assets/WindowIcon.png" Width="18" Height="18" VerticalAlignment="Center" />
+                    <TextBlock Text="LockscreenGif"
+                               FontWeight="SemiBold"
+                               FontSize="13"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Dedicated Draggable Client Space -->
+                <Grid Grid.Column="1" Background="Transparent" />
+            </Grid>
+        </Border>
+
+        <!-- Analytics Notification InfoBar -->
+        <InfoBar Grid.Row="1"
+                 x:Name="AnalyticsNotice"
+                 Margin="20,4,20,6"
+                 IsOpen="False"
+                 Severity="Informational"
+                 Background="{ThemeResource GlassSurfaceElevatedBrush}"
+                 BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                 BorderThickness="1"
+                 CornerRadius="{StaticResource GlassCornerRadiusControl}"
+                 Title="Usage analytics are enabled"
+                 Message="Lockscreen Gif shares feature use and operation outcomes with PostHog in the EU to help improve the app. You can opt out in Settings > Analytics. Filenames, media, and diagnostic logs are never included.">
             <InfoBar.ActionButton>
-                <Button Content="Open settings" Click="OpenAnalyticsSettings_Click" />
+                <Button Content="Open settings" Click="OpenAnalyticsSettings_Click" Style="{StaticResource GlassButtonStyle}" />
             </InfoBar.ActionButton>
         </InfoBar>
-        <InfoBar x:Name="LockscreenVerificationStatus" Grid.Row="1" Margin="24,12,24,0"
-            IsOpen="False" Severity="Informational" />
-        <NavigationView Grid.Row="2"
-            x:Name="Navigation"
-            PaneDisplayMode="Top"
-            IsBackButtonVisible="Collapsed"
-            IsSettingsVisible="False"
-            IsPaneToggleButtonVisible="False"
-            SelectionChanged="Navigation_SelectionChanged">
+
+        <!-- Lockscreen Verification Status InfoBar -->
+        <InfoBar Grid.Row="2"
+                 x:Name="LockscreenVerificationStatus"
+                 Margin="20,4,20,6"
+                 IsOpen="False"
+                 Severity="Informational"
+                 Background="{ThemeResource GlassSurfaceElevatedBrush}"
+                 BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                 BorderThickness="1"
+                 CornerRadius="{StaticResource GlassCornerRadiusControl}" />
+
+        <!-- Liquid Glass Navigation & Content Frame -->
+        <NavigationView Grid.Row="3"
+                        x:Name="Navigation"
+                        PaneDisplayMode="Top"
+                        IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        IsPaneToggleButtonVisible="False"
+                        SelectionChanged="Navigation_SelectionChanged">
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="LockscreenItem" Content="Lockscreen" Tag="Lockscreen">
                     <NavigationViewItem.Icon><SymbolIcon Symbol="Pictures" /></NavigationViewItem.Icon>

@@ -28,15 +28,25 @@ internal static class PreElevationDialog
         var detailsBorder = new Border
         {
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(6),
-            Padding = new Thickness(14, 12, 14, 12),
+            CornerRadius = new CornerRadius(12),
+            Padding = new Thickness(16, 14, 16, 14),
         };
 
-        if (Application.Current.Resources.TryGetValue("InstrumentSurfaceBrush", out var surface) && surface is Brush sb)
+        if (
+            (
+                Application.Current.Resources.TryGetValue("GlassSurfaceElevatedBrush", out var surface)
+                || Application.Current.Resources.TryGetValue("InstrumentSurfaceBrush", out surface)
+            ) && surface is Brush sb
+        )
         {
             detailsBorder.Background = sb;
         }
-        if (Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out var border) && border is Brush bb)
+        if (
+            (
+                Application.Current.Resources.TryGetValue("GlassBorderRimBrush", out var border)
+                || Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out border)
+            ) && border is Brush bb
+        )
         {
             detailsBorder.BorderBrush = bb;
         }
@@ -67,7 +77,12 @@ internal static class PreElevationDialog
             TextWrapping = TextWrapping.Wrap,
             FontSize = 12,
         };
-        if (Application.Current.Resources.TryGetValue("InstrumentTextMutedBrush", out var muted) && muted is Brush mb)
+        if (
+            (
+                Application.Current.Resources.TryGetValue("GlassTextSecondaryBrush", out var muted)
+                || Application.Current.Resources.TryGetValue("InstrumentTextMutedBrush", out muted)
+            ) && muted is Brush mb
+        )
         {
             uacNote.Foreground = mb;
         }

@@ -4,16 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:LockscreenGif.ViewModels"
     NavigationCacheMode="Required">
+
     <Page.Resources>
-        <Style x:Key="DiagnosticCard" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="8" />
+        <!-- Elevated Glass Surface for dense diagnostic content -->
+        <Style x:Key="DiagnosticCard" TargetType="Border" BasedOn="{StaticResource GlassCardElevatedStyle}">
             <Setter Property="Padding" Value="20" />
         </Style>
+
         <DataTemplate x:Key="FindingHeaderTemplate" x:DataType="vm:DiagnosticFindingViewModel">
-            <Border Style="{StaticResource InstrumentCardStyle}" Padding="14,10" Margin="0,3,0,6">
+            <Border Style="{StaticResource GlassCardStyle}" Padding="16,12" Margin="0,3,0,6">
                 <Grid RowSpacing="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -26,43 +25,45 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <Grid VerticalAlignment="Center" Margin="0,0,10,0">
-                        <FontIcon FontSize="18" Glyph="&#xE73E;" Foreground="{ThemeResource InstrumentGaugeGreenBrush}"
+                    <Grid VerticalAlignment="Center" Margin="0,0,12,0">
+                        <FontIcon FontSize="18" Glyph="&#xE73E;" Foreground="{ThemeResource GlassStatusSuccessBrush}"
                                   Visibility="{x:Bind SuccessVisibility}" AutomationProperties.Name="{x:Bind AccessibleStatus}" />
-                        <FontIcon FontSize="18" Glyph="&#xE7BA;" Foreground="{ThemeResource InstrumentAlertRedBrush}"
+                        <FontIcon FontSize="18" Glyph="&#xE7BA;" Foreground="{ThemeResource GlassStatusAlertBrush}"
                                   Visibility="{x:Bind WarningVisibility}" AutomationProperties.Name="{x:Bind AccessibleStatus}" />
-                        <FontIcon FontSize="18" Glyph="&#xE946;" Foreground="{ThemeResource InstrumentAccentBrassBrush}"
+                        <FontIcon FontSize="18" Glyph="&#xE946;" Foreground="{ThemeResource GlassAccentBrassBrush}"
                                   Visibility="{x:Bind InformationVisibility}" AutomationProperties.Name="{x:Bind AccessibleStatus}" />
                     </Grid>
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" TextWrapping="Wrap" FontSize="13" />
-                        <TextBlock FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}"
-                                   Text="{x:Bind StatusDescription}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                        <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" TextWrapping="Wrap" FontSize="13"
+                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                        <TextBlock FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   Text="{x:Bind StatusDescription}" FontFamily="{StaticResource GlassFontMonospace}" />
                     </StackPanel>
 
-                    <Border Grid.Column="2" VerticalAlignment="Center" CornerRadius="4" Padding="6,2"
-                            Background="{ThemeResource InstrumentBorderBrush}">
-                        <TextBlock Text="{x:Bind BadgeText}" FontFamily="{StaticResource InstrumentMonoFont}"
-                                   FontSize="10" FontWeight="Bold" Foreground="{ThemeResource InstrumentTextPrimaryBrush}" />
+                    <Border Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource GlassPillStyle}" Padding="8,2">
+                        <TextBlock Text="{x:Bind BadgeText}" FontFamily="{StaticResource GlassFontMonospace}"
+                                   FontSize="10" FontWeight="Bold" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                     </Border>
 
                     <!-- Plain Language Summary -->
-                    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="28,2,0,0"
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="30,2,0,0"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
                                Text="{x:Bind SummaryText}" TextWrapping="Wrap" FontSize="12" />
 
                     <!-- Collapsible Raw Detail ("one click deeper") -->
-                    <Expander Grid.Row="2" Grid.ColumnSpan="3" Margin="28,4,0,0"
+                    <Expander Grid.Row="2" Grid.ColumnSpan="3" Margin="30,4,0,0"
                               Header="Technical details" Visibility="{x:Bind TechnicalDetailVisibility}"
                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <TextBlock Text="{x:Bind TechnicalDetail}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
-                                   FontFamily="{StaticResource InstrumentMonoFont}" FontSize="11"
-                                   Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                                   FontFamily="{StaticResource GlassFontMonospace}" FontSize="11"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                     </Expander>
                 </Grid>
             </Border>
         </DataTemplate>
     </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -70,89 +71,98 @@
         </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled">
             <StackPanel MaxWidth="920" Margin="24,20,24,16" Spacing="16">
+                <!-- Page Header -->
                 <StackPanel Spacing="6">
-                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Diagnostics" />
-                    <TextBlock FontSize="16" Text="Find out what happens when your screen locks" TextWrapping="Wrap" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Apply a GIF, lock your computer, then unlock to review the findings. Results stay in memory until you start another test or close the app. Export a report if you want to keep it."
-                        TextWrapping="Wrap" />
+                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Diagnostics"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                    <TextBlock FontSize="16" Text="Find out what happens when your screen locks" TextWrapping="Wrap"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                    <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                               Text="Apply a GIF, lock your computer, then unlock to review the findings. Results stay in memory until you start another test or close the app. Export a report if you want to keep it."
+                               TextWrapping="Wrap" />
                 </StackPanel>
 
+                <!-- Configuration Card -->
                 <Border Style="{StaticResource DiagnosticCard}">
                     <StackPanel Spacing="16">
-                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Set up your test" />
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Set up your test"
+                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                         <StackPanel Spacing="4">
-                            <TextBlock FontWeight="SemiBold" Text="Source animation" />
-                            <TextBlock
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{x:Bind ViewModel.SourceDescription, Mode=OneWay}"
-                                TextWrapping="Wrap" />
+                            <TextBlock FontWeight="SemiBold" Text="Source animation"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                       Text="{x:Bind ViewModel.SourceDescription, Mode=OneWay}"
+                                       TextWrapping="Wrap" />
                         </StackPanel>
                         <HyperlinkButton HorizontalAlignment="Left" Padding="0" Click="ChooseSource_Click"
                                          Content="Choose or convert a GIF on Lockscreen"
+                                         Foreground="{ThemeResource GlassAccentBrassBrush}"
                                          AutomationProperties.Name="Select source animation on Lockscreen page"
                                          IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
-                        <CheckBox
-                            Content="Use the bundled reference animation"
-                            IsChecked="{x:Bind ViewModel.UseReference, Mode=TwoWay}"
-                            IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
-                        <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                        <CheckBox Content="Use the bundled reference animation"
+                                  IsChecked="{x:Bind ViewModel.UseReference, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
                         <StackPanel Spacing="6">
-                            <ToggleSwitch
-                                AutomationProperties.Name="Set the lock screen through Windows before applying the GIF"
-                                IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}"
-                                IsOn="{x:Bind ViewModel.Preferences.UseWindowsApi, Mode=TwoWay}"
-                                OffContent="Windows API step off"
-                                OnContent="Windows API step on">
+                            <ToggleSwitch AutomationProperties.Name="Set the lock screen through Windows before applying the GIF"
+                                          IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}"
+                                          IsOn="{x:Bind ViewModel.Preferences.UseWindowsApi, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          OffContent="Windows API step off"
+                                          OnContent="Windows API step on">
                                 <ToggleSwitch.Header>
                                     <TextBlock Text="Set the lock screen through Windows first" TextWrapping="Wrap" />
                                 </ToggleSwitch.Header>
                             </ToggleSwitch>
-                            <TextBlock
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="If your GIF is not working, turning this on may help. Windows will set the lock-screen image before the app applies the GIF. This preference is shared with Settings, also applies to normal lockscreen applies, and is saved between restarts."
-                                TextWrapping="Wrap" />
+                            <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                       Text="If your GIF is not working, turning this on may help. Windows will set the lock-screen image before the app applies the GIF. This preference is shared with Settings, also applies to normal lockscreen applies, and is saved between restarts."
+                                       TextWrapping="Wrap" />
                             <InfoBar IsOpen="{x:Bind ViewModel.Preferences.HasSaveError, Mode=OneWay}"
-                                IsClosable="False" Severity="Warning" Title="Could not save the lockscreen preference"
-                                Message="The setting applies for this session, but could not be saved. Toggle it again to retry before closing the app." />
+                                     IsClosable="False" Severity="Warning" Title="Could not save the lockscreen preference"
+                                     Background="{ThemeResource GlassSurfaceElevatedBrush}"
+                                     BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                     BorderThickness="1"
+                                     CornerRadius="{StaticResource GlassCornerRadiusControl}"
+                                     Message="The setting applies for this session, but could not be saved. Toggle it again to retry before closing the app." />
                         </StackPanel>
-                        <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
                         <StackPanel Spacing="8" Visibility="{x:Bind ViewModel.SetupWarningsVisibility, Mode=OneWay}">
                             <ItemsControl ItemsSource="{x:Bind ViewModel.SetupWarnings}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="vm:DiagnosticSetupWarning">
-                                        <InfoBar
-                                            Margin="0,0,0,8"
-                                            Title="{x:Bind Title}"
-                                            IsClosable="False"
-                                            IsOpen="True"
-                                            Message="{x:Bind Message}"
-                                            Severity="Warning" />
+                                        <InfoBar Margin="0,0,0,8"
+                                                 Title="{x:Bind Title}"
+                                                 IsClosable="False"
+                                                 IsOpen="True"
+                                                 Background="{ThemeResource GlassSurfaceElevatedBrush}"
+                                                 BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="{StaticResource GlassCornerRadiusControl}"
+                                                 Message="{x:Bind Message}"
+                                                 Severity="Warning" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <Button
-                                HorizontalAlignment="Left"
-                                AutomationProperties.Name="Check setup problems again"
-                                Click="Refresh_Click"
-                                Content="Check again"
-                                IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
+                            <Button HorizontalAlignment="Left"
+                                    AutomationProperties.Name="Check setup problems again"
+                                    Click="Refresh_Click"
+                                    Content="Check again"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
                         </StackPanel>
-                        <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Starting a test may request administrator permission once for tracing and any necessary cache access. Keep this app open throughout the test."
-                            TextWrapping="Wrap" />
-                        <Button
-                            HorizontalAlignment="Stretch"
-                            Click="Start_Click"
-                            Content="Start test and apply"
-                            AutomationProperties.Name="Start diagnostic test and apply animation"
-                            IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                            Style="{StaticResource AccentButtonStyle}" />
+                        <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   Text="Starting a test may request administrator permission once for tracing and any necessary cache access. Keep this app open throughout the test."
+                                   TextWrapping="Wrap" />
+                        <Button HorizontalAlignment="Stretch"
+                                Click="Start_Click"
+                                Content="Start test and apply"
+                                AutomationProperties.Name="Start diagnostic test and apply animation"
+                                IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                Style="{StaticResource GlassPrimaryButtonStyle}" />
                     </StackPanel>
                 </Border>
 
+                <!-- Active Test Session Status -->
                 <Border Style="{StaticResource DiagnosticCard}" Visibility="{x:Bind ViewModel.SessionVisibility, Mode=OneWay}">
                     <StackPanel Spacing="12">
                         <Grid ColumnSpacing="12">
@@ -160,74 +170,76 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ProgressRing
-                                Width="24"
-                                Height="24"
-                                IsActive="{x:Bind ViewModel.IsRunning, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.RunningVisibility, Mode=OneWay}" />
-                            <TextBlock
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                AutomationProperties.LiveSetting="Polite"
-                                Style="{ThemeResource SubtitleTextBlockStyle}"
-                                Text="{x:Bind ViewModel.Phase, Mode=OneWay}"
-                                TextWrapping="Wrap" />
+                            <ProgressRing Width="24" Height="24"
+                                          Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                          IsActive="{x:Bind ViewModel.IsRunning, Mode=OneWay}"
+                                          Visibility="{x:Bind ViewModel.RunningVisibility, Mode=OneWay}" />
+                            <TextBlock Grid.Column="1"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.LiveSetting="Polite"
+                                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                                       Text="{x:Bind ViewModel.Phase, Mode=OneWay}"
+                                       TextWrapping="Wrap" />
                         </Grid>
-                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.SessionDescription, Mode=OneWay}" TextWrapping="Wrap" />
-                        <TextBlock Text="{x:Bind ViewModel.ProgressDescription, Mode=OneWay}" TextWrapping="Wrap" />
-                        <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.RunningVisibility, Mode=OneWay}">
-                            <Button Click="Lock_Click" Content="Lock now" AutomationProperties.Name="Lock computer now for testing" IsEnabled="{x:Bind ViewModel.CanLock, Mode=OneWay}" />
-                            <Button Click="Stop_Click" Content="Stop test" AutomationProperties.Name="Stop active diagnostic test" IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}" />
+                        <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}" Text="{x:Bind ViewModel.SessionDescription, Mode=OneWay}" TextWrapping="Wrap" />
+                        <TextBlock Foreground="{ThemeResource GlassTextPrimaryBrush}" Text="{x:Bind ViewModel.ProgressDescription, Mode=OneWay}" TextWrapping="Wrap" />
+                        <StackPanel Orientation="Horizontal" Spacing="10" Visibility="{x:Bind ViewModel.RunningVisibility, Mode=OneWay}">
+                            <Button Click="Lock_Click" Content="Lock now" Style="{StaticResource GlassPrimaryButtonStyle}"
+                                    AutomationProperties.Name="Lock computer now for testing" IsEnabled="{x:Bind ViewModel.CanLock, Mode=OneWay}" />
+                            <Button Click="Stop_Click" Content="Stop test" Style="{StaticResource GlassButtonStyle}"
+                                    AutomationProperties.Name="Stop active diagnostic test" IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
+                <!-- Findings Results Card -->
                 <Border Style="{StaticResource DiagnosticCard}" Visibility="{x:Bind ViewModel.ResultVisibility, Mode=OneWay}">
                     <StackPanel Spacing="14">
-                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Findings" />
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Findings"
+                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                         <ItemsControl ItemsSource="{x:Bind ViewModel.Findings}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="vm:DiagnosticFindingViewModel">
-                                <Grid Margin="0,0,0,8">
-                                    <ContentPresenter
-                                        Content="{Binding}"
-                                        ContentTemplate="{StaticResource FindingHeaderTemplate}"
-                                        Visibility="{x:Bind LeafVisibility}" />
-                                    <Expander
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Stretch"
-                                        Header="{Binding}"
-                                        HeaderTemplate="{StaticResource FindingHeaderTemplate}"
-                                        IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
-                                        Visibility="{x:Bind GroupVisibility}">
-                                        <ItemsControl
-                                            ItemsSource="{x:Bind Children}"
-                                            ItemTemplate="{StaticResource FindingHeaderTemplate}" />
-                                    </Expander>
-                                </Grid>
-                            </DataTemplate>
+                                    <Grid Margin="0,0,0,8">
+                                        <ContentPresenter Content="{Binding}"
+                                                          ContentTemplate="{StaticResource FindingHeaderTemplate}"
+                                                          Visibility="{x:Bind LeafVisibility}" />
+                                        <Expander HorizontalAlignment="Stretch"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  Header="{Binding}"
+                                                  HeaderTemplate="{StaticResource FindingHeaderTemplate}"
+                                                  IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                                                  Visibility="{x:Bind GroupVisibility}">
+                                            <ItemsControl ItemsSource="{x:Bind Children}"
+                                                          ItemTemplate="{StaticResource FindingHeaderTemplate}" />
+                                        </Expander>
+                                    </Grid>
+                                </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-
                     </StackPanel>
                 </Border>
-
             </StackPanel>
         </ScrollViewer>
-        <Border
-            Grid.Row="1"
-            MaxWidth="920"
-            Margin="24,0,24,16"
-            Padding="18,16"
-            Style="{StaticResource InstrumentCardStyle}">
-            <StackPanel Spacing="12">
-                <InfoBar
-                    Title="Diagnostics"
-                    IsClosable="False"
-                    IsOpen="{x:Bind ViewModel.HasNotice, Mode=OneWay}"
-                    Message="{x:Bind ViewModel.Notice, Mode=OneWay}"
-                    Severity="Informational"
-                    AutomationProperties.LiveSetting="Polite" />
+
+        <!-- Bottom Export Sanitized Report Box -->
+        <Border Grid.Row="1"
+                MaxWidth="920"
+                Margin="24,0,24,16"
+                Padding="20,18"
+                Style="{StaticResource GlassCardElevatedStyle}">
+            <StackPanel Spacing="14">
+                <InfoBar Title="Diagnostics"
+                         IsClosable="False"
+                         IsOpen="{x:Bind ViewModel.HasNotice, Mode=OneWay}"
+                         Message="{x:Bind ViewModel.Notice, Mode=OneWay}"
+                         Severity="Informational"
+                         Background="{ThemeResource GlassSurfaceElevatedBrush}"
+                         BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                         BorderThickness="1"
+                         CornerRadius="{StaticResource GlassCornerRadiusControl}"
+                         AutomationProperties.LiveSetting="Polite" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -236,13 +248,13 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Spacing="2">
                         <TextBlock Text="EXPORT SANITIZED DIAGNOSTIC REPORT"
-                                   FontFamily="{StaticResource InstrumentMonoFont}" FontSize="11" FontWeight="SemiBold"
-                                   Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                                   FontFamily="{StaticResource GlassFontMonospace}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                         <TextBlock Text="Generates an inspectable .zip archive for troubleshooting lock-screen issues."
-                                   FontSize="12" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                                   FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                     </StackPanel>
-                    <TextBlock Grid.Column="1" FontSize="11" FontFamily="{StaticResource InstrumentMonoFont}"
-                               Foreground="{ThemeResource InstrumentTextMutedBrush}" VerticalAlignment="Center"
+                    <TextBlock Grid.Column="1" FontSize="11" FontFamily="{StaticResource GlassFontMonospace}"
+                               Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center"
                                Text="{x:Bind AppVersion}" />
                 </Grid>
 
@@ -251,35 +263,34 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Style="{StaticResource InstrumentCardStyle}" Padding="12,8" Background="{ThemeResource InstrumentBackgroundBrush}">
-                        <StackPanel Spacing="3">
-                            <TextBlock Text="✓ INCLUDED IN REPORT" FontFamily="{StaticResource InstrumentMonoFont}" FontSize="10"
-                                       FontWeight="Bold" Foreground="{ThemeResource InstrumentGaugeGreenBrush}" />
-                            <TextBlock Text="• Windows build, edition, and feature ID configuration" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
-                            <TextBlock Text="• Lock-screen cache verification timestamps and hashes" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
-                            <TextBlock Text="• Recent application event logs (usernames and local paths redacted)" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                    <Border Style="{StaticResource GlassCardStyle}" Padding="14,10">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="✓ INCLUDED IN REPORT" FontFamily="{StaticResource GlassFontMonospace}" FontSize="10"
+                                       FontWeight="Bold" Foreground="{ThemeResource GlassStatusSuccessBrush}" />
+                            <TextBlock Text="• Windows build, edition, and feature ID configuration" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="• Lock-screen cache verification timestamps and hashes" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="• Recent application event logs (usernames and local paths redacted)" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                         </StackPanel>
                     </Border>
-                    <Border Grid.Column="1" Style="{StaticResource InstrumentCardStyle}" Padding="12,8" Background="{ThemeResource InstrumentBackgroundBrush}">
-                        <StackPanel Spacing="3">
-                            <TextBlock Text="✗ EXCLUDED FOR PRIVACY" FontFamily="{StaticResource InstrumentMonoFont}" FontSize="10"
-                                       FontWeight="Bold" Foreground="{ThemeResource InstrumentAccentBrassBrush}" />
-                            <TextBlock Text="• No source videos or user GIFs included" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
-                            <TextBlock Text="• No screen captures or lock-screen images" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
-                            <TextBlock Text="• No passwords, tokens, or memory dumps" FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                    <Border Grid.Column="1" Style="{StaticResource GlassCardStyle}" Padding="14,10">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="✗ EXCLUDED FOR PRIVACY" FontFamily="{StaticResource GlassFontMonospace}" FontSize="10"
+                                       FontWeight="Bold" Foreground="{ThemeResource GlassAccentBrassBrush}" />
+                            <TextBlock Text="• No source videos or user GIFs included" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="• No screen captures or lock-screen images" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="• No passwords, tokens, or memory dumps" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <Button
-                    HorizontalAlignment="Stretch"
-                    Click="Export_Click"
-                    Content="Export Sanitized Report (ZIP)…"
-                    IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Padding="14,10"
-                    AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
-                    ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
+                <Button HorizontalAlignment="Stretch"
+                        Click="Export_Click"
+                        Content="Export Sanitized Report (ZIP)…"
+                        IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
+                        Style="{StaticResource GlassPrimaryButtonStyle}"
+                        Padding="14,10"
+                        AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
+                        ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
             </StackPanel>
         </Border>
     </Grid>

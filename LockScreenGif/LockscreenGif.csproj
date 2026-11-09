@@ -69,6 +69,11 @@
     <Folder Include="Vendor\gifski\" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Configuration)' != 'Debug'">
+    <Page Remove="Views\GlassGalleryPage.xaml" />
+    <Compile Remove="Views\GlassGalleryPage.xaml.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Logger\Logger.csproj" />
   </ItemGroup>

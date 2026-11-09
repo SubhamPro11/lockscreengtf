@@ -1,4 +1,4 @@
-﻿using LockscreenGif.Helpers;
+using LockscreenGif.Helpers;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI.ViewManagement;
 
@@ -18,11 +18,20 @@ public sealed partial class MainWindow : WindowEx
         Content = null;
         Title = "AppDisplayName".GetLocalized();
         SystemBackdrop = new DesktopAcrylicBackdrop();
+        ExtendsContentIntoTitleBar = true;
 
         // Theme change code picked from https://github.com/microsoft/WinUI-Gallery/pull/1239
         dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         settings = new UISettings();
         settings.ColorValuesChanged += Settings_ColorValuesChanged; // cannot use FrameworkElement.ActualThemeChanged event
+
+        Activated += MainWindow_Activated;
+        GlassFallbackManager.Initialize(this);
+    }
+
+    private void MainWindow_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
+    {
+        GlassFallbackManager.SetWindowActive(args.WindowActivationState != Microsoft.UI.Xaml.WindowActivationState.Deactivated);
     }
 
     // this handles updating the caption button colors correctly when indows system theme is changed

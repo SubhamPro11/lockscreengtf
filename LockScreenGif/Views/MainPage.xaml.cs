@@ -131,7 +131,13 @@ public sealed partial class MainPage : Page
         e.DragUIOverride.IsCaptionVisible = true;
         e.DragUIOverride.IsContentVisible = true;
         e.DragUIOverride.IsGlyphVisible = true;
-        if (DropTargetCard != null && Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out var brush))
+        if (
+            DropTargetCard != null
+            && (
+                Application.Current.Resources.TryGetValue("GlassAccentBrassBrush", out var brush)
+                || Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out brush)
+            )
+        )
         {
             DropTargetCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)brush;
         }
@@ -139,7 +145,13 @@ public sealed partial class MainPage : Page
 
     private void DropTarget_DragLeave(object sender, DragEventArgs e)
     {
-        if (DropTargetCard != null && Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out var brush))
+        if (
+            DropTargetCard != null
+            && (
+                Application.Current.Resources.TryGetValue("GlassBorderRimBrush", out var brush)
+                || Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out brush)
+            )
+        )
         {
             DropTargetCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)brush;
         }
@@ -147,7 +159,13 @@ public sealed partial class MainPage : Page
 
     private async void DropTarget_Drop(object sender, DragEventArgs e)
     {
-        if (DropTargetCard != null && Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out var brush))
+        if (
+            DropTargetCard != null
+            && (
+                Application.Current.Resources.TryGetValue("GlassBorderRimBrush", out var brush)
+                || Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out brush)
+            )
+        )
         {
             DropTargetCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)brush;
         }

@@ -33,11 +33,21 @@ internal sealed class DiagnosticLockDialog
             Margin = new Thickness(0, 10, 0, 4),
         };
 
-        if (Application.Current.Resources.TryGetValue("InstrumentMonoFont", out var mono) && mono is FontFamily ff)
+        if (
+            (
+                Application.Current.Resources.TryGetValue("GlassFontMonospace", out var mono)
+                || Application.Current.Resources.TryGetValue("InstrumentMonoFont", out mono)
+            ) && mono is FontFamily ff
+        )
         {
             _countdownBlock.FontFamily = ff;
         }
-        if (Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out var brass) && brass is Brush bb)
+        if (
+            (
+                Application.Current.Resources.TryGetValue("GlassAccentBrassBrush", out var brass)
+                || Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out brass)
+            ) && brass is Brush bb
+        )
         {
             _countdownBlock.Foreground = bb;
         }

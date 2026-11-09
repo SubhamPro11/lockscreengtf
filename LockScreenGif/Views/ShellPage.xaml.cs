@@ -20,6 +20,19 @@ public sealed partial class ShellPage : Page
         _analytics = App.GetService<AnalyticsService>();
         _navigationService = App.GetService<INavigationService>();
         _navigationService.Frame = ContentFrame;
+
+        Loaded += ShellPage_Loaded;
+        ActualThemeChanged += ShellPage_ActualThemeChanged;
+
+#if DEBUG
+        var galleryItem = new NavigationViewItem
+        {
+            Content = "Glass Gallery",
+            Tag = "GlassGallery",
+            Icon = new FontIcon { Glyph = "\uE790" },
+        };
+        Navigation.MenuItems.Add(galleryItem);
+#endif
     }
 
     private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -28,6 +41,14 @@ public sealed partial class ShellPage : Page
         {
             return;
         }
+
+#if DEBUG
+        if (args.SelectedItem is NavigationViewItem item && (string?)item.Tag == "GlassGallery")
+        {
+            ContentFrame.Navigate(typeof(GlassGalleryPage));
+            return;
+        }
+#endif
 
         var viewModel =
             ReferenceEquals(args.SelectedItem, SettingsItem) ? typeof(SettingsViewModel)
@@ -43,6 +64,16 @@ public sealed partial class ShellPage : Page
             AnalyticsNotice.IsOpen = false;
         }
         _synchronizingSelection = true;
+#if DEBUG
+        if (args.SourcePageType == typeof(GlassGalleryPage))
+        {
+            Navigation.SelectedItem = Navigation
+                .MenuItems.OfType<NavigationViewItem>()
+                .FirstOrDefault(i => (string?)i.Tag == "GlassGallery");
+            _synchronizingSelection = false;
+            return;
+        }
+#endif
         Navigation.SelectedItem =
             args.SourcePageType == typeof(SettingsPage) ? SettingsItem
             : args.SourcePageType == typeof(DiagnosticsPage) ? DiagnosticsItem
@@ -71,4 +102,16 @@ public sealed partial class ShellPage : Page
                     : AnalyticsPage.Lockscreen,
             }
         );
+
+    private void ShellPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        App.AppTitlebar = AppTitleBar;
+        App.MainWindow.SetTitleBar(AppTitleBar);
+        Helpers.TitleBarHelper.ApplySystemThemeToCaptionButtons();
+    }
+
+    private void ShellPage_ActualThemeChanged(Microsoft.UI.Xaml.FrameworkElement sender, object args)
+    {
+        Helpers.TitleBarHelper.ApplySystemThemeToCaptionButtons();
+    }
 }
