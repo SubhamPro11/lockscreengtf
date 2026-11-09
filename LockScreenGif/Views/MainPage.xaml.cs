@@ -361,6 +361,7 @@ public sealed partial class MainPage : Page
             _analyticsService.Track(AnalyticsEvent.GifGenerationStarted, operation);
             SuspendEditorPlayback();
             ClearGeneratedGif();
+            GifSkiService.CleanupTempDirectories();
             OperationStatus.IsOpen = false;
 
             if (ConversionProgressCard != null)
@@ -481,6 +482,7 @@ public sealed partial class MainPage : Page
         {
             Logger.Info("GIF generation cancelled by user");
             ClearGeneratedGif();
+            GifSkiService.CleanupTempDirectories();
             Flow.TryCompleteGeneration(flowToken, false);
             OperationStatus.Title = "Conversion cancelled";
             OperationStatus.Message = "GIF generation was cancelled. Your clip settings were preserved.";
@@ -503,6 +505,8 @@ public sealed partial class MainPage : Page
             {
                 ConversionProgressCard.Visibility = Visibility.Collapsed;
             }
+            ClearGeneratedGif();
+            GifSkiService.CleanupTempDirectories();
             OperationStatus.Title = "GIF generation failed";
             OperationStatus.Message = MediaFailureGuidance.Message(
                 ex,
@@ -521,7 +525,6 @@ public sealed partial class MainPage : Page
                 ConversionProgressCard.Visibility = Visibility.Collapsed;
             }
             FfmpegService.CleanupTempDirectories();
-            GifSkiService.CleanupTempDirectories();
             RefreshFlowUi();
             FocusStage();
         }
