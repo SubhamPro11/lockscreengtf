@@ -5,6 +5,7 @@ using LockscreenGif.Services;
 using LockscreenGif.Services.Analytics;
 using LockscreenGif.Services.Diagnostics;
 using LockscreenGif.Services.Lockscreen;
+using LockscreenGif.Views.Dialogs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -91,7 +92,19 @@ public sealed partial class MainPage
         }
     }
 
-    private async void SetLockscreenButton_click(object sender, RoutedEventArgs e) =>
+    private async void SetLockscreenButton_click(object sender, RoutedEventArgs e)
+    {
+        if (_preparedGif is null || _actionPending || Flow.Stage != MainFlowStage.Set)
+        {
+            return;
+        }
+
+        var confirmed = await PreElevationDialog.ShowAsync(XamlRoot);
+        if (!confirmed)
+        {
+            return;
+        }
+
         await RunActionAsync(
             async token =>
             {
@@ -116,14 +129,14 @@ public sealed partial class MainPage
                     _notificationService.Show(string.Format("AppNotificationFailure".GetLocalized(), AppContext.BaseDirectory));
                     return;
                 }
-                if (App.MainWindow.Content is ShellPage shell)
-                {
-                    await shell.CompleteLockscreenApplyAsync(result, sourcePath);
-                }
+                _lastAppliedResult = result;
+                _lastAppliedSourcePath = sourcePath;
+                _notificationService.Show(string.Format("AppNotificationSuccess".GetLocalized(), AppContext.BaseDirectory));
             },
             MainFlowOperation.Applying,
             changesLockscreen: true
         );
+    }
 
     private void ShowApplyOutcome()
     {
@@ -134,23 +147,120 @@ public sealed partial class MainPage
         }
         OperationStatus.Title = Flow.LastApplyOutcome switch
         {
-            MainFlowApplyOutcome.Cancelled => "Applying stopped",
-            MainFlowApplyOutcome.Partial => "Couldn’t finish applying",
-            _ => "Couldn’t apply the GIF",
+            MainFlowApplyOutcome.Cancelled => "Administrator permission was cancelled",
+            MainFlowApplyOutcome.Partial => "Partial lock-screen update",
+            _ => "Couldn’t apply lock-screen animation",
         };
         OperationStatus.Message = Flow.LastApplyOutcome switch
         {
             MainFlowApplyOutcome.Cancelled when Flow.LastApplyChangedFiles =>
-                "Some lock-screen files have already changed. Your GIF is still ready to retry.",
-            MainFlowApplyOutcome.Cancelled => "Your GIF is still ready to retry.",
+                "Some lock-screen files were updated before elevation was cancelled. Your animation is still ready to retry, or you can restore default settings.",
+            MainFlowApplyOutcome.Cancelled =>
+                "The administrator elevation prompt was cancelled. No files or system settings were modified. Your animation is preserved and ready whenever you want to try again.",
             MainFlowApplyOutcome.Partial when Flow.LastApplyError is not null =>
                 $"Some lock-screen files were updated, but the operation did not finish. {Flow.LastApplyError}",
-            MainFlowApplyOutcome.Partial => "Some lock-screen files were updated, but the operation did not finish. Try again.",
-            _ => Flow.LastApplyError ?? "Your GIF is still ready. Try again or open Diagnostics.",
+            MainFlowApplyOutcome.Partial => "Some lock-screen files were updated, but the operation did not finish. Try again or restore default lock screen.",
+            _ => Flow.LastApplyError ?? "Windows could not update the lock screen. Check Diagnostics or try again.",
         };
         OperationStatus.Severity =
-            Flow.LastApplyOutcome == MainFlowApplyOutcome.Cancelled ? InfoBarSeverity.Warning : InfoBarSeverity.Error;
+            Flow.LastApplyOutcome == MainFlowApplyOutcome.Cancelled
+                ? (Flow.LastApplyChangedFiles ? InfoBarSeverity.Warning : InfoBarSeverity.Informational)
+                : InfoBarSeverity.Error;
         OperationStatus.IsOpen = true;
+    }
+
+    public async Task RestoreDefaultLockscreenAsync()
+    {
+        if (_actionPending)
+        {
+            return;
+        }
+
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            RequestedTheme = (XamlRoot.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default,
+            Title = "Restore Default Lock Screen?",
+            Content = new TextBlock
+            {
+                Text = "This will remove the animated loop from the Windows lock-screen cache and revert your lock screen to standard Windows static imagery.",
+                TextWrapping = TextWrapping.Wrap,
+            },
+            PrimaryButtonText = "Restore Defaults",
+            CloseButtonText = "Keep Animation",
+            DefaultButton = ContentDialogButton.Close,
+        };
+
+        if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+        {
+            return;
+        }
+
+        OperationStatus.Title = "Restoring default lock screen…";
+        OperationStatus.Message = "Removing animated files from the Windows lock-screen cache.";
+        OperationStatus.Severity = InfoBarSeverity.Informational;
+        OperationStatus.IsOpen = true;
+
+        try
+        {
+            var result = await _lockscreenService.RemoveAppliedGif();
+            if (result is null || result.FailedDeletions > 0)
+            {
+                OperationStatus.Title = "Could not remove all animated files";
+                OperationStatus.Message = result is null
+                    ? "Failed to remove the animation. Check Diagnostics or try again with administrator permissions."
+                    : $"{result.SuccessfulDeletions} variants removed, but {result.FailedDeletions} could not be deleted.";
+                OperationStatus.Severity = InfoBarSeverity.Warning;
+            }
+            else
+            {
+                OperationStatus.Title = "Lock screen restored";
+                OperationStatus.Message = "The animated lock screen was removed. Windows will now show its default picture.";
+                OperationStatus.Severity = InfoBarSeverity.Success;
+                _notificationService.Show("Animated lock screen removed. Windows default lock screen is restored.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to restore default lock screen", ex);
+            OperationStatus.Title = "Error restoring lock screen";
+            OperationStatus.Message = ex.Message;
+            OperationStatus.Severity = InfoBarSeverity.Error;
+        }
+        finally
+        {
+            OperationStatus.IsOpen = true;
+        }
+    }
+
+    public async Task RunLiveTestCountdownAsync()
+    {
+        if (_actionPending)
+        {
+            return;
+        }
+
+        var countdown = new DiagnosticLockDialog(XamlRoot, DispatcherQueue);
+        if (!await countdown.ShowAsync())
+        {
+            return;
+        }
+
+        try
+        {
+            var sessionMonitor = App.GetService<WindowsSessionMonitor>();
+            if (!sessionMonitor.TryLock(out var lockError))
+            {
+                OperationStatus.Title = "Could not lock screen automatically";
+                OperationStatus.Message = lockError ?? "Press Win + L on your keyboard to lock manually.";
+                OperationStatus.Severity = InfoBarSeverity.Warning;
+                OperationStatus.IsOpen = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to trigger live test lock", ex);
+        }
     }
 
     private static async Task<StorageFile?> PickFileAsync(PickerLocationId location, params string[] extensions)

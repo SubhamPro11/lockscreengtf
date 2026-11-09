@@ -74,3 +74,4 @@ public static class SizeEstimator
         return $"{bytes / (1024.0 * 1024.0):F1} MB";
     }
 }
+

@@ -35,6 +35,8 @@ public sealed partial class MainPage : Page
     private double? _videoFps;
     private MediaPlaybackSession? _session;
     private CancellationTokenSource? _generationCts;
+    private LockscreenApplyResult? _lastAppliedResult;
+    private string? _lastAppliedSourcePath;
 
     private void Seek(double sec)
     {
@@ -618,5 +620,15 @@ public sealed partial class MainPage : Page
         {
             TelemetryImpactText.Foreground = brush;
         }
+    }
+
+    private async void RunLiveTest_Click(object sender, RoutedEventArgs e)
+    {
+        await RunLiveTestCountdownAsync();
+    }
+
+    private async void RestoreDefaultLockscreen_Click(object sender, RoutedEventArgs e)
+    {
+        await RestoreDefaultLockscreenAsync();
     }
 }

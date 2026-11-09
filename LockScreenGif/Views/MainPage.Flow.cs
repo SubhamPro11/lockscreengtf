@@ -66,7 +66,8 @@ public sealed partial class MainPage
         ChooseStagePanel.Visibility = stage == MainFlowStage.Choose ? Visibility.Visible : Visibility.Collapsed;
         EditStagePanel.Visibility = stage == MainFlowStage.Edit ? Visibility.Visible : Visibility.Collapsed;
         PreviewStagePanel.Visibility = preview ? Visibility.Visible : Visibility.Collapsed;
-        CompletionPanel.Visibility = stage == MainFlowStage.Done ? Visibility.Visible : Visibility.Collapsed;
+        CompletionPanel.Visibility = Visibility.Collapsed;
+        ApplySuccessCard.Visibility = stage == MainFlowStage.Done ? Visibility.Visible : Visibility.Collapsed;
         EditStepItem.Visibility = video ? Visibility.Visible : Visibility.Collapsed;
         UpdateStep(ChooseStepButton, ChooseStepCurrent, ChooseStepCurrentText, MainFlowStage.Choose, "1 · Choose");
         UpdateStep(EditStepButton, EditStepCurrent, EditStepCurrentText, MainFlowStage.Edit, "2 · Edit");

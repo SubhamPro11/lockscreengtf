@@ -197,7 +197,7 @@
                             <TextBlock x:Name="CurrentSelectionSummary" Visibility="Collapsed" TextWrapping="Wrap"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <HyperlinkButton x:Name="RemoveAnimationLink" Content="Restore Windows default lock screen"
-                                             Click="OpenSettings_Click" HorizontalAlignment="Left" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+                                             Click="RestoreDefaultLockscreen_Click" HorizontalAlignment="Left" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
                         </StackPanel>
 
                         <StackPanel x:Name="EditStagePanel" Spacing="16" Visibility="Collapsed">
@@ -379,6 +379,75 @@
                             <InfoBar x:Name="CompletionPanel" Title="Applied successfully" IsOpen="True" IsClosable="False"
                                      Visibility="Collapsed" Severity="Success" AutomationProperties.LiveSetting="Polite"
                                      Message="The lock-screen files were updated. Lock your PC to check the animation." />
+
+                            <!-- Post-Apply Success Instrument Card -->
+                            <Border x:Name="ApplySuccessCard" Style="{StaticResource InstrumentCardStyle}" Visibility="Collapsed" Padding="18,16">
+                                <StackPanel Spacing="14">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="3">
+                                            <TextBlock Text="LOCK SCREEN UPDATED SUCCESSFULLY"
+                                                       FontFamily="{StaticResource InstrumentMonoFont}" FontSize="12" FontWeight="Bold"
+                                                       Foreground="{ThemeResource InstrumentGaugeGreenBrush}" />
+                                            <TextBlock Text="Frames committed to Windows SystemData cache. Windows handles playback natively with zero ongoing battery or CPU drain."
+                                                       Foreground="{ThemeResource InstrumentTextMutedBrush}" TextWrapping="Wrap" FontSize="12" />
+                                        </StackPanel>
+                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" FontSize="24"
+                                                  Foreground="{ThemeResource InstrumentGaugeGreenBrush}" VerticalAlignment="Top" />
+                                    </Grid>
+
+                                    <Border Height="1" Background="{ThemeResource InstrumentBorderBrush}" Margin="0,2" />
+
+                                    <TextBlock Text="NEXT STEPS" FontFamily="{StaticResource InstrumentMonoFont}" FontSize="10"
+                                               Foreground="{ThemeResource InstrumentTextMutedBrush}" />
+
+                                    <Grid ColumnSpacing="12" RowSpacing="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Style="{StaticResource InstrumentCardStyle}" Padding="12,10" Background="{ThemeResource InstrumentBackgroundBrush}">
+                                            <StackPanel Spacing="6">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <Border Background="{ThemeResource InstrumentBorderBrush}" CornerRadius="4" Padding="6,2">
+                                                        <TextBlock Text="Win + L" FontFamily="{StaticResource InstrumentMonoFont}" FontSize="11" FontWeight="Bold" />
+                                                    </Border>
+                                                    <TextBlock Text="Lock PC Now" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <TextBlock Text="Press Win+L on your keyboard anytime to view your animated lock screen."
+                                                           FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Grid.Column="1" Style="{StaticResource InstrumentCardStyle}" Padding="12,10" Background="{ThemeResource InstrumentBackgroundBrush}">
+                                            <StackPanel Spacing="6">
+                                                <Button Click="RunLiveTest_Click" Style="{ThemeResource AccentButtonStyle}" Padding="10,5">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                                        <FontIcon Glyph="&#xE768;" FontSize="13" />
+                                                        <TextBlock Text="5s Live Test" FontSize="12" FontWeight="SemiBold" />
+                                                    </StackPanel>
+                                                </Button>
+                                                <TextBlock Text="Starts a 5-second countdown and locks screen to confirm animation."
+                                                           FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
+                                        <Button Click="RestoreDefaultLockscreen_Click" Padding="12,6">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="&#xE777;" FontSize="14" />
+                                                <TextBlock Text="Restore Default Lock Screen" FontSize="12" />
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBlock Text="Revert back to standard Windows lock screen anytime."
+                                                   FontSize="11" Foreground="{ThemeResource InstrumentTextMutedBrush}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                             <Border MaxHeight="340" MinHeight="120" HorizontalAlignment="Stretch" Padding="4"
                                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
