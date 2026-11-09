@@ -14,7 +14,7 @@ public sealed partial class MainWindow : WindowEx
     {
         InitializeComponent();
 
-        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "app.ico"));
         Content = null;
         Title = "AppDisplayName".GetLocalized();
         SystemBackdrop = new DesktopAcrylicBackdrop();

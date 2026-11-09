@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a2f36"/>
+      <stop offset="1" stop-color="#101215"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.60"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#c9a66b" stop-opacity="0.45"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.56" r="0.42">
+      <stop offset="0" stop-color="#c9a66b" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#c9a66b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e3c288"/>
+      <stop offset="0.55" stop-color="#c9a66b"/>
+      <stop offset="1" stop-color="#a38243"/>
+    </linearGradient>
+    <linearGradient id="ivory" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ece7da"/>
+      <stop offset="1" stop-color="#bdb8aa"/>
+    </linearGradient>
+    <clipPath id="tile"><rect x="40" y="40" width="944" height="944" rx="224"/></clipPath>
+  </defs>
+
+  <!-- glass tile -->
+  <rect x="40" y="40" width="944" height="944" rx="224" fill="url(#bg)"/>
+  <g clip-path="url(#tile)">
+    <rect x="40" y="40" width="944" height="944" fill="url(#glow)"/>
+    <ellipse cx="512" cy="60" rx="620" ry="330" fill="url(#gloss)"/>
+  </g>
+  <rect x="44" y="44" width="936" height="936" rx="220" fill="none" stroke="url(#rim)" stroke-width="8"/>
+
+  <!-- padlock shackle -->
+  <path d="M392 478 V388 a120 120 0 0 1 240 0 V478" fill="none" stroke="url(#ivory)" stroke-width="72" stroke-linecap="round"/>
+  <!-- padlock body -->
+  <rect x="292" y="468" width="440" height="352" rx="84" fill="url(#brass)"/>
+  <rect x="296" y="472" width="432" height="344" rx="80" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="5"/>
+  <!-- play triangle (keyhole) -->
+  <path d="M472 590 L472 706 L584 648 Z" fill="#15171a" stroke="#15171a" stroke-width="30" stroke-linejoin="round"/>
+</svg>

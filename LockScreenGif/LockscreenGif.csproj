@@ -4,7 +4,7 @@
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <RootNamespace>LockscreenGif</RootNamespace>
     <Version Condition="'$(Version)' == ''">3.0.0-local</Version>
-    <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64</Platforms>
     <PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
@@ -57,6 +57,9 @@
     <None Update="Vendor\gifski\gifski.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Assets\app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
