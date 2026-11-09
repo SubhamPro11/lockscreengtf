@@ -76,6 +76,7 @@ public partial class App : Application
                         Environment.OSVersion.Version.ToString()
                     ));
                     services.AddSingleton<IAppNotificationService, AppNotificationService>();
+                    services.AddSingleton<RecentFilesService>();
                     services.AddSingleton<IErrorReporter>(sp => sp.GetRequiredService<AnalyticsService>());
                     services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
                     services.AddSingleton<IActivationService, ActivationService>();

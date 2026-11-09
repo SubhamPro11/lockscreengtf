@@ -71,8 +71,9 @@ public static partial class VideoFrameService
         int end,
         int width,
         double maximumFps,
-        Action<double> progress
-    ) => Task.Run(() => ExportCoreAsync(input, index, start, end, width, maximumFps, progress));
+        Action<double> progress,
+        CancellationToken cancellationToken = default
+    ) => Task.Run(() => ExportCoreAsync(input, index, start, end, width, maximumFps, progress, cancellationToken), cancellationToken);
 
     private static async Task<VideoFrameIndex> IndexCoreAsync(
         string input,
@@ -281,7 +282,8 @@ public static partial class VideoFrameService
         int end,
         int width,
         double maximumFps,
-        Action<double> progress
+        Action<double> progress,
+        CancellationToken cancellationToken = default
     )
     {
         index.ValidateRange(start, end);
@@ -319,7 +321,7 @@ public static partial class VideoFrameService
                 times.Add(time);
                 progress(Math.Clamp(time / duration * 100, 0, 100));
             },
-            CancellationToken.None
+            cancellationToken
         );
         if (times.Count == 0)
         {

@@ -82,13 +82,17 @@ public class GifSkiService
         string inputDirectory,
         Action<double> onPercentageProgress,
         IReadOnlyList<double> presentationTimes,
-        double duration
+        double duration,
+        uint quality = 90,
+        CancellationToken cancellationToken = default
     )
     {
-        Logger.Info($"Going to create gif with {inputDirectory}, duration {duration}");
+        Logger.Info($"Going to create gif with {inputDirectory}, duration {duration}, quality {quality}");
 
         return await Task.Run(() =>
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var frames = Directory
                 .EnumerateFiles(inputDirectory, "frame_*.png")
                 .Select(path =>
@@ -122,7 +126,7 @@ public class GifSkiService
                     // unspecified dimensions automatically shrink large images.
                     settings.Width = width;
                     settings.Height = height;
-                    settings.Quality = 100;
+                    settings.Quality = (byte)Math.Clamp(quality, 10, 100);
                     settings.Extra = true;
                 }
             );
@@ -138,6 +142,7 @@ public class GifSkiService
 
                     for (var i = 0; i < frames.Length; i++)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         var timestamp = presentationTimes[i] + finalDelay;
                         ThrowIfFailed(
                             gifski.AddFramePngFile(frameNumber: (uint)i, presentationTimestamp: timestamp, filePath: frames[i].Path),
@@ -150,7 +155,7 @@ public class GifSkiService
             );
 
             return outputFile;
-        });
+        }, cancellationToken);
     }
 
     internal static void SubmitAndFinish(Action submit, Func<GifskiError> finish)

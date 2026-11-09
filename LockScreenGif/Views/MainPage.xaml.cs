@@ -9,6 +9,7 @@ using LockscreenGif.Services.Analytics;
 using LockscreenGif.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Windows.Media.Core;
 using Windows.Media.Editing;
 using Windows.Media.Playback;
@@ -33,6 +34,7 @@ public sealed partial class MainPage : Page
     private uint _videoHeight;
     private double? _videoFps;
     private MediaPlaybackSession? _session;
+    private CancellationTokenSource? _generationCts;
 
     private void Seek(double sec)
     {
@@ -50,18 +52,120 @@ public sealed partial class MainPage : Page
         _analyticsService = App.GetService<AnalyticsService>();
         InitializeComponent();
         _flowReady = true;
+        ValidateEnvironment();
+        LoadRecentFiles();
         RefreshFlowUi();
 
         NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         Loaded += (_, _) =>
         {
             StartLockscreenModePolling();
+            LoadRecentFiles();
             RefreshFlowUi();
             FocusStage();
         };
 
         Unloaded += MainPage_Unloaded;
         App.MainWindow.Closed += MainWindow_Closed;
+    }
+
+    private void ValidateEnvironment()
+    {
+        var validation = EnvironmentValidator.Validate();
+        if (!validation.CanOperate)
+        {
+            EnvironmentStatusInfoBar.Title = "System Compatibility Notice";
+            EnvironmentStatusInfoBar.Message = validation.PrimaryWarning ?? "System prerequisites could not be verified.";
+            EnvironmentStatusInfoBar.Severity = validation.IsSupportedOS ? InfoBarSeverity.Error : InfoBarSeverity.Warning;
+            EnvironmentStatusInfoBar.IsOpen = true;
+        }
+    }
+
+    public void LoadRecentFiles()
+    {
+        try
+        {
+            var recent = App.GetService<RecentFilesService>().GetRecentFiles();
+            if (RecentFilesItemsControl != null && RecentFilesSection != null)
+            {
+                if (recent.Count > 0)
+                {
+                    RecentFilesItemsControl.ItemsSource = recent;
+                    RecentFilesSection.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    RecentFilesSection.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to load recent files list", ex);
+        }
+    }
+
+    private async void RecentFileButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: string path } && File.Exists(path))
+        {
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(path);
+                await ProcessFileAsync(file);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to open recent file from {path}", ex);
+                ShowMediaFailure("Recent file unavailable", ex, "Could not open the selected recent file.");
+            }
+        }
+    }
+
+    private void DropTarget_DragOver(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+        e.DragUIOverride.Caption = "Drop video or GIF to load";
+        e.DragUIOverride.IsCaptionVisible = true;
+        e.DragUIOverride.IsContentVisible = true;
+        e.DragUIOverride.IsGlyphVisible = true;
+        if (DropTargetCard != null && Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out var brush))
+        {
+            DropTargetCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)brush;
+        }
+    }
+
+    private void DropTarget_DragLeave(object sender, DragEventArgs e)
+    {
+        if (DropTargetCard != null && Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out var brush))
+        {
+            DropTargetCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)brush;
+        }
+    }
+
+    private async void DropTarget_Drop(object sender, DragEventArgs e)
+    {
+        if (DropTargetCard != null && Application.Current.Resources.TryGetValue("InstrumentBorderBrush", out var brush))
+        {
+            DropTargetCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)brush;
+        }
+
+        if (e.DataView.Contains(Windows.ApplicationModel.DataTransfer.StandardDataFormats.StorageItems))
+        {
+            try
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                if (items.Count > 0 && items[0] is StorageFile file)
+                {
+                    await ProcessFileAsync(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Drop failed", ex);
+                ShowMediaFailure("Drop failed", ex, "The dropped file could not be opened.");
+            }
+        }
     }
 
     static double RoundToSigFigs(double value, int digits = 2)
@@ -186,6 +290,23 @@ public sealed partial class MainPage : Page
         ComboFps.SelectedIndex = 0;
     }
 
+    private void CancelGenerate_Click(object sender, RoutedEventArgs e)
+    {
+        _generationCts?.Cancel();
+    }
+
+    private void QualitySlider_ValueChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (QualityValueText != null)
+        {
+            var q = (int)e.NewValue;
+            var label = q >= 95 ? "Maximum" : q >= 80 ? "High" : "Balanced";
+            QualityValueText.Text = $"{label} ({q})";
+        }
+        UpdateTelemetry();
+        SyncDraftState();
+    }
+
     private async void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
         if (_videoFile is null || _frames is null || !_mediaReady || _actionPending || Flow.Stage != MainFlowStage.Edit)
@@ -217,10 +338,16 @@ public sealed partial class MainPage : Page
         var startFrame = _startFrame;
         var endFrame = _endFrame;
         var duration = _endSec - _startSec;
+
+        _generationCts?.Dispose();
+        _generationCts = new CancellationTokenSource();
+        var cancelToken = _generationCts.Token;
+
         try
         {
             var chosenWidth = (int)((ComboBoxItem)ComboResolution.SelectedItem).Tag;
             var chosenFps = (double)((ComboBoxItem)ComboFps.SelectedItem).Tag;
+            var chosenQuality = (uint)(QualitySlider?.Value ?? 85.0);
             operation = operation with
             {
                 OutputWidth = chosenWidth,
@@ -233,29 +360,48 @@ public sealed partial class MainPage : Page
             SuspendEditorPlayback();
             ClearGeneratedGif();
             OperationStatus.IsOpen = false;
-            GenerateLoading.ShowError = false;
+
+            if (ConversionProgressCard != null)
+            {
+                ConversionProgressCard.Visibility = Visibility.Visible;
+                ConversionPhaseTitle.Text = "Step 1 of 2: Extracting video frames (FFmpeg)…";
+                ConversionProgressDetail.Text = "Preparing extraction…";
+            }
             GenerateLoading.Value = 0;
-            GenerateLoading.IsIndeterminate = true;
-            GenerateLoading.Visibility = Visibility.Visible;
+            GenerateLoading.IsIndeterminate = false;
             RefreshFlowUi();
 
             var ExtractFramesProgress = (double percent) =>
             {
-                var display = percent * 0.3;
+                var display = percent * 0.4;
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    GenerateLoading.IsIndeterminate = false;
                     GenerateLoading.Value = display;
+                    if (ConversionPhaseTitle != null)
+                    {
+                        ConversionPhaseTitle.Text = "Step 1 of 2: Extracting video frames (FFmpeg)…";
+                    }
+                    if (ConversionProgressDetail != null)
+                    {
+                        ConversionProgressDetail.Text = $"{percent:F0}% ({Math.Round(display)}% total)";
+                    }
                 });
             };
 
             var CreateGifProgress = (double percent) =>
             {
-                var display = 30 + percent * 0.7;
+                var display = 40 + (percent * 0.6);
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    GenerateLoading.IsIndeterminate = false;
                     GenerateLoading.Value = display;
+                    if (ConversionPhaseTitle != null)
+                    {
+                        ConversionPhaseTitle.Text = "Step 2 of 2: Quantizing color palette (Gifski)…";
+                    }
+                    if (ConversionProgressDetail != null)
+                    {
+                        ConversionProgressDetail.Text = $"{percent:F0}% ({Math.Round(display)}% total)";
+                    }
                 });
             };
 
@@ -268,17 +414,30 @@ public sealed partial class MainPage : Page
                 endFrame,
                 chosenWidth,
                 chosenFps,
-                ExtractFramesProgress
+                ExtractFramesProgress,
+                cancelToken
             );
             operation = operation with
             {
                 ExtractionDurationMs = stageTimer.Elapsed.TotalMilliseconds,
                 ExtractedFrameCount = extracted.Timestamps.Length,
             };
+
+            cancelToken.ThrowIfCancellationRequested();
+
             stage = AnalyticsGenerationStage.EncodingGif;
             stageTimer.Restart();
-            var gifLocation = await GifSkiService.CreateGif(extracted.Directory, CreateGifProgress, extracted.Timestamps, duration);
+            var gifLocation = await GifSkiService.CreateGif(
+                extracted.Directory,
+                CreateGifProgress,
+                extracted.Timestamps,
+                duration,
+                chosenQuality,
+                cancelToken
+            );
             operation = operation with { EncodingDurationMs = stageTimer.Elapsed.TotalMilliseconds };
+
+            cancelToken.ThrowIfCancellationRequested();
 
             stage = AnalyticsGenerationStage.OpeningOutput;
             stageTimer.Restart();
@@ -287,7 +446,7 @@ public sealed partial class MainPage : Page
             stageTimer.Restart();
             var bitmap = await PrepareGifPreviewAsync(generated, value => operation = operation with { MediaLoadStage = value });
             operation = operation with { PreviewDurationMs = stageTimer.Elapsed.TotalMilliseconds, MediaLoadStage = null };
-            if (!Flow.IsCurrentOperation(flowToken))
+            if (!Flow.IsCurrentOperation(flowToken) || cancelToken.IsCancellationRequested)
             {
                 _analyticsService.Track(
                     AnalyticsEvent.GifGenerationCompleted,
@@ -316,6 +475,16 @@ public sealed partial class MainPage : Page
                 }
             );
         }
+        catch (OperationCanceledException)
+        {
+            Logger.Info("GIF generation cancelled by user");
+            ClearGeneratedGif();
+            Flow.TryCompleteGeneration(flowToken, false);
+            OperationStatus.Title = "Conversion cancelled";
+            OperationStatus.Message = "GIF generation was cancelled. Your clip settings were preserved.";
+            OperationStatus.Severity = InfoBarSeverity.Informational;
+            OperationStatus.IsOpen = true;
+        }
         catch (Exception ex)
         {
             _analyticsService.TrackFailure(
@@ -328,7 +497,10 @@ public sealed partial class MainPage : Page
                     FailureStageDurationMs = stageTimer.Elapsed.TotalMilliseconds,
                 }
             );
-            GenerateLoading.ShowError = true;
+            if (ConversionProgressCard != null)
+            {
+                ConversionProgressCard.Visibility = Visibility.Collapsed;
+            }
             OperationStatus.Title = "GIF generation failed";
             OperationStatus.Message = MediaFailureGuidance.Message(
                 ex,
@@ -342,8 +514,12 @@ public sealed partial class MainPage : Page
         finally
         {
             Flow.TryFinishOperation(flowToken);
+            if (ConversionProgressCard != null)
+            {
+                ConversionProgressCard.Visibility = Visibility.Collapsed;
+            }
             FfmpegService.CleanupTempDirectories();
-            GenerateLoading.IsIndeterminate = false;
+            GifSkiService.CleanupTempDirectories();
             RefreshFlowUi();
             FocusStage();
         }
@@ -380,7 +556,67 @@ public sealed partial class MainPage : Page
         if (ComboFps.SelectedItem != null && ComboResolution.SelectedItem != null)
         {
             UpdateFileSizeWarning();
+            UpdateTelemetry();
             SyncDraftState();
+        }
+    }
+
+    private void UpdateTelemetry()
+    {
+        if (TelemetryDurationText is null || TelemetryFramesText is null || TelemetryFpsText is null || TelemetrySizeText is null || TelemetryImpactText is null)
+        {
+            return;
+        }
+
+        var durationSec = Math.Max(0, _endSec - _startSec);
+        TelemetryDurationText.Text = VideoFrameIndex.FormatTime(durationSec);
+
+        var fpsTag = (ComboFps?.SelectedItem as ComboBoxItem)?.Tag as double?;
+        var fps = fpsTag ?? _videoFps ?? 0;
+        var frameCount = fps <= 0
+            ? Math.Max(0, _endFrame - _startFrame)
+            : (int)Math.Min(_endFrame - _startFrame, Math.Ceiling(durationSec * fps) + 1);
+
+        TelemetryFramesText.Text = $"{frameCount:N0} frames";
+
+        if (fpsTag is double chosenFps && chosenFps > 0)
+        {
+            TelemetryFpsText.Text = $"{chosenFps:0.##} fps";
+        }
+        else if (_videoFps.HasValue && _videoFps.Value > 0)
+        {
+            TelemetryFpsText.Text = $"{_videoFps.Value:0.##} fps (orig)";
+        }
+        else
+        {
+            TelemetryFpsText.Text = "Original";
+        }
+
+        var targetWidth = (int)((ComboResolution?.SelectedItem as ComboBoxItem)?.Tag as int? ?? (int)_videoWidth);
+        if (targetWidth <= 0)
+        {
+            targetWidth = 1280;
+        }
+        var targetHeight = _videoWidth > 0
+            ? (int)Math.Round(targetWidth * (double)_videoHeight / _videoWidth)
+            : 720;
+
+        var quality = QualitySlider != null ? (uint)QualitySlider.Value : 85;
+
+        var estimate = SizeEstimator.EstimateGifSize(frameCount, targetWidth, targetHeight, quality);
+        TelemetrySizeText.Text = $"~{estimate.FormattedSize}";
+        TelemetryImpactText.Text = $"• Cache: {estimate.ImpactDescription}";
+
+        var brushKey = estimate.ImpactLevel switch
+        {
+            CacheImpactLevel.Safe => "InstrumentGaugeGreenBrush",
+            CacheImpactLevel.Moderate => "InstrumentAccentBrassBrush",
+            _ => "InstrumentAlertRedBrush"
+        };
+
+        if (Application.Current.Resources.TryGetValue(brushKey, out var brushObj) && brushObj is Brush brush)
+        {
+            TelemetryImpactText.Foreground = brush;
         }
     }
 }

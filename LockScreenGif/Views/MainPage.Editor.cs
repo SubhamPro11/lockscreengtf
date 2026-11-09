@@ -96,6 +96,7 @@ public sealed partial class MainPage
         UpdatePreviewPosition();
         UpdateGenerateEnabled();
         UpdateFileSizeWarning();
+        UpdateTelemetry();
     }
 
     private void UpdateValidationText()

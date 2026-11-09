@@ -85,15 +85,24 @@
                                  AutomationProperties.LiveSetting="Polite" />
 
                         <StackPanel x:Name="ChooseStagePanel" Spacing="16">
-                            <Border x:Name="PrerequisitesPanel" Padding="16"
+                            <InfoBar x:Name="EnvironmentStatusInfoBar" IsOpen="False" IsClosable="True" Severity="Warning" />
+
+                            <Border x:Name="PrerequisitesPanel" Padding="14,10"
                                     Style="{StaticResource PrerequisitesWarningStyle}" CornerRadius="8">
-                                <Expander x:Name="PrerequisitesExpander" IsExpanded="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                          Background="Transparent" AutomationProperties.Name="Prerequisites">
+                                <Expander x:Name="PrerequisitesExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                          Background="Transparent" AutomationProperties.Name="System Prerequisites">
                                     <Expander.Resources>
                                         <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
                                     </Expander.Resources>
                                     <Expander.Header>
-                                        <TextBlock Text="Prerequisites" FontSize="18" FontWeight="SemiBold" />
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon Glyph="&#xE7BA;" FontSize="16" VerticalAlignment="Center" Foreground="{ThemeResource SystemFillColorCautionBrush}" />
+                                            <TextBlock Grid.Column="1" Text="System Prerequisites (Windows 11 24H2+ &amp; Picture Mode)" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </Grid>
                                     </Expander.Header>
                                     <StackPanel Spacing="12" Margin="0,12,0,0">
                                         <Grid ColumnSpacing="12">
@@ -129,54 +138,115 @@
                                     </StackPanel>
                                 </Expander>
                             </Border>
-                            <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Padding="20"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon Glyph="&#xE714;" VerticalAlignment="Center" />
-                                    <StackPanel Grid.Column="1" Spacing="4">
-                                        <TextBlock Text="Choose video" Style="{ThemeResource BodyStrongTextBlockStyle}" />
-                                        <TextBlock Text="Trim an MP4 or MKV video and turn it into a GIF."
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+
+                            <!-- Modern Drag and Drop Target Card -->
+                            <Border x:Name="DropTargetCard" Style="{StaticResource InstrumentCardStyle}"
+                                    AllowDrop="True" DragOver="DropTarget_DragOver" DragLeave="DropTarget_DragLeave" Drop="DropTarget_Drop"
+                                    Padding="32,24" HorizontalAlignment="Stretch">
+                                <StackPanel Spacing="14" HorizontalAlignment="Center">
+                                    <FontIcon Glyph="&#xE8B9;" FontSize="40" Foreground="{ThemeResource InstrumentAccentBrassBrush}" HorizontalAlignment="Center" />
+                                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                        <TextBlock Text="Drop a video or animated GIF here"
+                                                   Style="{ThemeResource SubtitleTextBlockStyle}" TextAlignment="Center" />
+                                        <TextBlock Text="Supported: MP4 · WEBM · MOV · MKV · AVI · GIF (up to 4K)"
+                                                   Foreground="{ThemeResource InstrumentTextMutedBrush}" TextAlignment="Center" FontSize="12" />
                                     </StackPanel>
-                                </Grid>
-                            </Button>
-                            <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Padding="20"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon Glyph="&#xE8B9;" VerticalAlignment="Center" />
-                                    <StackPanel Grid.Column="1" Spacing="4">
-                                        <TextBlock Text="Choose GIF" Style="{ThemeResource BodyStrongTextBlockStyle}" />
-                                        <TextBlock Text="Preview and use a GIF from your device."
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                                    <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,6,0,0">
+                                        <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Style="{ThemeResource AccentButtonStyle}" Padding="16,10">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <FontIcon Glyph="&#xE714;" FontSize="16" />
+                                                <TextBlock Text="Choose Video…" FontWeight="SemiBold" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Padding="16,10">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <FontIcon Glyph="&#xE8B9;" FontSize="16" />
+                                                <TextBlock Text="Choose GIF…" />
+                                            </StackPanel>
+                                        </Button>
                                     </StackPanel>
-                                </Grid>
-                            </Button>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Recent Files Section -->
+                            <Border x:Name="RecentFilesSection" Style="{StaticResource InstrumentCardStyle}" Visibility="Collapsed" Padding="16,12">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="RECENT ANIMATIONS" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{ThemeResource InstrumentTextMutedBrush}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                                    <ItemsControl x:Name="RecentFilesItemsControl">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="8" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Click="RecentFileButton_Click" Tag="{Binding Path}" Padding="10,6"
+                                                        ToolTipService.ToolTip="{Binding Path}">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                                        <FontIcon Glyph="&#xE714;" FontSize="14" Foreground="{ThemeResource InstrumentAccentBrassBrush}" />
+                                                        <TextBlock Text="{Binding FileName}" MaxWidth="160" TextTrimming="CharacterEllipsis" FontSize="12" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
                             <TextBlock x:Name="CurrentSelectionSummary" Visibility="Collapsed" TextWrapping="Wrap"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <HyperlinkButton x:Name="RemoveAnimationLink" Content="Remove animation in Settings"
-                                             Click="OpenSettings_Click" HorizontalAlignment="Left" />
+                            <HyperlinkButton x:Name="RemoveAnimationLink" Content="Restore Windows default lock screen"
+                                             Click="OpenSettings_Click" HorizontalAlignment="Left" Foreground="{ThemeResource InstrumentTextMutedBrush}" />
                         </StackPanel>
 
                         <StackPanel x:Name="EditStagePanel" Spacing="16" Visibility="Collapsed">
                             <Grid x:Name="VideoPreviewPanel" Visibility="Collapsed" MaxWidth="800" MaxHeight="340">
                                 <MediaPlayerElement x:Name="VideoPreview" AreTransportControlsEnabled="False" />
                                 <Image x:Name="PreviewStill" Stretch="Uniform" Visibility="Collapsed" IsHitTestVisible="False" />
-                                <Border x:Name="PreviewLoadingPanel" Visibility="Collapsed" Background="#99000000" IsHitTestVisible="False">
+                                <Border x:Name="PreviewLoadingPanel" Visibility="Collapsed" Background="{ThemeResource SmokeFillColorDefaultBrush}" IsHitTestVisible="False">
                                     <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
-                                        <ProgressRing x:Name="PreviewLoadingRing" Width="32" Height="32" IsActive="False" Foreground="White" />
-                                        <TextBlock x:Name="PreviewLoadingText" Text="Loading frame…" Foreground="White" TextAlignment="Center" TextWrapping="Wrap" />
-                                        <TextBlock Text="You can keep adjusting the clip." Foreground="White" FontSize="12" TextAlignment="Center" TextWrapping="Wrap" />
+                                        <ProgressRing x:Name="PreviewLoadingRing" Width="32" Height="32" IsActive="False" />
+                                        <TextBlock x:Name="PreviewLoadingText" Text="Loading frame…" TextAlignment="Center" TextWrapping="Wrap" />
+                                        <TextBlock Text="You can keep adjusting the clip." Foreground="{ThemeResource InstrumentTextMutedBrush}" FontSize="12" TextAlignment="Center" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Border>
                             </Grid>
+
+                            <!-- Monospace Telemetry Gauge Strip -->
+                            <Border Style="{StaticResource InstrumentCardStyle}" Padding="14,10">
+                                <Grid ColumnSpacing="16" RowSpacing="6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Grid.Column="0" Spacing="2">
+                                        <TextBlock Text="CLIP DURATION" FontSize="10" Foreground="{ThemeResource InstrumentTextMutedBrush}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                                        <TextBlock x:Name="TelemetryDurationText" Text="00:00.000" Style="{StaticResource InstrumentReadoutTextStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="FRAMES" FontSize="10" Foreground="{ThemeResource InstrumentTextMutedBrush}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                                        <TextBlock x:Name="TelemetryFramesText" Text="0 frames" Style="{StaticResource InstrumentReadoutTextStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Spacing="2">
+                                        <TextBlock Text="TARGET RATE" FontSize="10" Foreground="{ThemeResource InstrumentTextMutedBrush}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                                        <TextBlock x:Name="TelemetryFpsText" Text="Original" Style="{StaticResource InstrumentReadoutTextStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="3" Spacing="2">
+                                        <TextBlock Text="EST. GIF SIZE" FontSize="10" Foreground="{ThemeResource InstrumentTextMutedBrush}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                                        <TextBlock x:Name="TelemetrySizeText" Text="~0 MB" Style="{StaticResource InstrumentReadoutTextStyle}" />
+                                    </StackPanel>
+                                    <TextBlock x:Name="TelemetryImpactText" Grid.Row="1" Grid.ColumnSpan="4"
+                                               FontSize="11" Margin="0,4,0,0" FontFamily="{StaticResource InstrumentMonoFont}"
+                                               Foreground="{ThemeResource InstrumentGaugeGreenBrush}" TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
                             <ContentControl x:Name="TrimEditorHost" HorizontalContentAlignment="Stretch">
                             <StackPanel x:Name="TrimControlsPanel" Spacing="12" Visibility="Collapsed" SizeChanged="TrimControlsPanel_SizeChanged">
                                 <Grid Margin="0,4,0,0" ColumnSpacing="12">
@@ -273,22 +343,33 @@
                             </ContentControl>
 
                             <ContentControl x:Name="VideoSettingsHost" HorizontalContentAlignment="Stretch">
-                                <Expander x:Name="OutputSettingsExpander" IsExpanded="False" HorizontalAlignment="Stretch"
-                                          HorizontalContentAlignment="Stretch">
-                                    <Expander.Header>
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Text="Output settings" />
-                                            <TextBlock x:Name="OutputSettingsSummary" Text="Original resolution and frame rate"
-                                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                                        </StackPanel>
-                                    </Expander.Header>
-                                    <StackPanel x:Name="ComboSettingsStack" Spacing="12" Visibility="Collapsed">
-                                        <ComboBox x:Name="ComboResolution" Header="Resolution" HorizontalAlignment="Stretch"
-                                                  SelectionChanged="ComboResolution_SelectionChanged" />
-                                        <ComboBox x:Name="ComboFps" Header="Frame rate" HorizontalAlignment="Stretch"
-                                                  SelectionChanged="ComboResolution_SelectionChanged" />
+                                <Border Style="{StaticResource InstrumentCardStyle}">
+                                    <StackPanel Spacing="14">
+                                        <TextBlock Text="OUTPUT GAUGES &amp; QUALITY" FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource InstrumentTextMutedBrush}" FontFamily="{StaticResource InstrumentMonoFont}" />
+                                        <Grid ColumnSpacing="16" x:Name="ComboSettingsStack" Visibility="Visible">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="1.4*" />
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox x:Name="ComboResolution" Header="Resolution" HorizontalAlignment="Stretch"
+                                                      SelectionChanged="ComboResolution_SelectionChanged" />
+                                            <ComboBox x:Name="ComboFps" Grid.Column="1" Header="Frame rate" HorizontalAlignment="Stretch"
+                                                      SelectionChanged="ComboResolution_SelectionChanged" />
+                                            <StackPanel Grid.Column="2" Spacing="4">
+                                                <Grid>
+                                                    <TextBlock Text="Quality" Style="{ThemeResource BodyStrongTextBlockStyle}" FontSize="12" />
+                                                    <TextBlock x:Name="QualityValueText" Text="High (85)" HorizontalAlignment="Right"
+                                                               FontSize="12" Style="{StaticResource InstrumentReadoutTextStyle}" />
+                                                </Grid>
+                                                <Slider x:Name="QualitySlider" Minimum="70" Maximum="100" Value="85" StepFrequency="5"
+                                                        ValueChanged="QualitySlider_ValueChanged" AutomationProperties.Name="GIF color quality" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <TextBlock x:Name="OutputSettingsSummary" Visibility="Collapsed" Text="" />
                                     </StackPanel>
-                                </Expander>
+                                </Border>
                             </ContentControl>
                             <InfoBar x:Name="FileSizeWarning" Title="Temporary space estimate" IsClosable="False"
                                      IsOpen="False" Message="" Severity="Warning" />
@@ -338,8 +419,27 @@
                                        TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
                         </Grid>
                     </StackPanel>
-                    <ProgressBar x:Name="GenerateLoading" Visibility="Collapsed" Value="0"
-                                 AutomationProperties.Name="GIF generation progress" />
+                    <Border x:Name="ConversionProgressCard" Visibility="Collapsed"
+                            Style="{StaticResource InstrumentCardStyle}" Margin="0,4,0,4">
+                        <StackPanel Spacing="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="2">
+                                    <TextBlock x:Name="ConversionPhaseTitle" Text="Converting animation…"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock x:Name="ConversionProgressDetail" Text="Preparing frames…"
+                                               Style="{StaticResource InstrumentReadoutTextStyle}" />
+                                </StackPanel>
+                                <Button x:Name="CancelConversionButton" Grid.Column="1" Content="Cancel"
+                                        Click="CancelGenerate_Click" VerticalAlignment="Center" />
+                            </Grid>
+                            <ProgressBar x:Name="GenerateLoading" Value="0" HorizontalAlignment="Stretch"
+                                         AutomationProperties.Name="GIF conversion progress" />
+                        </StackPanel>
+                    </Border>
                     <Grid ColumnSpacing="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
