@@ -96,17 +96,24 @@ internal sealed class CacheLayout(string directory, CachePermissions permissions
                 foreach (var folder in ReadFolders())
                 {
                     permissions.ValidatePath(folder);
-                    foreach (var path in Directory.GetFiles(folder))
+                    try
                     {
-                        permissions.ValidatePath(path);
-                        var info = new FileInfo(path);
-                        entries.Add($"{path}|{info.Length}|{info.LastWriteTimeUtc.Ticks}");
+                        foreach (var path in Directory.GetFiles(folder))
+                        {
+                            permissions.ValidatePath(path);
+                            var info = new FileInfo(path);
+                            entries.Add($"{path}|{info.Length}|{info.LastWriteTimeUtc.Ticks}");
+                        }
+                    }
+                    catch (Exception ex) when (CachePermissions.IsAccessDenied(ex))
+                    {
+                        // Subfolders may have strict ACLs until elevated repair; continue observing what we can
                     }
                 }
                 var current = string.Join("\n", entries.Order(StringComparer.OrdinalIgnoreCase));
                 stableSamples = current == previous ? stableSamples + 1 : 0;
                 previous = current;
-                if (stableSamples >= 3)
+                if (stableSamples >= 3 && entries.Count > 0)
                 {
                     progress.Report("WindowsApi", "The cache inventory was unchanged across three samples.");
                     return;
