@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:LockscreenGif.Features.DesktopWallpaper.Models"
     xmlns:vm="using:LockscreenGif.Features.DesktopWallpaper.ViewModels"
     mc:Ignorable="d">
 
@@ -133,6 +134,137 @@
                             </Border>
                         </Grid>
                     </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Wallpaper Library & Playlists Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Wallpaper Library"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Manage your saved wallpapers, favorites, and automatic rotation playlists."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <!-- Search & Filter Controls -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
+                            <TextBox x:Name="SearchBox"
+                                     PlaceholderText="Search wallpapers…"
+                                     Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}"
+                                     Width="200"
+                                     Style="{StaticResource GlassTextBoxStyle}"
+                                     AutomationProperties.Name="Search wallpaper library" />
+
+                            <ToggleButton IsChecked="{x:Bind ViewModel.FilterFavoritesOnly, Mode=TwoWay}"
+                                          Content="★ Favorites"
+                                          Style="{StaticResource GlassToggleButtonStyle}"
+                                          AutomationProperties.Name="Filter favorites only" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Library Items List / Grid -->
+                    <ListView ItemsSource="{x:Bind ViewModel.LibraryItems, Mode=OneWay}"
+                              SelectedItem="{x:Bind ViewModel.SelectedLibraryEntry, Mode=TwoWay}"
+                              SelectionMode="Single"
+                              MaxHeight="260"
+                              AutomationProperties.Name="Saved wallpaper library list">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:WallpaperLibraryEntry">
+                                <Grid Padding="6,8" ColumnSpacing="{StaticResource AppSpacingM}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Type Icon / Thumbnail -->
+                                    <Border Width="40" Height="40"
+                                            Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                            CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                            BorderBrush="{ThemeResource GlassBorderSubtleBrush}"
+                                            BorderThickness="1">
+                                        <FontIcon Glyph="{x:Bind TypeGlyph, Mode=OneWay}" FontSize="{StaticResource AppFontSizeBody}" Foreground="{ThemeResource GlassTextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <!-- Title & Path -->
+                                    <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}" Foreground="{ThemeResource GlassTextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{x:Bind SourcePathOrUrl, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Favorite Toggle -->
+                                    <Button Grid.Column="2"
+                                            Click="LibraryEntry_Favorite_Click"
+                                            Style="{StaticResource GlassButtonStyle}"
+                                            Padding="8,4"
+                                            AutomationProperties.Name="Toggle favorite">
+                                        <FontIcon Glyph="{x:Bind FavoriteGlyph, Mode=OneWay}" FontSize="{StaticResource AppFontSizeCaption}" />
+                                    </Button>
+
+                                    <!-- Delete Button with confirmation -->
+                                    <Button Grid.Column="3"
+                                            Content="Delete"
+                                            Click="LibraryEntry_Delete_Click"
+                                            Style="{StaticResource GlassButtonStyle}"
+                                            Padding="8,4"
+                                            AutomationProperties.Name="Delete wallpaper from library" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Playlists Configuration Row -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Automatic Playlist Rotation"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Automatically cycle through wallpapers in your library on a timed schedule."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsPlaylistEnabled, Mode=TwoWay}"
+                                          OnContent="Enabled"
+                                          OffContent="Disabled"
+                                          AutomationProperties.Name="Enable playlist rotation" />
+
+                            <ComboBox SelectedIndex="{x:Bind ViewModel.PlaylistIntervalIndex, Mode=TwoWay}"
+                                      Width="130"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Playlist rotation interval">
+                                <ComboBoxItem Content="Every 5 min" />
+                                <ComboBoxItem Content="Every 15 min" />
+                                <ComboBoxItem Content="Every 30 min" />
+                                <ComboBoxItem Content="Every hour" />
+                                <ComboBoxItem Content="Daily" />
+                            </ComboBox>
+
+                            <Button Content="Next"
+                                    Command="{x:Bind ViewModel.RotateNextCommand}"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    AutomationProperties.Name="Rotate to next wallpaper" />
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
             </Border>
 

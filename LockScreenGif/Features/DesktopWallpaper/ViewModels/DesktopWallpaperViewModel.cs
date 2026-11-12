@@ -1,21 +1,25 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LockscreenGif.Features.DesktopWallpaper.Models;
 using LockscreenGif.Features.DesktopWallpaper.Services;
+using LockscreenGif.Features.DesktopWallpaper.Services.Library;
 using Microsoft.UI.Dispatching;
 
 namespace LockscreenGif.Features.DesktopWallpaper.ViewModels;
 
 /// <summary>
-/// ViewModel for the Desktop Wallpaper page supporting video, web, image, and executable wallpapers.
+/// ViewModel for the Desktop Wallpaper page supporting library management, video/web/image/exe types,
+/// playlists, custom properties, and smart performance rules.
 /// </summary>
 public sealed class DesktopWallpaperViewModel : ObservableObject
 {
     private readonly IWallpaperEngineService _engineService;
+    private readonly IWallpaperLibraryService _libraryService;
     private readonly DispatcherQueue _dispatcherQueue;
 
     private string _statusText = "Stopped";
@@ -395,6 +399,93 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         set => SetProperty(ref _autoPausedReasonText, value);
     }
 
+    // Library and Playlist properties
+    public ObservableCollection<WallpaperLibraryEntry> LibraryItems { get; } = [];
+    public ObservableCollection<WallpaperCustomProperty> CustomProperties { get; } = [];
+
+    private string _searchQuery = string.Empty;
+    public string SearchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            if (SetProperty(ref _searchQuery, value))
+            {
+                RefreshLibraryView();
+            }
+        }
+    }
+
+    private bool _filterFavoritesOnly;
+    public bool FilterFavoritesOnly
+    {
+        get => _filterFavoritesOnly;
+        set
+        {
+            if (SetProperty(ref _filterFavoritesOnly, value))
+            {
+                RefreshLibraryView();
+            }
+        }
+    }
+
+    private WallpaperLibraryEntry? _selectedLibraryEntry;
+    public WallpaperLibraryEntry? SelectedLibraryEntry
+    {
+        get => _selectedLibraryEntry;
+        set
+        {
+            if (SetProperty(ref _selectedLibraryEntry, value))
+            {
+                if (value != null)
+                {
+                    LoadSource(value.SourcePathOrUrl);
+                    _ = LoadCustomPropertiesForEntryAsync(value);
+                }
+            }
+        }
+    }
+
+    public bool IsPlaylistEnabled
+    {
+        get => _libraryService.Playlist.IsEnabled;
+        set
+        {
+            _libraryService.Playlist.IsEnabled = value;
+            _ = _libraryService.SaveSettingsAsync();
+            OnPropertyChanged();
+        }
+    }
+
+    private int _playlistIntervalIndex = 2; // 30 min
+    public int PlaylistIntervalIndex
+    {
+        get => _playlistIntervalIndex;
+        set
+        {
+            if (SetProperty(ref _playlistIntervalIndex, value))
+            {
+                _libraryService.Playlist.IntervalMinutes = value switch
+                {
+                    0 => 5,
+                    1 => 15,
+                    2 => 30,
+                    3 => 60,
+                    4 => 1440,
+                    _ => 30
+                };
+                _ = _libraryService.SaveSettingsAsync();
+            }
+        }
+    }
+
+    private bool _hasCustomProperties;
+    public bool HasCustomProperties
+    {
+        get => _hasCustomProperties;
+        set => SetProperty(ref _hasCustomProperties, value);
+    }
+
     public ObservableCollection<DisplayMonitor> Monitors { get; } = [];
 
     public bool CanStart => !IsRunning && !IsBusy;
@@ -417,9 +508,15 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public IAsyncRelayCommand ApplyWallpaperCommand { get; }
     public IRelayCommand RefreshMonitorsCommand { get; }
 
-    public DesktopWallpaperViewModel(IWallpaperEngineService engineService)
+    public IAsyncRelayCommand<WallpaperLibraryEntry> ApplyLibraryEntryCommand { get; }
+    public IAsyncRelayCommand<WallpaperLibraryEntry> DeleteLibraryEntryCommand { get; }
+    public IAsyncRelayCommand<WallpaperLibraryEntry> ToggleFavoriteCommand { get; }
+    public IAsyncRelayCommand RotateNextCommand { get; }
+
+    public DesktopWallpaperViewModel(IWallpaperEngineService engineService, IWallpaperLibraryService libraryService)
     {
         _engineService = engineService;
+        _libraryService = libraryService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         StartCommand = new AsyncRelayCommand(StartAsync, () => CanStart);
@@ -427,6 +524,11 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         TogglePauseCommand = new AsyncRelayCommand(TogglePauseAsync, () => CanPauseResume);
         ApplyWallpaperCommand = new AsyncRelayCommand(ApplyWallpaperAsync, () => CanApply);
         RefreshMonitorsCommand = new RelayCommand(RefreshMonitors);
+
+        ApplyLibraryEntryCommand = new AsyncRelayCommand<WallpaperLibraryEntry>(ApplyLibraryEntryAsync);
+        DeleteLibraryEntryCommand = new AsyncRelayCommand<WallpaperLibraryEntry>(DeleteLibraryEntryAsync);
+        ToggleFavoriteCommand = new AsyncRelayCommand<WallpaperLibraryEntry>(ToggleFavoriteAsync);
+        RotateNextCommand = new AsyncRelayCommand(RotateNextAsync);
 
         _engineService.StatusChanged += EngineService_StatusChanged;
 
@@ -449,7 +551,114 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             });
         };
 
+        _libraryService.LibraryChanged += (s, e) =>
+        {
+            _dispatcherQueue.TryEnqueue(RefreshLibraryView);
+        };
+
+        _libraryService.ActiveWallpaperChanged += (s, entry) =>
+        {
+            _dispatcherQueue.TryEnqueue(async () =>
+            {
+                LoadSource(entry.SourcePathOrUrl);
+                await ApplyWallpaperAsync();
+            });
+        };
+
+        _ = InitializeLibraryAsync();
         RefreshFromEngine();
+    }
+
+    private async Task InitializeLibraryAsync()
+    {
+        await _libraryService.InitializeAsync();
+        _dispatcherQueue.TryEnqueue(RefreshLibraryView);
+    }
+
+    private void RefreshLibraryView()
+    {
+        var items = _libraryService.Items.AsEnumerable();
+
+        if (FilterFavoritesOnly)
+        {
+            items = items.Where(x => x.IsFavorite);
+        }
+
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            var q = SearchQuery.Trim().ToLowerInvariant();
+            items = items.Where(x => x.Title.ToLowerInvariant().Contains(q) || x.Tags.Any(t => t.ToLowerInvariant().Contains(q)));
+        }
+
+        LibraryItems.Clear();
+        foreach (var item in items)
+        {
+            LibraryItems.Add(item);
+        }
+    }
+
+    private async Task ApplyLibraryEntryAsync(WallpaperLibraryEntry? entry)
+    {
+        if (entry == null)
+        {
+            return;
+        }
+
+        SelectedLibraryEntry = entry;
+        LoadSource(entry.SourcePathOrUrl);
+        await ApplyWallpaperAsync();
+
+        if (SelectedMonitor != null)
+        {
+            await _libraryService.SetMonitorSelectionAsync(SelectedMonitor.DeviceName, entry.Id);
+        }
+    }
+
+    private async Task DeleteLibraryEntryAsync(WallpaperLibraryEntry? entry)
+    {
+        if (entry == null)
+        {
+            return;
+        }
+
+        await _libraryService.RemoveAsync(entry.Id);
+    }
+
+    private async Task ToggleFavoriteAsync(WallpaperLibraryEntry? entry)
+    {
+        if (entry == null)
+        {
+            return;
+        }
+
+        await _libraryService.ToggleFavoriteAsync(entry.Id);
+    }
+
+    private async Task RotateNextAsync()
+    {
+        await _libraryService.RotatePlaylistNextAsync();
+    }
+
+    private async Task LoadCustomPropertiesForEntryAsync(WallpaperLibraryEntry entry)
+    {
+        CustomProperties.Clear();
+        var descriptor = await _libraryService.ReadDescriptorAsync(entry.SourcePathOrUrl);
+        if (descriptor != null && descriptor.Properties.Count > 0)
+        {
+            HasCustomProperties = true;
+            foreach (var prop in descriptor.Properties)
+            {
+                if (entry.CustomProperties.TryGetValue(prop.Id, out var savedVal))
+                {
+                    prop.Value = savedVal;
+                }
+                CustomProperties.Add(prop);
+            }
+        }
+        else
+        {
+            HasCustomProperties = false;
+        }
     }
 
     private void EngineService_StatusChanged(object? sender, WallpaperEngineStatus status)
@@ -532,7 +741,9 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         IsMediaLoaded = true;
         ApplyWallpaperCommand.NotifyCanExecuteChanged();
 
-        // If the engine is already running, seamlessly apply the newly selected wallpaper
+        // Add to library automatically if not already present
+        _ = _libraryService.AddAsync(pathOrUrl, WallpaperTitle);
+
         if (IsRunning)
         {
             _ = ApplyWallpaperAsync();
@@ -591,6 +802,14 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             {
                 ErrorMessage = _engineService.CurrentErrorMessage ?? "Failed to apply wallpaper.";
                 HasError = true;
+            }
+            else if (SelectedMonitor != null)
+            {
+                var entry = _libraryService.Items.FirstOrDefault(x => x.SourcePathOrUrl == SourceInput);
+                if (entry != null)
+                {
+                    await _libraryService.SetMonitorSelectionAsync(SelectedMonitor.DeviceName, entry.Id);
+                }
             }
         }
         catch (Exception ex)

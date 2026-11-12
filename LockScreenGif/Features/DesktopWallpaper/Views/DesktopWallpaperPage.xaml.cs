@@ -162,4 +162,34 @@ public sealed partial class DesktopWallpaperPage : Page
             ViewModel.AllowAdvancedExecutables = false;
         }
     }
+
+    private async void LibraryEntry_Favorite_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LockscreenGif.Features.DesktopWallpaper.Models.WallpaperLibraryEntry entry })
+        {
+            await ViewModel.ToggleFavoriteCommand.ExecuteAsync(entry);
+        }
+    }
+
+    private async void LibraryEntry_Delete_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LockscreenGif.Features.DesktopWallpaper.Models.WallpaperLibraryEntry entry })
+        {
+            var dialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Delete Wallpaper",
+                Content = $"Are you sure you want to remove '{entry.Title}' from your wallpaper library?",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Close
+            };
+
+            var res = await dialog.ShowAsync();
+            if (res == ContentDialogResult.Primary)
+            {
+                await ViewModel.DeleteLibraryEntryCommand.ExecuteAsync(entry);
+            }
+        }
+    }
 }
