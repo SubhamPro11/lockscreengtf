@@ -325,6 +325,22 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
         }
     }
 
+    public Task PostWebMessageAsJsonAsync(string json)
+    {
+        if (_controller != null)
+        {
+            try
+            {
+                _controller.CoreWebView2.PostWebMessageAsJson(json);
+            }
+            catch
+            {
+                // Best effort
+            }
+        }
+        return Task.CompletedTask;
+    }
+
     public Task CloseAsync()
     {
         _isPlaying = false;

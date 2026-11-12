@@ -128,6 +128,7 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
     public Task SetMutedAsync(bool muted) => Task.CompletedTask;
     public Task SetPlaybackRateAsync(double rate) => Task.CompletedTask;
     public Task SetFitModeAsync(WallpaperFitMode fitMode) => Task.CompletedTask;
+    public Task PostWebMessageAsJsonAsync(string json) => Task.CompletedTask;
 
     public Task CloseAsync()
     {

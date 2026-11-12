@@ -21,6 +21,7 @@ public interface IWallpaperEngineService
 
     WallpaperItem? CurrentWallpaper { get; }
     bool AllowAdvancedExecutables { get; set; }
+    bool IsAudioReactiveEnabled { get; set; }
     LockscreenGif.Features.DesktopWallpaper.Services.Performance.WallpaperPerformanceMonitor PerformanceMonitor { get; }
 
     bool IsRunning { get; }

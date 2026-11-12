@@ -29,6 +29,14 @@
                      Title="Desktop wallpaper notice"
                      Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
 
+            <!-- Sync & Lockscreen Notice InfoBar -->
+            <InfoBar x:Name="SyncNoticeBanner"
+                     IsOpen="{x:Bind ViewModel.HasSyncNotice, Mode=OneWay}"
+                     Severity="Informational"
+                     Title="Lock Screen &amp; Desktop Sync"
+                     Message="{x:Bind ViewModel.SyncNotice, Mode=OneWay}"
+                     IsClosable="True" />
+
             <!-- Wallpaper Selection & Drop Target Card -->
             <Border x:Name="DropTargetCard"
                     Style="{StaticResource GlassCardStyle}"
@@ -70,6 +78,14 @@
                                     Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
                                     IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
                                     AutomationProperties.Name="Apply selected wallpaper to desktop" />
+
+                            <Button x:Name="ApplyBothButton"
+                                    Content="Apply to Both"
+                                    ToolTipService.ToolTip="Apply this video/GIF to both Desktop Wallpaper and Windows Lock Screen"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
+                                    AutomationProperties.Name="Apply selected wallpaper as both desktop wallpaper and lock screen" />
                         </StackPanel>
                     </Grid>
 
@@ -656,6 +672,82 @@
                         <ToggleSwitch Grid.Column="1"
                                       IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}"
                                       AutomationProperties.Name="Lower decode quality" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- System Integration & Audio Reactivity Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                        <TextBlock Text="System Integration &amp; Audio"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                        <TextBlock Text="Configure Windows startup, notification area controls, and audio-reactive visualization."
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                    </StackPanel>
+
+                    <!-- Run at Windows Startup Toggle -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Run at Windows startup"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Automatically launch LockscreenGif in the background and restore your active wallpaper when signing into Windows."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.IsRunAtStartup, Mode=TwoWay}"
+                                      AutomationProperties.Name="Run at Windows startup toggle" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Audio-Reactive Toggle -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Audio-reactive spectrum (WASAPI loopback)"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Captures system audio output and streams 16-band normalized frequency spectrum data to web wallpapers via window.onAudioSpectrum JavaScript API."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.IsAudioReactiveEnabled, Mode=TwoWay}"
+                                      AutomationProperties.Name="Audio reactive visualization toggle" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Notification Tray Info Row -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingS}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE7F4;"
+                                  FontSize="{StaticResource AppFontSizeBody}"
+                                  Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                  VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="System Tray active: Right-click the LockscreenGif tray icon in the notification area to Pause/Resume, Next Wallpaper, Open app, or Exit."
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   VerticalAlignment="Center" />
                     </Grid>
                 </StackPanel>
             </Border>

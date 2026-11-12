@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.Models;
+using LockscreenGif.Features.DesktopWallpaper.Services.Audio;
 using LockscreenGif.Features.DesktopWallpaper.Services.Input;
 using LockscreenGif.Features.DesktopWallpaper.Services.Native;
 using LockscreenGif.Features.DesktopWallpaper.Services.Performance;
@@ -86,6 +88,26 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
     private readonly WallpaperPerformanceMonitor _performanceMonitor;
     public WallpaperPerformanceMonitor PerformanceMonitor => _performanceMonitor;
 
+    private readonly WasapiAudioCaptureService _audioCaptureService = new();
+    private bool _isAudioReactiveEnabled;
+
+    public bool IsAudioReactiveEnabled
+    {
+        get => _isAudioReactiveEnabled;
+        set
+        {
+            _isAudioReactiveEnabled = value;
+            if (value && IsRunning)
+            {
+                _audioCaptureService.Enable();
+            }
+            else
+            {
+                _audioCaptureService.Disable();
+            }
+        }
+    }
+
     public bool IsRunning => Status == WallpaperEngineStatus.Running || Status == WallpaperEngineStatus.Paused;
 
     public event EventHandler<WallpaperEngineStatus>? StatusChanged;
@@ -93,7 +115,22 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
     public WallpaperEngineService()
     {
         _performanceMonitor = new WallpaperPerformanceMonitor(this);
+        _audioCaptureService.SpectrumReady += OnAudioSpectrumReady;
         RefreshMonitors();
+    }
+
+    private void OnAudioSpectrumReady(object? sender, AudioSpectrumData data)
+    {
+        if (!_isAudioReactiveEnabled || _renderers.Count == 0)
+        {
+            return;
+        }
+
+        var json = $"{{\"type\":\"audioSpectrum\",\"peak\":{data.Peak.ToString("F3", CultureInfo.InvariantCulture)},\"bands\":[{string.Join(",", data.Bands.Select(b => b.ToString("F3", CultureInfo.InvariantCulture)))}]}}";
+        foreach (var renderer in _renderers)
+        {
+            _ = renderer.PostWebMessageAsJsonAsync(json);
+        }
     }
 
     public void RefreshMonitors()
@@ -286,6 +323,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         try
         {
             Logger.Info("Stopping wallpaper engine...");
+            _audioCaptureService.Disable();
             _performanceMonitor.Stop();
             _inputForwarder.Disable();
             await CleanRenderersAsync();
@@ -448,6 +486,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         _disposed = true;
 
         _performanceMonitor.Dispose();
+        _audioCaptureService.Dispose();
         _inputForwarder.Dispose();
         CleanRenderersAsync().GetAwaiter().GetResult();
         CleanHostWindows();

@@ -21,6 +21,7 @@ public interface IWallpaperRenderer : IAsyncDisposable
     Task SetMutedAsync(bool muted);
     Task SetPlaybackRateAsync(double rate);
     Task SetFitModeAsync(WallpaperFitMode fitMode);
+    Task PostWebMessageAsJsonAsync(string json);
     Task CloseAsync();
 }
 

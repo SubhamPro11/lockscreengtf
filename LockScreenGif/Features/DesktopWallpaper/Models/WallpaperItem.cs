@@ -21,6 +21,18 @@ public sealed class WallpaperItem
     public string? ThumbnailPath { get; set; }
     public bool IsAdvancedExecutable { get; set; }
 
+    public static WallpaperItem FromPathOrUrl(string pathOrUrl, string? title = null)
+    {
+        return new WallpaperItem
+        {
+            SourcePathOrUrl = pathOrUrl,
+            Title = !string.IsNullOrWhiteSpace(title)
+                ? title
+                : (pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? pathOrUrl : Path.GetFileName(pathOrUrl)),
+            Type = DetectType(pathOrUrl)
+        };
+    }
+
     public static WallpaperType DetectType(string pathOrUrl)
     {
         if (string.IsNullOrWhiteSpace(pathOrUrl))

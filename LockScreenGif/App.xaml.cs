@@ -108,6 +108,7 @@ public partial class App : Application
                     // Desktop Wallpaper Feature
                     services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService, LockscreenGif.Features.DesktopWallpaper.Services.WallpaperEngineService>();
                     services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService, LockscreenGif.Features.DesktopWallpaper.Services.Library.WallpaperLibraryService>();
+                    services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperTrayService>();
                     services.AddTransient<LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel>();
                     services.AddTransient<LockscreenGif.Features.DesktopWallpaper.Views.DesktopWallpaperPage>();
 
@@ -166,6 +167,40 @@ public partial class App : Application
         {
             GetService<AnalyticsService>().Track(AnalyticsEvent.AppOpened);
             (MainWindow.Content as ShellPage)?.StartPageAnalytics();
+        }
+
+        try
+        {
+            _ = GetService<LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperTrayService>();
+
+            if (Environment.GetCommandLineArgs().Any(a => string.Equals(a, "--autostart", StringComparison.OrdinalIgnoreCase)))
+            {
+                MainWindow.AppWindow.Hide();
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var libService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService>();
+                        var engineService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>();
+                        await libService.InitializeAsync();
+                        var lastEntry = libService.Items.FirstOrDefault(e => e.Id == libService.Settings.LastActiveWallpaperId)
+                                     ?? libService.Items.FirstOrDefault();
+                        if (lastEntry != null)
+                        {
+                            var item = LockscreenGif.Features.DesktopWallpaper.Models.WallpaperItem.FromPathOrUrl(lastEntry.SourcePathOrUrl, lastEntry.Title);
+                            await engineService.ApplyWallpaperAsync(item);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"Failed to autostart desktop wallpaper: {ex.Message}");
+                    }
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn($"Failed to initialize wallpaper tray or autostart: {ex.Message}");
         }
     }
 

@@ -195,7 +195,7 @@ internal static class DesktopAttachHelper
             DesktopNativeMethods.EnumDisplayMonitors(0, 0, (nint hMon, nint hdc, ref DesktopNativeMethods.RECT rc, nint data) =>
             {
                 var mi = new DesktopNativeMethods.MONITORINFOEX();
-                mi.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(DesktopNativeMethods.MONITORINFOEX));
+                mi.cbSize = global::System.Runtime.InteropServices.Marshal.SizeOf(typeof(DesktopNativeMethods.MONITORINFOEX));
                 if (DesktopNativeMethods.GetMonitorInfo(hMon, ref mi))
                 {
                     var isPrimary = (mi.dwFlags & 1) != 0;

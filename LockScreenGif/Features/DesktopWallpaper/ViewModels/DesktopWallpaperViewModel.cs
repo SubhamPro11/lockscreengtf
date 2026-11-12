@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LockscreenGif.Contracts.Services;
 using LockscreenGif.Features.DesktopWallpaper.Models;
 using LockscreenGif.Features.DesktopWallpaper.Services;
 using LockscreenGif.Features.DesktopWallpaper.Services.Library;
+using LockscreenGif.Features.DesktopWallpaper.Services.System;
 using Microsoft.UI.Dispatching;
 
 namespace LockscreenGif.Features.DesktopWallpaper.ViewModels;
@@ -20,6 +22,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 {
     private readonly IWallpaperEngineService _engineService;
     private readonly IWallpaperLibraryService _libraryService;
+    private readonly ILockscreenService _lockscreenService;
     private readonly DispatcherQueue _dispatcherQueue;
 
     private string _statusText = "Stopped";
@@ -71,8 +74,15 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 OnPropertyChanged(nameof(CanStart));
                 OnPropertyChanged(nameof(CanStop));
                 OnPropertyChanged(nameof(CanPauseResume));
+                OnPropertyChanged(nameof(CanApply));
+                OnPropertyChanged(nameof(CanApplyBoth));
                 OnPropertyChanged(nameof(StartButtonVisibility));
                 OnPropertyChanged(nameof(StopButtonVisibility));
+                StartCommand?.NotifyCanExecuteChanged();
+                StopCommand?.NotifyCanExecuteChanged();
+                TogglePauseCommand?.NotifyCanExecuteChanged();
+                ApplyWallpaperCommand?.NotifyCanExecuteChanged();
+                ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
             }
         }
     }
@@ -89,6 +99,40 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     {
         get => _hasError;
         set => SetProperty(ref _hasError, value);
+    }
+
+    private string? _syncNotice;
+    public string? SyncNotice
+    {
+        get => _syncNotice;
+        set => SetProperty(ref _syncNotice, value);
+    }
+
+    private bool _hasSyncNotice;
+    public bool HasSyncNotice
+    {
+        get => _hasSyncNotice;
+        set => SetProperty(ref _hasSyncNotice, value);
+    }
+
+    public bool IsRunAtStartup
+    {
+        get => WallpaperStartupService.IsStartupEnabled();
+        set
+        {
+            WallpaperStartupService.SetStartupEnabled(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsAudioReactiveEnabled
+    {
+        get => _engineService.IsAudioReactiveEnabled;
+        set
+        {
+            _engineService.IsAudioReactiveEnabled = value;
+            OnPropertyChanged();
+        }
     }
 
     private string? _originalWallpaperPath;
@@ -135,7 +179,14 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public string SourceInput
     {
         get => _sourceInput;
-        set => SetProperty(ref _sourceInput, value);
+        set
+        {
+            if (SetProperty(ref _sourceInput, value))
+            {
+                OnPropertyChanged(nameof(CanApplyBoth));
+                ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
+            }
+        }
     }
 
     private string _wallpaperTitle = "No wallpaper selected";
@@ -161,6 +212,9 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             if (SetProperty(ref _isMediaLoaded, value))
             {
                 OnPropertyChanged(nameof(CanApply));
+                OnPropertyChanged(nameof(CanApplyBoth));
+                ApplyWallpaperCommand?.NotifyCanExecuteChanged();
+                ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
             }
         }
     }
@@ -492,6 +546,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public bool CanStop => IsRunning && !IsBusy;
     public bool CanPauseResume => IsRunning && !IsBusy;
     public bool CanApply => IsMediaLoaded && !IsBusy;
+    public bool CanApplyBoth => CanApply && !string.IsNullOrWhiteSpace(SourceInput) && File.Exists(SourceInput) && !IsBusy;
 
     public string PauseResumeButtonText => IsPaused ? "Resume" : "Pause";
     public string PauseResumeGlyph => IsPaused ? "\uE768" : "\uE769";
@@ -506,6 +561,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public IAsyncRelayCommand StopCommand { get; }
     public IAsyncRelayCommand TogglePauseCommand { get; }
     public IAsyncRelayCommand ApplyWallpaperCommand { get; }
+    public IAsyncRelayCommand ApplyBothDesktopAndLockscreenCommand { get; }
     public IRelayCommand RefreshMonitorsCommand { get; }
 
     public IAsyncRelayCommand<WallpaperLibraryEntry> ApplyLibraryEntryCommand { get; }
@@ -513,16 +569,21 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public IAsyncRelayCommand<WallpaperLibraryEntry> ToggleFavoriteCommand { get; }
     public IAsyncRelayCommand RotateNextCommand { get; }
 
-    public DesktopWallpaperViewModel(IWallpaperEngineService engineService, IWallpaperLibraryService libraryService)
+    public DesktopWallpaperViewModel(
+        IWallpaperEngineService engineService,
+        IWallpaperLibraryService libraryService,
+        ILockscreenService lockscreenService)
     {
         _engineService = engineService;
         _libraryService = libraryService;
+        _lockscreenService = lockscreenService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         StartCommand = new AsyncRelayCommand(StartAsync, () => CanStart);
         StopCommand = new AsyncRelayCommand(StopAsync, () => CanStop);
         TogglePauseCommand = new AsyncRelayCommand(TogglePauseAsync, () => CanPauseResume);
         ApplyWallpaperCommand = new AsyncRelayCommand(ApplyWallpaperAsync, () => CanApply);
+        ApplyBothDesktopAndLockscreenCommand = new AsyncRelayCommand(ApplyBothDesktopAndLockscreenAsync, () => CanApplyBoth);
         RefreshMonitorsCommand = new RelayCommand(RefreshMonitors);
 
         ApplyLibraryEntryCommand = new AsyncRelayCommand<WallpaperLibraryEntry>(ApplyLibraryEntryAsync);
@@ -703,10 +764,12 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         StopCommand.NotifyCanExecuteChanged();
         TogglePauseCommand.NotifyCanExecuteChanged();
         ApplyWallpaperCommand.NotifyCanExecuteChanged();
+        ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
 
         OnPropertyChanged(nameof(CanStart));
         OnPropertyChanged(nameof(CanStop));
         OnPropertyChanged(nameof(CanPauseResume));
+        OnPropertyChanged(nameof(CanApplyBoth));
         OnPropertyChanged(nameof(StartButtonVisibility));
         OnPropertyChanged(nameof(StopButtonVisibility));
     }
@@ -821,6 +884,49 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             IsBusy = false;
             RefreshFromEngine();
+        }
+    }
+
+    public async Task ApplyBothDesktopAndLockscreenAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SourceInput) || !File.Exists(SourceInput))
+        {
+            SyncNotice = "Setting lock screen requires a local video or GIF file.";
+            HasSyncNotice = true;
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            SyncNotice = "Applying to Desktop Wallpaper...";
+            HasSyncNotice = true;
+
+            await ApplyWallpaperAsync();
+
+            SyncNotice = "Desktop wallpaper active! Now setting lock screen...";
+            var lockResult = await _lockscreenService.ApplyAsync(SourceInput, false);
+
+            if (lockResult.Success)
+            {
+                SyncNotice = "Success: applied as both Desktop Wallpaper and Lock Screen!";
+                HasSyncNotice = true;
+            }
+            else
+            {
+                SyncNotice = $"Desktop wallpaper active. Lock screen apply returned: {lockResult.Error ?? "Failed to set lock screen."}";
+                HasSyncNotice = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to apply as both desktop and lock screen", ex);
+            SyncNotice = $"Desktop wallpaper applied, but lock screen failed: {ex.Message}";
+            HasSyncNotice = true;
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
