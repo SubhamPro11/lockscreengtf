@@ -77,9 +77,23 @@ public sealed class DiagnosticsViewModel : ObservableObject
     public bool IsRunning => _service.IsRunning;
     public bool CanConfigure => !_busy && !_stopping && !IsRunning;
     public bool CanStart => CanConfigure && !_service.IsVerificationRunning && (UseReference || _lockscreen.CurrentImage is not null);
+    public string StartDisabledReason =>
+        CanStart ? string.Empty
+        : IsRunning ? "A diagnostic test is already in progress."
+        : _service.IsVerificationRunning ? "Lock-screen verification is running."
+        : !UseReference && _lockscreen.CurrentImage is null
+            ? "Choose an animation first on the Lockscreen page, or check the reference animation above."
+        : "The test cannot be started right now.";
+    public Visibility StartDisabledVisibility => CanStart ? Visibility.Collapsed : Visibility.Visible;
     public bool CanStop => IsRunning && !_stopping;
     public bool CanLock => !_busy && !_stopping && IsRunning && _session?.Phase == "Waiting for lock";
     public bool CanExport => CanConfigure && _session is not null;
+    public string ExportDisabledReason =>
+        CanExport ? string.Empty
+        : IsRunning ? "Wait for the active test to complete before exporting."
+        : _session is null ? "Run a test first to generate diagnostic findings."
+        : "A report cannot be exported right now.";
+    public Visibility ExportDisabledVisibility => CanExport ? Visibility.Collapsed : Visibility.Visible;
     public Visibility SessionVisibility => _session is null ? Visibility.Collapsed : Visibility.Visible;
     public Visibility ResultVisibility => _session is not null && !IsRunning ? Visibility.Visible : Visibility.Collapsed;
     public Visibility RunningVisibility => IsRunning ? Visibility.Visible : Visibility.Collapsed;
@@ -338,9 +352,13 @@ public sealed class DiagnosticsViewModel : ObservableObject
                 nameof(UseWindowsApi),
                 nameof(CanConfigure),
                 nameof(CanStart),
+                nameof(StartDisabledReason),
+                nameof(StartDisabledVisibility),
                 nameof(CanStop),
                 nameof(CanLock),
                 nameof(CanExport),
+                nameof(ExportDisabledReason),
+                nameof(ExportDisabledVisibility),
                 nameof(SessionVisibility),
                 nameof(ResultVisibility),
                 nameof(RunningVisibility),

@@ -11,7 +11,8 @@ namespace LockscreenGif.Views;
 public sealed partial class DiagnosticsPage : Page
 {
     public DiagnosticsViewModel ViewModel { get; }
-    public string AppVersion => LockscreenGif.Helpers.BuildInfo.DisplayVersion;
+    public string AppVersion => LockscreenGif.Helpers.BuildInfo.ShortDisplayVersion;
+    public string FullVersion => LockscreenGif.Helpers.BuildInfo.DisplayVersion;
     private bool _exportPickerOpen;
     private DiagnosticLockDialog? _lockCountdown;
 

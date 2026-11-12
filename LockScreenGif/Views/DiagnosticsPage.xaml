@@ -89,10 +89,14 @@
                         </StackPanel>
                         <HyperlinkButton Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                          Click="ChooseSource_Click"
-                                         Content="Change on Lockscreen page"
                                          Style="{StaticResource GlassHyperlinkButtonStyle}"
                                          AutomationProperties.Name="Select source animation on Lockscreen page"
-                                         IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
+                                         IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Change on Lockscreen page" />
+                                <FontIcon Glyph="&#xE76C;" FontSize="11" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </HyperlinkButton>
                     </Grid>
 
                     <CheckBox Content="Use the bundled reference animation (simple loop)"
@@ -150,12 +154,20 @@
                                Text="Starting a test may ask for administrator permission once to trace file operations. Keep this app open during the test."
                                TextWrapping="Wrap" FontSize="12" />
 
-                    <Button HorizontalAlignment="Stretch"
-                            Click="Start_Click"
-                            Content="Start test and apply"
-                            AutomationProperties.Name="Start diagnostic test and apply animation"
-                            IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                            Style="{StaticResource GlassPrimaryButtonStyle}" />
+                    <StackPanel Spacing="4">
+                        <Button HorizontalAlignment="Stretch"
+                                Click="Start_Click"
+                                Content="Start test and apply"
+                                AutomationProperties.Name="Start diagnostic test and apply animation"
+                                IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                Style="{StaticResource GlassPrimaryButtonStyle}" />
+                        <TextBlock HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   Text="{x:Bind ViewModel.StartDisabledReason, Mode=OneWay}"
+                                   Visibility="{x:Bind ViewModel.StartDisabledVisibility, Mode=OneWay}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
 
@@ -237,7 +249,8 @@
                         </StackPanel>
                         <TextBlock Grid.Column="1" FontSize="11" FontFamily="{StaticResource GlassFontMonospace}"
                                    Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center"
-                                   Text="{x:Bind AppVersion}" />
+                                   Text="{x:Bind AppVersion}"
+                                   ToolTipService.ToolTip="{x:Bind FullVersion}" />
                     </Grid>
 
                     <Grid ColumnSpacing="12" Margin="0,2,0,4">
@@ -265,13 +278,21 @@
                         </Border>
                     </Grid>
 
-                    <Button HorizontalAlignment="Stretch"
-                            Click="Export_Click"
-                            Content="Export Sanitized Report (ZIP)…"
-                            IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
-                            Style="{StaticResource GlassPrimaryButtonStyle}"
-                            AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
-                            ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
+                    <StackPanel Spacing="4">
+                        <Button HorizontalAlignment="Stretch"
+                                Click="Export_Click"
+                                Content="Export Sanitized Report (ZIP)…"
+                                IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
+                                Style="{StaticResource GlassPrimaryButtonStyle}"
+                                AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
+                                ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
+                        <TextBlock HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   Text="{x:Bind ViewModel.ExportDisabledReason, Mode=OneWay}"
+                                   Visibility="{x:Bind ViewModel.ExportDisabledVisibility, Mode=OneWay}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </StackPanel>
