@@ -9,12 +9,17 @@
     <x:Double x:Key="AppSpacingXL">32</x:Double>
 
     <!-- Semantic Padding and Margins -->
+    <Thickness x:Key="AppPageMargin">24,20,24,24</Thickness>
+    <x:Double x:Key="AppPageMaxWidth">1000</x:Double>
+    <x:Double x:Key="AppCardSpacing">16</x:Double>
     <Thickness x:Key="AppPaddingCard">16,16,16,16</Thickness>
-    <Thickness x:Key="AppPaddingCardElevated">20,20,20,20</Thickness>
+    <Thickness x:Key="AppPaddingCardElevated">16,16,16,16</Thickness>
     <Thickness x:Key="AppPaddingSection">24,20,24,24</Thickness>
     <Thickness x:Key="AppPaddingDialog">24,20,24,20</Thickness>
     <Thickness x:Key="AppPaddingButton">16,6,16,6</Thickness>
     <Thickness x:Key="AppPaddingPill">8,3,8,3</Thickness>
+    <Thickness x:Key="AppSettingRowPadding">0,6,0,6</Thickness>
+    <x:Double x:Key="AppSettingControlColumnWidth">240</x:Double>
 
     <!-- Backward-compatible Thickness definitions -->
     <Thickness x:Key="LargeTopMargin">0,32,0,0</Thickness>

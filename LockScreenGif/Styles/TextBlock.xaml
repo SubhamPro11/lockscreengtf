@@ -1,11 +1,33 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="PageTitleStyle" TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontWeight" Value="SemiLight" />
-        <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="{StaticResource AppFontSizeTitle}" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="AppPageTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PageTitleStyle}" />
+
+    <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="{StaticResource AppFontSizeSubtitle}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="AppSectionTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource SectionTitleStyle}" />
+
+    <Style x:Key="SettingTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="SettingDescriptionStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
     <Style x:Key="BodyTextStyle" TargetType="TextBlock">

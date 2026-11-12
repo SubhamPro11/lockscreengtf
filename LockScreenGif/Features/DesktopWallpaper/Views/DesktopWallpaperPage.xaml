@@ -9,14 +9,12 @@
     mc:Ignorable="d">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Spacing="{StaticResource AppSpacingL}" Margin="24,20,24,24" MaxWidth="920" HorizontalAlignment="Left">
+        <StackPanel HorizontalAlignment="Center" MaxWidth="{StaticResource AppPageMaxWidth}" Margin="{StaticResource AppPageMargin}" Spacing="{StaticResource AppCardSpacing}">
 
             <!-- Page Header -->
             <StackPanel Spacing="{StaticResource AppSpacingXXS}">
                 <TextBlock Text="Desktop Wallpaper"
-                           Style="{ThemeResource TitleTextBlockStyle}"
-                           FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                           Style="{StaticResource PageTitleStyle}" />
                 <TextBlock Text="Display live animated videos, interactive web pages, or images behind your Windows 11 desktop icons."
                            Style="{ThemeResource BodyTextBlockStyle}"
                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
@@ -189,9 +187,13 @@
                                      AutomationProperties.Name="Search wallpaper library" />
 
                             <ToggleButton IsChecked="{x:Bind ViewModel.FilterFavoritesOnly, Mode=TwoWay}"
-                                          Content="★ Favorites"
                                           Style="{StaticResource GlassToggleButtonStyle}"
-                                          AutomationProperties.Name="Filter favorites only" />
+                                          AutomationProperties.Name="Filter favorites only">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE734;" FontSize="13" Foreground="{ThemeResource GlassAccentBrassBrush}" />
+                                    <TextBlock Text="Favorites" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ToggleButton>
                         </StackPanel>
                     </Grid>
 
@@ -370,8 +372,7 @@
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
                             <ToggleSwitch IsOn="{x:Bind ViewModel.IsMuted, Mode=TwoWay}"
-                                          OnContent="Muted"
-                                          OffContent="Unmuted"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
                                           AutomationProperties.Name="Mute wallpaper audio" />
 
                             <Slider Value="{x:Bind ViewModel.Volume, Mode=TwoWay}"
@@ -411,8 +412,7 @@
                             </ComboBox>
 
                             <ToggleSwitch IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
-                                          OnContent="Loop"
-                                          OffContent="Once"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
                                           AutomationProperties.Name="Loop playback" />
                         </StackPanel>
                     </Grid>

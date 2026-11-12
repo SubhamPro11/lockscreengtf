@@ -43,66 +43,56 @@
     </Page.Resources>
 
     <Grid>
-        <ContentControl x:Name="PageContent" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <Grid MaxWidth="920" Margin="20,14,20,20" RowSpacing="14">
-                <Grid.RowDefinitions>
-                    <!-- Stepper & Stage Header -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Scrollable Stage Content -->
-                    <RowDefinition Height="*" />
-                    <!-- Sticky Action Bar -->
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <ScrollViewer x:Name="StageScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ContentControl x:Name="PageContent" HorizontalContentAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Center" MaxWidth="{StaticResource AppPageMaxWidth}" Margin="{StaticResource AppPageMargin}" Spacing="{StaticResource AppCardSpacing}">
 
-                <!-- Stage Header and Step Navigation -->
-                <StackPanel Grid.Row="0" Spacing="8">
-                    <StackPanel Orientation="Horizontal" Spacing="8" AutomationProperties.Name="Animation setup steps">
-                        <Grid>
-                            <Button x:Name="ChooseStepButton" Content="1 · Choose" Click="ChooseStep_Click"
-                                    Style="{StaticResource GlassSubtleButtonStyle}"
-                                    AutomationProperties.Name="Choose source step" Visibility="Collapsed" IsEnabled="False" />
-                            <Border x:Name="ChooseStepCurrent" Style="{StaticResource CurrentStepStyle}">
-                                <TextBlock x:Name="ChooseStepCurrentText" Text="1 · Choose" Style="{StaticResource CurrentStepTextStyle}"
-                                           AutomationProperties.Name="Choose, current step" />
+                    <!-- Stage Header and Step Navigation -->
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8" AutomationProperties.Name="Animation setup steps">
+                            <Grid>
+                                <Button x:Name="ChooseStepButton" Content="1 · Choose" Click="ChooseStep_Click"
+                                        Style="{StaticResource GlassSubtleButtonStyle}"
+                                        AutomationProperties.Name="Choose source step" Visibility="Collapsed" IsEnabled="False" />
+                                <Border x:Name="ChooseStepCurrent" Style="{StaticResource CurrentStepStyle}">
+                                    <TextBlock x:Name="ChooseStepCurrentText" Text="1 · Choose" Style="{StaticResource CurrentStepTextStyle}"
+                                               AutomationProperties.Name="Choose, current step" />
+                                </Border>
+                            </Grid>
+                            <Grid x:Name="EditStepItem" Visibility="Collapsed">
+                                <Button x:Name="EditStepButton" Content="2 · Edit" Click="EditStep_Click"
+                                        Style="{StaticResource GlassSubtleButtonStyle}"
+                                        AutomationProperties.Name="Edit video clip step" IsEnabled="False" />
+                                <Border x:Name="EditStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
+                                    <TextBlock x:Name="EditStepCurrentText" Text="2 · Edit" Style="{StaticResource CurrentStepTextStyle}"
+                                               AutomationProperties.Name="Edit, current step" />
+                                </Border>
+                            </Grid>
+                            <Grid>
+                                <Button x:Name="SetStepButton" Content="Set" Click="SetStep_Click"
+                                        Style="{StaticResource GlassSubtleButtonStyle}"
+                                        AutomationProperties.Name="Set lock screen step" IsEnabled="False" />
+                                <Border x:Name="SetStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
+                                    <TextBlock x:Name="SetStepCurrentText" Style="{StaticResource CurrentStepTextStyle}"
+                                               AutomationProperties.Name="Set, current step" />
+                                </Border>
+                            </Grid>
+                            <Border x:Name="AppliedStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
+                                <TextBlock Text="✓ Applied" Style="{StaticResource CurrentStepTextStyle}"
+                                           AutomationProperties.Name="Applied, current step" />
                             </Border>
-                        </Grid>
-                        <Grid x:Name="EditStepItem" Visibility="Collapsed">
-                            <Button x:Name="EditStepButton" Content="2 · Edit" Click="EditStep_Click"
-                                    Style="{StaticResource GlassSubtleButtonStyle}"
-                                    AutomationProperties.Name="Edit video clip step" IsEnabled="False" />
-                            <Border x:Name="EditStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
-                                <TextBlock x:Name="EditStepCurrentText" Text="2 · Edit" Style="{StaticResource CurrentStepTextStyle}"
-                                           AutomationProperties.Name="Edit, current step" />
-                            </Border>
-                        </Grid>
-                        <Grid>
-                            <Button x:Name="SetStepButton" Content="Set" Click="SetStep_Click"
-                                    Style="{StaticResource GlassSubtleButtonStyle}"
-                                    AutomationProperties.Name="Set lock screen step" IsEnabled="False" />
-                            <Border x:Name="SetStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
-                                <TextBlock x:Name="SetStepCurrentText" Style="{StaticResource CurrentStepTextStyle}"
-                                           AutomationProperties.Name="Set, current step" />
-                            </Border>
-                        </Grid>
-                        <Border x:Name="AppliedStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
-                            <TextBlock Text="✓ Applied" Style="{StaticResource CurrentStepTextStyle}"
-                                       AutomationProperties.Name="Applied, current step" />
-                        </Border>
+                        </StackPanel>
+
+                        <ContentControl x:Name="StageFocusTarget" IsTabStop="True" HorizontalContentAlignment="Stretch">
+                            <TextBlock x:Name="StageHeading" Text="Choose your animation" Style="{StaticResource PageTitleStyle}"
+                                       TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level1" />
+                        </ContentControl>
+                        <TextBlock x:Name="StageDescription" Text="Pick a video or an existing GIF to play on your lock screen."
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="13" />
                     </StackPanel>
 
-                    <ContentControl x:Name="StageFocusTarget" IsTabStop="True" HorizontalContentAlignment="Stretch">
-                        <TextBlock x:Name="StageHeading" Text="Choose your animation" Style="{ThemeResource TitleTextBlockStyle}"
-                                   Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                                   TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level1" />
-                    </ContentControl>
-                    <TextBlock x:Name="StageDescription" Text="Pick a video or an existing GIF to play on your lock screen."
-                               Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="13" />
-                </StackPanel>
-
-                <!-- Scrollable Main Stage Content -->
-                <ScrollViewer x:Name="StageScrollViewer" Grid.Row="1" IsTabStop="False" HorizontalContentAlignment="Stretch"
-                              HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Spacing="16" Padding="0,0,4,8">
+                    <!-- Main Stage Content -->
+                    <StackPanel Spacing="16">
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition IsStaggeringEnabled="False" />
@@ -614,10 +604,9 @@
                                     Visibility="Collapsed" HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>
-                </ScrollViewer>
 
-                <!-- Bottom Sticky Action & Progress Bar -->
-                <StackPanel Grid.Row="2" Spacing="10">
+                    <!-- Bottom Action & Progress Bar -->
+                    <StackPanel Spacing="10">
                     <StackPanel x:Name="OperationProgressPanel" Spacing="8" Visibility="Collapsed">
                         <Grid ColumnSpacing="10">
                             <Grid.ColumnDefinitions>
@@ -718,8 +707,9 @@
                         </Button>
                     </Grid>
                 </StackPanel>
-            </Grid>
+            </StackPanel>
         </ContentControl>
+    </ScrollViewer>
 
         <!-- Outside ScrollView: Translucent Video Loading Scrim & Modal Dialog -->
         <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#80000000"

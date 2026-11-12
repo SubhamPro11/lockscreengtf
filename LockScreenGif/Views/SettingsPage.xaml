@@ -5,32 +5,28 @@
     xmlns:helpers="using:LockscreenGif.Helpers">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="32,24,32,48" Spacing="24" MaxWidth="760" HorizontalAlignment="Left">
+        <StackPanel HorizontalAlignment="Center" MaxWidth="{StaticResource AppPageMaxWidth}" Margin="{StaticResource AppPageMargin}" Spacing="{StaticResource AppCardSpacing}">
             <!-- Page Title -->
-            <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}"
-                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+            <TextBlock Text="Settings" Style="{StaticResource PageTitleStyle}" />
 
             <!-- Lockscreen Section -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Lockscreen" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <Border Style="{StaticResource GlassCardStyle}" Padding="20">
+                <TextBlock Text="Lockscreen" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
-                        <Grid ColumnSpacing="16">
+                        <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Enable Windows lock-screen API" FontWeight="SemiBold"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="13" />
-                                <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12"
-                                           Text="Windows sets the lock-screen image before the app applies the GIF. Off by default. Saved between restarts." />
+                                <TextBlock Text="Enable Windows lock-screen API" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Windows sets the lock-screen image before the app applies the GIF. Off by default. Saved between restarts."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
                             </StackPanel>
-                            <ToggleSwitch x:Name="WindowsApiToggle" Grid.Column="1" VerticalAlignment="Center"
+                            <ToggleSwitch x:Name="WindowsApiToggle" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                           Style="{StaticResource GlassToggleSwitchStyle}"
-                                          IsOn="{x:Bind ViewModel.Preferences.UseWindowsApi, Mode=TwoWay}"
-                                          OnContent="Enabled" OffContent="Disabled" />
+                                          IsOn="{x:Bind ViewModel.Preferences.UseWindowsApi, Mode=TwoWay}" />
                         </Grid>
                         <InfoBar IsOpen="{x:Bind ViewModel.Preferences.HasSaveError, Mode=OneWay}"
                                  IsClosable="False" Severity="Warning" Title="Could not save preference"
@@ -41,22 +37,20 @@
 
             <!-- Logs Section -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Logs" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <Border Style="{StaticResource GlassCardStyle}" Padding="20">
+                <TextBlock Text="Logs" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
-                        <Grid ColumnSpacing="16">
+                        <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Application logs" FontWeight="SemiBold"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="13" />
-                                <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12"
-                                           Text="Open the log folder in File Explorer or export a ZIP copy for troubleshooting." />
+                                <TextBlock Text="Application logs" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Open the log folder in File Explorer or export a ZIP copy for troubleshooting."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <Button x:Name="OpenLogFolderButton" Content="Open folder" Click="OpenLogFolder_Click"
                                         Style="{StaticResource GlassButtonStyle}"
                                         AutomationProperties.Name="Open application log folder in File Explorer" />
@@ -76,24 +70,22 @@
 
             <!-- Analytics Section -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Analytics" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <Border Style="{StaticResource GlassCardStyle}" Padding="20">
+                <TextBlock Text="Analytics" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
-                        <Grid ColumnSpacing="16">
+                        <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Share anonymous usage analytics" FontWeight="SemiBold"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="13" />
-                                <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12"
-                                           Text="Shares feature usage and error outcomes with PostHog in the EU to help improve LockscreenGif. Personal paths, media, and logs are never sent." />
+                                <TextBlock Text="Share anonymous usage analytics" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Shares feature usage and error outcomes with PostHog in the EU to help improve LockscreenGif. Personal paths, media, and logs are never sent."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
                             </StackPanel>
-                            <ToggleSwitch x:Name="AnalyticsToggle" Grid.Column="1" VerticalAlignment="Center"
+                            <ToggleSwitch x:Name="AnalyticsToggle" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                           Style="{StaticResource GlassToggleSwitchStyle}"
-                                          OnContent="Enabled" OffContent="Disabled" Toggled="AnalyticsToggle_Toggled" />
+                                          Toggled="AnalyticsToggle_Toggled" />
                         </Grid>
                         <InfoBar x:Name="AnalyticsStatus" IsOpen="False" IsClosable="False" Severity="Informational" />
                         <InfoBar x:Name="AnalyticsSettingsError" IsOpen="False" Severity="Warning"
@@ -105,16 +97,14 @@
 
             <!-- Advanced Windows Feature Settings -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Advanced system settings" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                <TextBlock Text="Advanced system settings" Style="{StaticResource SectionTitleStyle}" />
 
                 <!-- Feature ID Card -->
-                <Border Style="{StaticResource GlassCardStyle}" Padding="20">
+                <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
-                        <TextBlock Text="Lock-screen feature ID" FontWeight="SemiBold"
-                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="13" />
+                        <TextBlock Text="Lock-screen feature ID" Style="{StaticResource SettingTitleStyle}" />
                         <TextBlock Text="Controls which Windows 11 internal feature is monitored. Only change if recommended for your Windows build."
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="12" />
+                                   Style="{StaticResource SettingDescriptionStyle}" />
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <TextBox x:Name="FeatureIdInput" Header="Feature ID" InputScope="Number"
                                      Style="{StaticResource GlassTextBoxStyle}"
@@ -132,10 +122,9 @@
                 </Border>
 
                 <!-- Re-enable Windows Feature Card -->
-                <Border Style="{StaticResource GlassCardStyle}" Padding="20">
+                <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
-                        <TextBlock Text="Windows lock-screen image feature" FontWeight="SemiBold"
-                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="13" />
+                        <TextBlock Text="Windows lock-screen image feature" Style="{StaticResource SettingTitleStyle}" />
                         <InfoBar IsOpen="True" IsClosable="False" Severity="Warning"
                                  Title="Notice"
                                  Message="Enabling this feature will break animated GIF lock screens on Windows 11 25H2 or later. Keep disabled for animations to play." />
@@ -152,28 +141,23 @@
 
             <!-- Destructive Action: Remove Lockscreen -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Reset lock screen" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <Border Padding="20"
-                        Background="{ThemeResource GlassSurfaceBaseBrush}"
-                        BorderBrush="{ThemeResource GlassStatusAlertBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource AppCornerRadiusCard}">
-                    <Grid ColumnSpacing="16">
+                <TextBlock Text="Reset lock screen" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}"
+                        BorderBrush="{ThemeResource GlassStatusAlertBrush}">
+                    <Grid ColumnSpacing="16" MinHeight="40">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
-                            <TextBlock FontWeight="SemiBold" Text="Remove Animated Lockscreen"
-                                       Foreground="{ThemeResource GlassStatusAlertBrush}" FontSize="14" />
-                            <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                       Text="Clears all animated GIF files from the Windows cache and restores your standard Windows static lock screen."
-                                       TextWrapping="Wrap" FontSize="12" />
+                            <TextBlock Text="Remove Animated Lockscreen" Style="{StaticResource SettingTitleStyle}"
+                                       Foreground="{ThemeResource GlassStatusAlertBrush}" />
+                            <TextBlock Text="Clears all animated GIF files from the Windows cache and restores your standard Windows static lock screen."
+                                       Style="{StaticResource SettingDescriptionStyle}" />
                         </StackPanel>
-                        <Button x:Name="RemoveLockscreenButton" Grid.Column="1" VerticalAlignment="Center"
+                        <Button x:Name="RemoveLockscreenButton" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Click="RemoveLockscreen_Click" Content="Remove"
-                                Style="{StaticResource GlassButtonStyle}"
+                                Style="{StaticResource GlassDestructiveButtonStyle}"
                                 AutomationProperties.Name="Remove animated lock screen from Windows" />
                     </Grid>
                 </Border>
@@ -182,9 +166,8 @@
 
             <!-- About Section -->
             <StackPanel Spacing="8">
-                <TextBlock Text="About" Style="{StaticResource SubtitleTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <Border Style="{StaticResource GlassCardElevatedStyle}" Padding="20">
+                <TextBlock Text="About" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardElevatedStyle}">
                     <StackPanel Spacing="16">
                         <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
                             <Image Source="ms-appx:///Assets/WindowIcon.png" Width="40" Height="40" VerticalAlignment="Center" />
@@ -220,20 +203,17 @@
 
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <HyperlinkButton Content="Website"
-                                             Padding="0"
-                                             Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                             Style="{StaticResource GlassHyperlinkButtonStyle}"
                                              NavigateUri="https://lockscreen-gtf-web.morbius.workers.dev"
                                              AutomationProperties.Name="Visit LockscreenGif website" />
                             <TextBlock Text="·" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
                             <HyperlinkButton Content="GitHub Repository"
-                                             Padding="0"
-                                             Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                             Style="{StaticResource GlassHyperlinkButtonStyle}"
                                              NavigateUri="https://github.com/SubhamPro11/lockscreengtf"
                                              AutomationProperties.Name="View source code on GitHub" />
                             <TextBlock Text="·" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
                             <HyperlinkButton Content="Report an Issue"
-                                             Padding="0"
-                                             Foreground="{ThemeResource GlassAccentBrassBrush}"
+                                             Style="{StaticResource GlassHyperlinkButtonStyle}"
                                              NavigateUri="https://github.com/SubhamPro11/lockscreengtf/issues"
                                              AutomationProperties.Name="Report an issue on GitHub" />
                         </StackPanel>
