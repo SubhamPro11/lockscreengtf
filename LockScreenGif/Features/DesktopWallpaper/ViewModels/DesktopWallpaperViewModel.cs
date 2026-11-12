@@ -270,10 +270,13 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             if (SetProperty(ref _volume, value))
             {
+                OnPropertyChanged(nameof(VolumeText));
                 _ = _engineService.SetVolumeAsync(value / 100.0);
             }
         }
     }
+
+    public string VolumeText => $"{(int)Math.Round(Volume)}%";
 
     private bool _isMuted = true;
     public bool IsMuted
@@ -547,7 +550,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
     public ObservableCollection<DisplayMonitor> Monitors { get; } = [];
 
-    public bool CanStart => !IsRunning && !IsBusy;
+    public bool CanStart => !IsRunning && !IsBusy && (IsMediaLoaded || _libraryService.Items.Count > 0);
     public bool CanStop => IsRunning && !IsBusy;
     public bool CanPauseResume => IsRunning && !IsBusy;
     public bool CanApply => IsMediaLoaded && !IsBusy;
@@ -555,6 +558,46 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
     public string PauseResumeButtonText => IsPaused ? "Resume" : "Pause";
     public string PauseResumeGlyph => IsPaused ? "\uE768" : "\uE769";
+
+    public string NowPlayingTitle =>
+        IsRunning
+            ? (
+                string.IsNullOrWhiteSpace(WallpaperTitle) || WallpaperTitle == "No wallpaper selected"
+                    ? "Desktop Wallpaper"
+                    : WallpaperTitle
+            )
+            : (IsMediaLoaded ? $"{WallpaperTitle} (Ready)" : "Nothing playing");
+
+    public string StateBadgeText => IsRunning ? (IsPaused ? "Paused" : "Playing") : "Stopped";
+
+    public string CpuTextWithLabel => $"CPU: {CpuUsageText}";
+    public string MemoryTextWithLabel => $"RAM: {MemoryUsageText}";
+
+    public Microsoft.UI.Xaml.Visibility ResourceUsageVisibility =>
+        IsRunning ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility AutoPausedVisibility =>
+        IsAutoPaused && !string.IsNullOrWhiteSpace(AutoPausedReasonText)
+            ? Microsoft.UI.Xaml.Visibility.Visible
+            : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public bool HasActiveWallpaper => IsRunning || IsMediaLoaded;
+
+    public bool HasMultipleMonitors => Monitors.Count > 1;
+
+    public bool IsMonitorPickerEnabled => LayoutModeIndex != 0 && Monitors.Count > 1;
+
+    public Microsoft.UI.Xaml.Visibility SingleDisplayNoticeVisibility =>
+        Monitors.Count <= 1 ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility MultiDisplayControlsVisibility =>
+        Monitors.Count > 1 ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility MediaSelectedVisibility =>
+        IsMediaLoaded ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility MediaPlaceholderVisibility =>
+        IsMediaLoaded ? Microsoft.UI.Xaml.Visibility.Collapsed : Microsoft.UI.Xaml.Visibility.Visible;
 
     public Microsoft.UI.Xaml.Visibility StartButtonVisibility =>
         IsRunning ? Microsoft.UI.Xaml.Visibility.Collapsed : Microsoft.UI.Xaml.Visibility.Visible;
@@ -792,6 +835,17 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         OnPropertyChanged(nameof(CanApplyBoth));
         OnPropertyChanged(nameof(StartButtonVisibility));
         OnPropertyChanged(nameof(StopButtonVisibility));
+        OnPropertyChanged(nameof(NowPlayingTitle));
+        OnPropertyChanged(nameof(StateBadgeText));
+        OnPropertyChanged(nameof(ResourceUsageVisibility));
+        OnPropertyChanged(nameof(AutoPausedVisibility));
+        OnPropertyChanged(nameof(HasActiveWallpaper));
+        OnPropertyChanged(nameof(IsMonitorPickerEnabled));
+        OnPropertyChanged(nameof(HasMultipleMonitors));
+        OnPropertyChanged(nameof(SingleDisplayNoticeVisibility));
+        OnPropertyChanged(nameof(MultiDisplayControlsVisibility));
+        OnPropertyChanged(nameof(MediaSelectedVisibility));
+        OnPropertyChanged(nameof(MediaPlaceholderVisibility));
     }
 
     public void LoadSource(string pathOrUrl)
@@ -996,23 +1050,38 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             return;
         }
 
-        IsBusy = true;
-        try
+        if (_engineService.CurrentWallpaper != null)
         {
-            UpdateEngineLayoutMode();
-            _engineService.SelectedMonitor = SelectedMonitor;
-            await _engineService.StartAsync();
+            IsBusy = true;
+            try
+            {
+                UpdateEngineLayoutMode();
+                _engineService.SelectedMonitor = SelectedMonitor;
+                await _engineService.StartAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                HasError = true;
+            }
+            finally
+            {
+                IsBusy = false;
+                RefreshFromEngine();
+            }
+            return;
         }
-        catch (Exception ex)
+
+        var last = _libraryService.Items.LastOrDefault();
+        if (last != null)
         {
-            ErrorMessage = ex.Message;
-            HasError = true;
+            LoadSource(last.SourcePathOrUrl);
+            await ApplyWallpaperAsync();
+            return;
         }
-        finally
-        {
-            IsBusy = false;
-            RefreshFromEngine();
-        }
+
+        ErrorMessage = "Choose or drag a video, GIF, or web wallpaper first.";
+        HasError = true;
     }
 
     private async Task StopAsync()

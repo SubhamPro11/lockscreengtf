@@ -12,12 +12,10 @@
         <StackPanel HorizontalAlignment="Center" MaxWidth="{StaticResource AppPageMaxWidth}" Margin="{StaticResource AppPageMargin}" Spacing="{StaticResource AppCardSpacing}">
 
             <!-- Page Header -->
-            <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                <TextBlock Text="Desktop Wallpaper"
-                           Style="{StaticResource PageTitleStyle}" />
+            <StackPanel Spacing="4">
+                <TextBlock Text="Desktop Wallpaper" Style="{StaticResource PageTitleStyle}" />
                 <TextBlock Text="Display live animated videos, interactive web pages, or images behind your Windows 11 desktop icons."
-                           Style="{ThemeResource BodyTextBlockStyle}"
-                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                           FontSize="14" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
             </StackPanel>
 
             <!-- Error InfoBar -->
@@ -40,850 +38,703 @@
                          Visibility="{x:Bind ViewModel.BusyVisibility, Mode=OneWay}"
                          HorizontalAlignment="Stretch" />
 
-            <!-- Wallpaper Selection & Drop Target Card -->
-            <Border x:Name="DropTargetCard"
-                    Style="{StaticResource GlassCardStyle}"
-                    AllowDrop="True"
-                    DragOver="DropTarget_DragOver"
-                    DragLeave="DropTarget_DragLeave"
-                    Drop="DropTarget_Drop">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+            <!-- 1. NOW PLAYING TOP BAR -->
+            <Border Style="{StaticResource GlassCardElevatedStyle}">
+                <Grid ColumnSpacing="16" MinHeight="44">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Select Wallpaper Media"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Drag and drop a file here, choose from disk, or load a web URL."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                            <Button x:Name="ChooseFileButton"
-                                    Content="Choose File"
-                                    Style="{StaticResource GlassButtonStyle}"
-                                    Click="ChooseFile_Click"
-                                    AutomationProperties.Name="Choose wallpaper media file">
-                                <Button.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="O" Modifiers="Control" />
-                                </Button.KeyboardAccelerators>
-                            </Button>
-
-                            <Button x:Name="ApplyWallpaperButton"
-                                    Content="Apply to Desktop"
-                                    Style="{StaticResource GlassPrimaryButtonStyle}"
-                                    Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
-                                    IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
-                                    AutomationProperties.Name="Apply selected wallpaper to desktop" />
-
-                            <Button x:Name="ApplyBothButton"
-                                    Content="Apply to Both"
-                                    ToolTipService.ToolTip="Apply this video/GIF to both Desktop Wallpaper and Windows Lock Screen"
-                                    Style="{StaticResource GlassButtonStyle}"
-                                    Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
-                                    IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
-                                    AutomationProperties.Name="Apply selected wallpaper as both desktop wallpaper and lock screen" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Web URL input row -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingS}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBox x:Name="UrlInputBox"
-                                 PlaceholderText="Enter a web wallpaper URL (e.g. https://... or http://localhost:...)"
-                                 Text="{x:Bind ViewModel.SourceInput, Mode=TwoWay}"
-                                 Style="{StaticResource GlassTextBoxStyle}"
-                                 AutomationProperties.Name="Web wallpaper URL input" />
-
-                        <Button Grid.Column="1"
-                                Content="Load URL"
-                                Style="{StaticResource GlassButtonStyle}"
-                                Click="LoadUrl_Click"
-                                AutomationProperties.Name="Load entered web wallpaper URL" />
-                    </Grid>
-
-                    <!-- Selected Media Info Row -->
-                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
-                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                            BorderThickness="1"
-                            CornerRadius="{StaticResource AppCornerRadiusControl}"
-                            Padding="12,8">
-                        <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <FontIcon Glyph="&#xE8B9;"
-                                      FontSize="{StaticResource AppFontSizeSubtitle}"
-                                      Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                      VerticalAlignment="Center" />
-
-                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind ViewModel.WallpaperTitle, Mode=OneWay}"
-                                           Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                                           TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{x:Bind ViewModel.SourceInput, Mode=OneWay, TargetNullValue='No file or URL selected yet.'}"
-                                           Style="{ThemeResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                           TextTrimming="CharacterEllipsis" />
-                            </StackPanel>
-
-                            <Border Grid.Column="2"
-                                    Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                    <StackPanel Spacing="3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ViewModel.NowPlayingTitle, Mode=OneWay}"
+                                       Style="{StaticResource SectionTitleStyle}"
+                                       TextTrimming="CharacterEllipsis" />
+                            <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
                                     BorderBrush="{ThemeResource GlassBorderRimBrush}"
                                     BorderThickness="1"
                                     CornerRadius="{StaticResource AppCornerRadiusControl}"
-                                    Padding="8,2"
+                                    Padding="6,2"
                                     VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind ViewModel.WallpaperTypeDescription, Mode=OneWay}"
-                                           FontSize="{StaticResource AppFontSizeCaption}"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            </Border>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- Wallpaper Library & Playlists Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Wallpaper Library"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Manage your saved wallpapers, favorites, and automatic rotation playlists."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <!-- Search & Filter Controls -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                            <TextBox x:Name="SearchBox"
-                                     PlaceholderText="Search wallpapers…"
-                                     Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}"
-                                     Width="200"
-                                     Style="{StaticResource GlassTextBoxStyle}"
-                                     AutomationProperties.Name="Search wallpaper library" />
-
-                            <ToggleButton IsChecked="{x:Bind ViewModel.FilterFavoritesOnly, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleButtonStyle}"
-                                          AutomationProperties.Name="Filter favorites only">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE734;" FontSize="13" Foreground="{ThemeResource GlassAccentBrassBrush}" />
-                                    <TextBlock Text="Favorites" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </ToggleButton>
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Empty State Placeholder -->
-                    <Border Visibility="{x:Bind ViewModel.EmptyLibraryVisibility, Mode=OneWay}"
-                            Background="{ThemeResource GlassSurfaceSubtleBrush}"
-                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                            BorderThickness="1"
-                            CornerRadius="{StaticResource AppCornerRadiusControl}"
-                            Padding="24,28"
-                            HorizontalAlignment="Stretch">
-                        <StackPanel Spacing="{StaticResource AppSpacingS}" HorizontalAlignment="Center">
-                            <FontIcon Glyph="&#xE8B9;"
-                                      FontSize="32"
-                                      Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                      HorizontalAlignment="Center" />
-                            <TextBlock Text="No wallpapers in library yet"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="Choose a video, animated GIF, or web URL above to start building your collection."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                       HorizontalAlignment="Center" />
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Library Items List / Grid -->
-                    <ListView Visibility="{x:Bind ViewModel.LibraryListVisibility, Mode=OneWay}"
-                              ItemsSource="{x:Bind ViewModel.LibraryItems, Mode=OneWay}"
-                              SelectedItem="{x:Bind ViewModel.SelectedLibraryEntry, Mode=TwoWay}"
-                              SelectionMode="Single"
-                              MaxHeight="260"
-                              AutomationProperties.Name="Saved wallpaper library list">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:WallpaperLibraryEntry">
-                                <Grid Padding="6,8" ColumnSpacing="{StaticResource AppSpacingM}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Type Icon / Thumbnail -->
-                                    <Border Width="40" Height="40"
-                                            Background="{ThemeResource GlassSurfaceSubtleBrush}"
-                                            CornerRadius="{StaticResource AppCornerRadiusControl}"
-                                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                            BorderThickness="1">
-                                        <FontIcon Glyph="{x:Bind TypeGlyph, Mode=OneWay}" FontSize="{StaticResource AppFontSizeBody}" Foreground="{ThemeResource GlassTextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-
-                                    <!-- Title & Path -->
-                                    <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{ThemeResource BodyStrongTextBlockStyle}" Foreground="{ThemeResource GlassTextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{x:Bind SourcePathOrUrl, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
-                                    </StackPanel>
-
-                                    <!-- Favorite Toggle -->
-                                    <Button Grid.Column="2"
-                                            Click="LibraryEntry_Favorite_Click"
-                                            Style="{StaticResource GlassButtonStyle}"
-                                            Padding="8,4"
-                                            AutomationProperties.Name="Toggle favorite">
-                                        <FontIcon Glyph="{x:Bind FavoriteGlyph, Mode=OneWay}" FontSize="{StaticResource AppFontSizeCaption}" />
-                                    </Button>
-
-                                    <!-- Delete Button with confirmation -->
-                                    <Button Grid.Column="3"
-                                            Content="Delete"
-                                            Click="LibraryEntry_Delete_Click"
-                                            Style="{StaticResource GlassButtonStyle}"
-                                            Padding="8,4"
-                                            AutomationProperties.Name="Delete wallpaper from library" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Playlists Configuration Row -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Automatic Playlist Rotation"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Automatically cycle through wallpapers in your library on a timed schedule."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsPlaylistEnabled, Mode=TwoWay}"
-                                          OnContent="Enabled"
-                                          OffContent="Disabled"
-                                          AutomationProperties.Name="Enable playlist rotation" />
-
-                            <ComboBox SelectedIndex="{x:Bind ViewModel.PlaylistIntervalIndex, Mode=TwoWay}"
-                                      Width="130"
-                                      Style="{StaticResource GlassComboBoxStyle}"
-                                      AutomationProperties.Name="Playlist rotation interval">
-                                <ComboBoxItem Content="Every 5 min" />
-                                <ComboBoxItem Content="Every 15 min" />
-                                <ComboBoxItem Content="Every 30 min" />
-                                <ComboBoxItem Content="Every hour" />
-                                <ComboBoxItem Content="Daily" />
-                            </ComboBox>
-
-                            <Button Content="Next"
-                                    Command="{x:Bind ViewModel.RotateNextCommand}"
-                                    Style="{StaticResource GlassButtonStyle}"
-                                    AutomationProperties.Name="Rotate to next wallpaper" />
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- Playback & Fit Controls Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <TextBlock Text="Playback &amp; Fit Settings"
-                               Style="{ThemeResource SubtitleTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                    <!-- Fit Mode -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="220" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Scaling mode"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Choose how media is positioned on your display."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ComboBox Grid.Column="1"
-                                  HorizontalAlignment="Stretch"
-                                  SelectedIndex="{x:Bind ViewModel.FitModeIndex, Mode=TwoWay}"
-                                  Style="{StaticResource GlassComboBoxStyle}"
-                                  AutomationProperties.Name="Wallpaper fit mode">
-                            <ComboBoxItem Content="Fill (Crop to cover)" />
-                            <ComboBoxItem Content="Fit (Letterbox full content)" />
-                            <ComboBoxItem Content="Stretch (Fit entire screen)" />
-                            <ComboBoxItem Content="Center (Original size)" />
-                        </ComboBox>
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Audio Volume & Mute -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="220" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Audio playback"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Adjust audio output volume and mute status for video or web wallpapers."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsMuted, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Mute wallpaper audio" />
-
-                            <Slider Value="{x:Bind ViewModel.Volume, Mode=TwoWay}"
-                                    Minimum="0"
-                                    Maximum="100"
-                                    Width="120"
-                                    AutomationProperties.Name="Wallpaper volume slider" />
-                        </StackPanel>
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Playback Speed & Loop -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="220" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Speed &amp; repetition"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Control video playback rate and continuous looping."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                            <ComboBox SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
-                                      Width="110"
-                                      Style="{StaticResource GlassComboBoxStyle}"
-                                      AutomationProperties.Name="Playback speed">
-                                <ComboBoxItem Content="0.5x" />
-                                <ComboBoxItem Content="1.0x" />
-                                <ComboBoxItem Content="1.5x" />
-                                <ComboBoxItem Content="2.0x" />
-                            </ComboBox>
-
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Loop playback" />
-                        </StackPanel>
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Interactive Desktop Input (Web Wallpapers) -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Forward mouse input to wallpaper"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Enables mouse clicks and cursor interaction on web wallpapers (WebGL, canvas, shaders)."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.ForwardInput, Mode=TwoWay}"
-                                      AutomationProperties.Name="Forward desktop mouse interaction" />
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- Engine Status & Primary Control Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <Grid RowSpacing="{StaticResource AppSpacingM}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                                <TextBlock Text="Wallpaper Engine Status"
-                                           Style="{ThemeResource SubtitleTextBlockStyle}"
+                                <TextBlock Text="{x:Bind ViewModel.StateBadgeText, Mode=OneWay}"
+                                           FontFamily="{StaticResource GlassFontMonospace}"
+                                           FontSize="11"
                                            FontWeight="SemiBold"
                                            Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Resource usage readout only shown when running -->
+                        <StackPanel Orientation="Horizontal" Spacing="10" Visibility="{x:Bind ViewModel.ResourceUsageVisibility, Mode=OneWay}">
+                            <TextBlock Text="{x:Bind ViewModel.CpuTextWithLabel, Mode=OneWay}"
+                                       FontSize="11"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="·" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.MemoryTextWithLabel, Mode=OneWay}"
+                                       FontSize="11"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.AutoPausedReasonText, Mode=OneWay}"
+                                       FontSize="11"
+                                       Foreground="{ThemeResource GlassStatusAlertBrush}"
+                                       Visibility="{x:Bind ViewModel.AutoPausedVisibility, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Quick controls -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Button x:Name="PauseResumeButton"
+                                Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
+                                Style="{StaticResource GlassButtonStyle}"
+                                Command="{x:Bind ViewModel.TogglePauseCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
+                                AutomationProperties.Name="Pause or resume wallpaper" />
+
+                        <Button x:Name="StartEngineButton"
+                                Content="Start wallpaper"
+                                Style="{StaticResource GlassPrimaryButtonStyle}"
+                                Command="{x:Bind ViewModel.StartCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
+                                AutomationProperties.Name="Start desktop wallpaper engine" />
+
+                        <Button x:Name="StopEngineButton"
+                                Content="Stop"
+                                Style="{StaticResource GlassButtonStyle}"
+                                Command="{x:Bind ViewModel.StopCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
+                                AutomationProperties.Name="Stop wallpaper and restore Windows wallpaper" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 2. LIBRARY SECTION -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Library" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
+                    <StackPanel Spacing="16">
+                        <!-- Drop Target & Picker Zone -->
+                        <Border x:Name="DropTargetCard"
+                                Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{StaticResource AppCornerRadiusCard}"
+                                Padding="20,16"
+                                AllowDrop="True"
+                                DragOver="DropTarget_DragOver"
+                                DragLeave="DropTarget_DragLeave"
+                                Drop="DropTarget_Drop">
+                            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE8B9;" FontSize="24" Foreground="{ThemeResource GlassAccentBrassBrush}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Drag a video, GIF, or HTML file here, or choose a file"
+                                           Style="{StaticResource SettingTitleStyle}"
+                                           TextAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                    <Button x:Name="ChooseFileButton"
+                                            Content="Choose file…"
+                                            Style="{StaticResource GlassPrimaryButtonStyle}"
+                                            Click="ChooseFile_Click"
+                                            AutomationProperties.Name="Choose wallpaper media file">
+                                        <Button.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                        </Button.KeyboardAccelerators>
+                                    </Button>
+
+                                    <Button x:Name="ApplyWallpaperButton"
+                                            Content="Apply to desktop"
+                                            Style="{StaticResource GlassButtonStyle}"
+                                            Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
+                                            IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
+                                            AutomationProperties.Name="Apply selected wallpaper to desktop" />
+
+                                    <Button x:Name="ApplyBothButton"
+                                            Content="Also set as lock screen"
+                                            ToolTipService.ToolTip="Apply this video or GIF as both your desktop wallpaper and Windows lock screen"
+                                            Style="{StaticResource GlassButtonStyle}"
+                                            Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
+                                            IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
+                                            AutomationProperties.Name="Also set as lock screen" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Web URL input row -->
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="UrlInputBox"
+                                     PlaceholderText="Enter a web wallpaper URL (e.g. https://… or http://localhost:…)"
+                                     Text="{x:Bind ViewModel.SourceInput, Mode=TwoWay}"
+                                     Style="{StaticResource GlassTextBoxStyle}"
+                                     AutomationProperties.Name="Web wallpaper URL input" />
+                            <Button Grid.Column="1"
+                                    Content="Load URL"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    Click="LoadUrl_Click"
+                                    AutomationProperties.Name="Load entered web wallpaper URL" />
+                        </Grid>
+
+                        <!-- Selected Media Info Row -->
+                        <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                Padding="12,8">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon Glyph="&#xE8B9;" FontSize="18"
+                                          Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                          VerticalAlignment="Center" />
+
+                                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind ViewModel.WallpaperTitle, Mode=OneWay}"
+                                               Style="{StaticResource SettingTitleStyle}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{x:Bind ViewModel.SourceInput, Mode=OneWay, TargetNullValue='No file or URL selected yet.'}"
+                                               Style="{StaticResource SettingDescriptionStyle}"
+                                               Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+
+                                <Border Grid.Column="2"
+                                        Visibility="{x:Bind ViewModel.MediaSelectedVisibility, Mode=OneWay}"
+                                        Background="{ThemeResource GlassSurfaceSubtleBrush}"
                                         BorderBrush="{ThemeResource GlassBorderRimBrush}"
                                         BorderThickness="1"
                                         CornerRadius="{StaticResource AppCornerRadiusControl}"
                                         Padding="8,2"
                                         VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                                               FontSize="{StaticResource AppFontSizeCaption}"
+                                    <TextBlock Text="{x:Bind ViewModel.WallpaperTypeDescription, Mode=OneWay}"
+                                               FontSize="11"
                                                FontWeight="Medium"
                                                Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                                 </Border>
-                            </StackPanel>
-                            <TextBlock Text="{x:Bind ViewModel.ActiveTargetDescription, Mode=OneWay, TargetNullValue='Engine is currently idle. Press Start or Apply to attach to the desktop background layer.'}"
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
+                            </Grid>
+                        </Border>
 
-                        <!-- Control Buttons -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
-                            <Button x:Name="PauseResumeButton"
-                                    Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
-                                    Style="{StaticResource GlassButtonStyle}"
-                                    Command="{x:Bind ViewModel.TogglePauseCommand}"
-                                    IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
-                                    AutomationProperties.Name="Pause or resume wallpaper playback" />
-
-                            <Button x:Name="StartEngineButton"
-                                    Content="Start Engine"
-                                    Style="{StaticResource GlassPrimaryButtonStyle}"
-                                    Command="{x:Bind ViewModel.StartCommand}"
-                                    IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
-                                    AutomationProperties.Name="Start desktop wallpaper engine" />
-
-                            <Button x:Name="StopEngineButton"
-                                    Content="Stop Engine"
-                                    Style="{StaticResource GlassButtonStyle}"
-                                    Command="{x:Bind ViewModel.StopCommand}"
-                                    IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
-                                    AutomationProperties.Name="Stop desktop wallpaper engine" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Real-time Resource Usage Readout Row -->
-                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
-                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                            BorderThickness="1"
-                            CornerRadius="{StaticResource AppCornerRadiusControl}"
-                            Padding="12,8">
-                        <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <!-- Search & Filter Controls -->
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Saved wallpapers" Style="{StaticResource SettingTitleStyle}" VerticalAlignment="Center" />
+                            <TextBox x:Name="SearchBox" Grid.Column="1"
+                                     PlaceholderText="Search wallpapers…"
+                                     Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}"
+                                     Width="180" Height="32"
+                                     VerticalAlignment="Center"
+                                     Style="{StaticResource GlassTextBoxStyle}"
+                                     AutomationProperties.Name="Search wallpaper library" />
+                            <ToggleButton Grid.Column="2"
+                                          IsChecked="{x:Bind ViewModel.FilterFavoritesOnly, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleButtonStyle}"
+                                          Height="32"
+                                          AutomationProperties.Name="Filter favorites only">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE734;" FontSize="13" Foreground="{ThemeResource GlassAccentBrassBrush}" />
+                                    <TextBlock Text="Favorites" VerticalAlignment="Center" FontSize="12" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </Grid>
+
+                        <!-- Empty State Placeholder -->
+                        <Border Visibility="{x:Bind ViewModel.EmptyLibraryVisibility, Mode=OneWay}"
+                                Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                Padding="24,24"
+                                HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE8B9;" FontSize="28" Foreground="{ThemeResource GlassTextSecondaryBrush}" HorizontalAlignment="Center" />
+                                <TextBlock Text="No wallpapers in library yet"
+                                           Style="{StaticResource SettingTitleStyle}"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Choose a video, animated GIF, or web URL above to start building your collection."
+                                           Style="{StaticResource SettingDescriptionStyle}"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Library Items List -->
+                        <ListView Visibility="{x:Bind ViewModel.LibraryListVisibility, Mode=OneWay}"
+                                  ItemsSource="{x:Bind ViewModel.LibraryItems, Mode=OneWay}"
+                                  SelectedItem="{x:Bind ViewModel.SelectedLibraryEntry, Mode=TwoWay}"
+                                  SelectionMode="Single"
+                                  MaxHeight="240"
+                                  AutomationProperties.Name="Saved wallpaper library list">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:WallpaperLibraryEntry">
+                                    <Grid Padding="4,6" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="36" Height="36"
+                                                Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                                CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                                BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                                BorderThickness="1">
+                                            <FontIcon Glyph="{x:Bind TypeGlyph, Mode=OneWay}" FontSize="16" Foreground="{ThemeResource GlassTextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource SettingTitleStyle}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind SourcePathOrUrl, Mode=OneWay}" Style="{StaticResource SettingDescriptionStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                        <Button Grid.Column="2"
+                                                Click="LibraryEntry_Favorite_Click"
+                                                Style="{StaticResource GlassButtonStyle}"
+                                                Padding="8,4"
+                                                AutomationProperties.Name="Toggle favorite">
+                                            <FontIcon Glyph="{x:Bind FavoriteGlyph, Mode=OneWay}" FontSize="12" />
+                                        </Button>
+                                        <Button Grid.Column="3"
+                                                Content="Delete"
+                                                Click="LibraryEntry_Delete_Click"
+                                                Style="{StaticResource GlassButtonStyle}"
+                                                Padding="8,4"
+                                                AutomationProperties.Name="Delete wallpaper from library" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Playlists Configuration Row -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Automatic playlist rotation" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Automatically cycle through wallpapers in your library on a timed schedule."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <ToggleSwitch IsOn="{x:Bind ViewModel.IsPlaylistEnabled, Mode=TwoWay}"
+                                              Style="{StaticResource GlassToggleSwitchStyle}"
+                                              AutomationProperties.Name="Enable playlist rotation" />
+                                <ComboBox SelectedIndex="{x:Bind ViewModel.PlaylistIntervalIndex, Mode=TwoWay}"
+                                          Width="110"
+                                          IsEnabled="{x:Bind ViewModel.IsPlaylistEnabled, Mode=OneWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Playlist rotation interval">
+                                    <ComboBoxItem Content="5 min" />
+                                    <ComboBoxItem Content="15 min" />
+                                    <ComboBoxItem Content="30 min" />
+                                    <ComboBoxItem Content="1 hour" />
+                                    <ComboBoxItem Content="Daily" />
+                                </ComboBox>
+                                <Button Content="Next"
+                                        Command="{x:Bind ViewModel.RotateNextCommand}"
+                                        IsEnabled="{x:Bind ViewModel.IsPlaylistEnabled, Mode=OneWay}"
+                                        Style="{StaticResource GlassButtonStyle}"
+                                        AutomationProperties.Name="Rotate to next wallpaper" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 3. PLAYBACK SECTION -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Playback" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
+                    <StackPanel Spacing="14">
+                        <!-- Fit Mode -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Scaling mode" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Choose how media is positioned on your display."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"
+                                      HorizontalAlignment="Stretch"
+                                      SelectedIndex="{x:Bind ViewModel.FitModeIndex, Mode=TwoWay}"
+                                      IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Wallpaper fit mode">
+                                <ComboBoxItem Content="Fill (Crop to cover)" />
+                                <ComboBoxItem Content="Fit (Letterbox full content)" />
+                                <ComboBoxItem Content="Stretch (Fit entire screen)" />
+                                <ComboBoxItem Content="Center (Original size)" />
+                            </ComboBox>
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Audio Volume & Mute -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Audio playback" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Adjust audio output volume and mute status for video or web wallpapers."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <ToggleSwitch IsOn="{x:Bind ViewModel.IsMuted, Mode=TwoWay}"
+                                              IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                              Style="{StaticResource GlassToggleSwitchStyle}"
+                                              AutomationProperties.Name="Mute wallpaper audio" />
+                                <Slider Value="{x:Bind ViewModel.Volume, Mode=TwoWay}"
+                                        Minimum="0" Maximum="100"
+                                        MinWidth="160" Width="160"
+                                        IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                        AutomationProperties.Name="Wallpaper volume slider" />
+                                <TextBlock Text="{x:Bind ViewModel.VolumeText, Mode=OneWay}"
+                                           Width="36" TextAlignment="Right"
+                                           FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Playback Speed & Loop -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Speed &amp; repetition" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Control video playback rate and continuous looping."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <ComboBox SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
+                                          Width="110"
+                                          IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Playback speed">
+                                    <ComboBoxItem Content="0.5x" />
+                                    <ComboBoxItem Content="1.0x" />
+                                    <ComboBoxItem Content="1.5x" />
+                                    <ComboBoxItem Content="2.0x" />
+                                </ComboBox>
+                                <ToggleSwitch IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
+                                              IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                              Style="{StaticResource GlassToggleSwitchStyle}"
+                                              AutomationProperties.Name="Loop playback" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 4. PERFORMANCE SECTION -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Performance" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
+                    <StackPanel Spacing="14">
+                        <!-- Rule 1: Fullscreen apps & games -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Pause when fullscreen app or game is focused" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Suspends video decoding and web rendering while gaming or using fullscreen applications."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.PauseWhenFullscreenAppActive, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Pause when fullscreen app is active" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Rule 2: Desktop Covered -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Pause when desktop is fully covered" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Pauses rendering when active windows are maximized over the desktop."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.PauseWhenDesktopCovered, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Pause when desktop is fully covered" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Rule 3: Battery & Battery Saver -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Pause in battery saver mode" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Automatically pauses wallpaper whenever Windows battery saver is turned on."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.PauseInBatterySaver, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Pause in battery saver mode" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Rule 4: Pause On Battery (General) -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Pause on battery power" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Always pause wallpaper playback when unplugged from AC power."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.PauseOnBattery, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Pause on battery power" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Rule 5: Screen Locked or Display Off -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Pause when PC is locked or display is off" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Stops rendering when the workstation is locked (Win+L) or monitors sleep."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.PauseWhenLockedOrDisplayOff, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Pause when PC is locked" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- FPS Limit -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Frame rate limit" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Cap playback frame rate to reduce GPU utilization and thermals."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"
+                                      HorizontalAlignment="Stretch"
+                                      SelectedIndex="{x:Bind ViewModel.FpsLimitIndex, Mode=TwoWay}"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Frame rate limit">
+                                <ComboBoxItem Content="60 FPS (Fluid)" />
+                                <ComboBoxItem Content="30 FPS (Standard)" />
+                                <ComboBoxItem Content="15 FPS (Power saving)" />
+                                <ComboBoxItem Content="Unlimited" />
+                            </ComboBox>
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Lower Decode Quality Toggle -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Lower decode quality" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Favors power efficiency over maximum resolution decoding for background video."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Lower decode quality" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 5. DISPLAY SECTION -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Display" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
+                    <StackPanel Spacing="14">
+                        <!-- Multi-Monitor Layout Mode -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Multi-monitor layout" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Choose whether to span wallpaper across all screens or select a specific monitor."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"
+                                      HorizontalAlignment="Stretch"
+                                      SelectedIndex="{x:Bind ViewModel.LayoutModeIndex, Mode=TwoWay}"
+                                      IsEnabled="{x:Bind ViewModel.HasMultipleMonitors, Mode=OneWay}"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Multi-monitor layout mode">
+                                <ComboBoxItem Content="Span all displays" />
+                                <ComboBoxItem Content="Single display" />
+                                <ComboBoxItem Content="Duplicate on each" />
+                            </ComboBox>
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Detected Displays -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Detected displays" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="One display detected"
+                                           Visibility="{x:Bind ViewModel.SingleDisplayNoticeVisibility, Mode=OneWay}"
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                                <TextBlock Text="Select a display or refresh to detect newly attached monitors."
+                                           Visibility="{x:Bind ViewModel.MultiDisplayControlsVisibility, Mode=OneWay}"
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <ComboBox x:Name="MonitorPicker"
+                                          ItemsSource="{x:Bind ViewModel.Monitors, Mode=OneWay}"
+                                          SelectedItem="{x:Bind ViewModel.SelectedMonitor, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"
+                                          Width="160"
+                                          IsEnabled="{x:Bind ViewModel.IsMonitorPickerEnabled, Mode=OneWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Selected display monitor" />
+                                <Button Content="Refresh"
+                                        Command="{x:Bind ViewModel.RefreshMonitorsCommand}"
+                                        Style="{StaticResource GlassButtonStyle}"
+                                        AutomationProperties.Name="Refresh display monitors" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 6. ADVANCED SECTION -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Advanced" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
+                    <StackPanel Spacing="14">
+                        <!-- Mouse Input Forwarding -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Forward mouse input to web wallpapers" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Enables mouse clicks and cursor interaction on web wallpapers (WebGL, canvas, shaders)."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.ForwardInput, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Forward desktop mouse interaction" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Audio-Reactive Toggle -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="System audio visualization" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Allows web wallpapers to react to music and sounds via audio spectrum data."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.IsAudioReactiveEnabled, Mode=TwoWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Audio reactive visualization toggle" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Executable Wallpapers Switch -->
+                        <Grid ColumnSpacing="16" MinHeight="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Allow executable (.exe) wallpapers" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Permits running user-selected native Windows programs behind the desktop. Default is Off for security."
+                                           Style="{StaticResource SettingDescriptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch x:Name="AdvancedExeToggle"
+                                          Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.AllowAdvancedExecutables, Mode=OneWay}"
+                                          Toggled="AdvancedExeToggle_Toggled"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Allow executable wallpapers switch" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                        <!-- Original Wallpaper Safeguard info -->
+                        <Grid ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingXS}" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE950;" FontSize="{StaticResource AppFontSizeCaption}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="CPU:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="{x:Bind ViewModel.CpuUsageText, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="SemiBold" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingXS}" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE8B9;" FontSize="{StaticResource AppFontSizeCaption}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="RAM:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="{x:Bind ViewModel.MemoryUsageText, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="SemiBold" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            </StackPanel>
-
-                            <TextBlock Grid.Column="2"
-                                       HorizontalAlignment="Right"
-                                       Text="{x:Bind ViewModel.AutoPausedReasonText, Mode=OneWay, TargetNullValue='Wallpaper running smoothly'}"
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                            <FontIcon Glyph="&#xE72D;" FontSize="14" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Safeguard: Windows default wallpaper restores automatically upon stopping.'}"
+                                       Style="{StaticResource SettingDescriptionStyle}"
                                        Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis"
                                        VerticalAlignment="Center" />
                         </Grid>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- Smart Performance & Power Rules Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <TextBlock Text="Smart Performance &amp; Power Rules"
-                               Style="{ThemeResource SubtitleTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                    <!-- Rule 1: Fullscreen apps & games -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Pause when fullscreen app or game is focused"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Suspends video decoding and web rendering while gaming or using fullscreen applications."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.PauseWhenFullscreenAppActive, Mode=TwoWay}"
-                                      AutomationProperties.Name="Pause when fullscreen app is active" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Rule 2: Desktop Covered -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Pause when desktop is fully covered"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Pauses rendering when active windows are maximized over the desktop."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.PauseWhenDesktopCovered, Mode=TwoWay}"
-                                      AutomationProperties.Name="Pause when desktop is fully covered" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Rule 3: Battery & Battery Saver -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Pause in battery saver mode"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Automatically pauses wallpaper whenever Windows battery saver is turned on."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.PauseInBatterySaver, Mode=TwoWay}"
-                                      AutomationProperties.Name="Pause in battery saver mode" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Rule 4: Pause On Battery (General) -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Pause on battery power"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Always pause wallpaper playback when unplugged from AC power (default off)."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.PauseOnBattery, Mode=TwoWay}"
-                                      AutomationProperties.Name="Pause on battery power" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Rule 5: Screen Locked or Display Off -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Pause when PC is locked or display is turned off"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Stops rendering when the workstation is locked (Win+L) or monitors sleep."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.PauseWhenLockedOrDisplayOff, Mode=TwoWay}"
-                                      AutomationProperties.Name="Pause when PC is locked" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- FPS Limit & Decode Quality -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="220" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Frame rate limit"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Cap playback frame rate to reduce GPU utilization and thermals."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ComboBox Grid.Column="1"
-                                  HorizontalAlignment="Stretch"
-                                  SelectedIndex="{x:Bind ViewModel.FpsLimitIndex, Mode=TwoWay}"
-                                  Style="{StaticResource GlassComboBoxStyle}"
-                                  AutomationProperties.Name="Frame rate limit">
-                            <ComboBoxItem Content="60 FPS (Fluid)" />
-                            <ComboBoxItem Content="30 FPS (Standard)" />
-                            <ComboBoxItem Content="15 FPS (Power saving)" />
-                            <ComboBoxItem Content="Unlimited" />
-                        </ComboBox>
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Lower Decode Quality Toggle -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Lower decode quality"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Favors power efficiency over maximum resolution decoding for background video."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}"
-                                      AutomationProperties.Name="Lower decode quality" />
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- System Integration & Audio Reactivity Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                        <TextBlock Text="System Integration &amp; Audio"
-                                   Style="{ThemeResource SubtitleTextBlockStyle}"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                        <TextBlock Text="Configure Windows startup, notification area controls, and audio-reactive visualization."
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                     </StackPanel>
-
-
-
-                    <!-- Audio-Reactive Toggle -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Audio-reactive spectrum (WASAPI loopback)"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Captures system audio output and streams 16-band normalized frequency spectrum data to web wallpapers via window.onAudioSpectrum JavaScript API."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.IsAudioReactiveEnabled, Mode=TwoWay}"
-                                      AutomationProperties.Name="Audio reactive visualization toggle" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Notification Tray Info Row -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingS}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE7F4;"
-                                  FontSize="{StaticResource AppFontSizeBody}"
-                                  Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                  VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1"
-                                   Text="System Tray active: Right-click the LockscreenGif tray icon in the notification area to Pause/Resume, Next Wallpaper, Open app, or Exit."
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                   VerticalAlignment="Center" />
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- Multi-Monitor & Placement Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <TextBlock Text="Display &amp; Monitors"
-                               Style="{ThemeResource SubtitleTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                    <!-- Layout Mode Selector -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="220" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Multi-monitor layout"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Choose whether to span wallpaper across all screens or select a specific monitor."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ComboBox Grid.Column="1"
-                                  HorizontalAlignment="Stretch"
-                                  SelectedIndex="{x:Bind ViewModel.LayoutModeIndex, Mode=TwoWay}"
-                                  Style="{StaticResource GlassComboBoxStyle}"
-                                  AutomationProperties.Name="Multi-monitor layout mode">
-                            <ComboBoxItem Content="Span all displays" />
-                            <ComboBoxItem Content="Single display" />
-                            <ComboBoxItem Content="Duplicate on each" />
-                        </ComboBox>
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Monitor Selection -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Detected displays"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Per-monitor DPI awareness and resolution detection."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                            <ComboBox x:Name="MonitorPicker"
-                                      ItemsSource="{x:Bind ViewModel.Monitors, Mode=OneWay}"
-                                      SelectedItem="{x:Bind ViewModel.SelectedMonitor, Mode=TwoWay}"
-                                      DisplayMemberPath="DisplayName"
-                                      MinWidth="260"
-                                      Style="{StaticResource GlassComboBoxStyle}"
-                                      AutomationProperties.Name="Selected display monitor" />
-
-                            <Button Content="Refresh"
-                                    Command="{x:Bind ViewModel.RefreshMonitorsCommand}"
-                                    Style="{StaticResource GlassButtonStyle}"
-                                    AutomationProperties.Name="Refresh display monitors" />
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- Advanced & Safeguards Card -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingM}">
-                    <TextBlock Text="Advanced Options &amp; Safeguards"
-                               Style="{ThemeResource SubtitleTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                    <!-- Executable Wallpapers Switch -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Allow executable (.exe) wallpapers"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Permits running user-selected native Windows programs behind the desktop. Default is Off for system security."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <ToggleSwitch Grid.Column="1"
-                                      x:Name="AdvancedExeToggle"
-                                      IsOn="{x:Bind ViewModel.AllowAdvancedExecutables, Mode=OneWay}"
-                                      Toggled="AdvancedExeToggle_Toggled"
-                                      AutomationProperties.Name="Allow executable wallpapers switch" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
-
-                    <!-- Original Wallpaper Safeguard info -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingS}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE72D;"
-                                  FontSize="{StaticResource AppFontSizeBody}"
-                                  Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                  VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1"
-                                   Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Safeguard: Windows default / System managed wallpaper will restore upon stopping.'}"
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                   TextTrimming="CharacterEllipsis"
-                                   VerticalAlignment="Center" />
-                    </Grid>
-                </StackPanel>
-            </Border>
+                </Border>
+            </StackPanel>
 
         </StackPanel>
     </ScrollViewer>

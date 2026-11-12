@@ -230,7 +230,21 @@ public sealed class WallpaperTrayService : IDisposable
 
                 case 4:
                     HideTrayIcon();
-                    Application.Current.Exit();
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _engineService.StopAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error("Error stopping wallpaper engine on tray exit", ex);
+                        }
+                        finally
+                        {
+                            App.MainWindow?.DispatcherQueue.TryEnqueue(() => Application.Current.Exit());
+                        }
+                    });
                     break;
             }
         }
