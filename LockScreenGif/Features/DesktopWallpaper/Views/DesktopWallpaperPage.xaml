@@ -16,7 +16,7 @@
                            Style="{StaticResource TitleTextBlockStyle}"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <TextBlock Text="Display animated wallpapers behind desktop icons on Windows 11."
+                <TextBlock Text="Display live animated videos, interactive web pages, or images behind your Windows 11 desktop icons."
                            Style="{StaticResource BodyTextBlockStyle}"
                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
             </StackPanel>
@@ -25,14 +25,246 @@
             <InfoBar x:Name="ErrorBanner"
                      IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
                      Severity="Error"
-                     Title="Desktop attachment notice"
+                     Title="Desktop wallpaper notice"
                      Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
+
+            <!-- Wallpaper Selection & Drop Target Card -->
+            <Border x:Name="DropTargetCard"
+                    Style="{StaticResource GlassCardStyle}"
+                    AllowDrop="True"
+                    DragOver="DropTarget_DragOver"
+                    DragLeave="DropTarget_DragLeave"
+                    Drop="DropTarget_Drop">
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Select Wallpaper Media"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Drag and drop a file here, choose from disk, or load a web URL."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
+                            <Button x:Name="ChooseFileButton"
+                                    Content="Choose File"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    Click="ChooseFile_Click"
+                                    AutomationProperties.Name="Choose wallpaper media file">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+
+                            <Button x:Name="ApplyWallpaperButton"
+                                    Content="Apply to Desktop"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
+                                    AutomationProperties.Name="Apply selected wallpaper to desktop" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Web URL input row -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingS}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="UrlInputBox"
+                                 PlaceholderText="Enter a web wallpaper URL (e.g. https://... or http://localhost:...)"
+                                 Text="{x:Bind ViewModel.SourceInput, Mode=TwoWay}"
+                                 Style="{StaticResource GlassTextBoxStyle}"
+                                 AutomationProperties.Name="Web wallpaper URL input" />
+
+                        <Button Grid.Column="1"
+                                Content="Load URL"
+                                Style="{StaticResource GlassButtonStyle}"
+                                Click="LoadUrl_Click"
+                                AutomationProperties.Name="Load entered web wallpaper URL" />
+                    </Grid>
+
+                    <!-- Selected Media Info Row -->
+                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource AppCornerRadiusControl}"
+                            Padding="12,8">
+                        <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <FontIcon Glyph="&#xE8B9;"
+                                      FontSize="{StaticResource AppFontSizeSubtitle}"
+                                      Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                      VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind ViewModel.WallpaperTitle, Mode=OneWay}"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind ViewModel.SourceInput, Mode=OneWay, TargetNullValue='No file or URL selected yet.'}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+
+                            <Border Grid.Column="2"
+                                    Background="{ThemeResource GlassBorderSubtleBrush}"
+                                    CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                    Padding="8,2"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind ViewModel.WallpaperTypeDescription, Mode=OneWay}"
+                                           FontSize="{StaticResource AppFontSizeCaption}"
+                                           FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Playback & Fit Controls Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <TextBlock Text="Playback &amp; Fit Settings"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+
+                    <!-- Fit Mode -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Scaling mode"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Choose how media is positioned on your display."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  SelectedIndex="{x:Bind ViewModel.FitModeIndex, Mode=TwoWay}"
+                                  Style="{StaticResource GlassComboBoxStyle}"
+                                  AutomationProperties.Name="Wallpaper fit mode">
+                            <ComboBoxItem Content="Fill (Crop to cover)" />
+                            <ComboBoxItem Content="Fit (Letterbox full content)" />
+                            <ComboBoxItem Content="Stretch (Fit entire screen)" />
+                            <ComboBoxItem Content="Center (Original size)" />
+                        </ComboBox>
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Audio Volume & Mute -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Audio playback"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Adjust audio output volume and mute status for video or web wallpapers."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsMuted, Mode=TwoWay}"
+                                          OnContent="Muted"
+                                          OffContent="Unmuted"
+                                          AutomationProperties.Name="Mute wallpaper audio" />
+
+                            <Slider Value="{x:Bind ViewModel.Volume, Mode=TwoWay}"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Width="120"
+                                    AutomationProperties.Name="Wallpaper volume slider" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Playback Speed & Loop -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Speed &amp; repetition"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Control video playback rate and continuous looping."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
+                            <ComboBox SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
+                                      Width="110"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Playback speed">
+                                <ComboBoxItem Content="0.5x" />
+                                <ComboBoxItem Content="1.0x" />
+                                <ComboBoxItem Content="1.5x" />
+                                <ComboBoxItem Content="2.0x" />
+                            </ComboBox>
+
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
+                                          OnContent="Loop"
+                                          OffContent="Once"
+                                          AutomationProperties.Name="Loop playback" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Interactive Desktop Input (Web Wallpapers) -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Forward mouse input to wallpaper"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Enables mouse clicks and cursor interaction on web wallpapers (WebGL, canvas, shaders)."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.ForwardInput, Mode=TwoWay}"
+                                      AutomationProperties.Name="Forward desktop mouse interaction" />
+                    </Grid>
+                </StackPanel>
+            </Border>
 
             <!-- Engine Status & Primary Control Card -->
             <Border Style="{StaticResource GlassCardStyle}">
                 <Grid RowSpacing="{StaticResource AppSpacingM}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -42,7 +274,7 @@
 
                     <StackPanel Spacing="{StaticResource AppSpacingXXS}">
                         <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                            <TextBlock Text="Wallpaper Engine"
+                            <TextBlock Text="Wallpaper Engine Status"
                                        Style="{StaticResource SubtitleTextBlockStyle}"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource GlassTextPrimaryBrush}" />
@@ -58,13 +290,20 @@
                                            Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                             </Border>
                         </StackPanel>
-                        <TextBlock Text="{x:Bind ViewModel.ActiveTargetDescription, Mode=OneWay, TargetNullValue='Engine is currently idle. Press Start to attach to the desktop background layer.'}"
+                        <TextBlock Text="{x:Bind ViewModel.ActiveTargetDescription, Mode=OneWay, TargetNullValue='Engine is currently idle. Press Start or Apply to attach to the desktop background layer.'}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                     </StackPanel>
 
-                    <!-- Start / Stop Button -->
+                    <!-- Control Buttons -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
+                        <Button x:Name="PauseResumeButton"
+                                Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
+                                Style="{StaticResource GlassButtonStyle}"
+                                Command="{x:Bind ViewModel.TogglePauseCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
+                                AutomationProperties.Name="Pause or resume wallpaper playback" />
+
                         <Button x:Name="StartEngineButton"
                                 Content="Start Engine"
                                 Style="{StaticResource AccentButtonStyle}"
@@ -153,19 +392,40 @@
                 </StackPanel>
             </Border>
 
-            <!-- System Safeguards & Original Wallpaper Card -->
+            <!-- Advanced & Safeguards Card -->
             <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="{StaticResource AppSpacingS}">
-                    <TextBlock Text="System Safeguards"
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <TextBlock Text="Advanced Options &amp; Safeguards"
                                Style="{StaticResource SubtitleTextBlockStyle}"
                                FontWeight="SemiBold"
                                Foreground="{ThemeResource GlassTextPrimaryBrush}" />
 
-                    <TextBlock Text="To ensure your desktop is never left with a black or blank screen, the engine records your active Windows wallpaper before starting and restores it automatically whenever playback stops or the app closes."
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                    <!-- Executable Wallpapers Switch -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Allow executable (.exe) wallpapers"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Permits running user-selected native Windows programs behind the desktop. Default is Off for system security."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
 
-                    <Grid ColumnSpacing="{StaticResource AppSpacingS}" Margin="0,4,0,0">
+                        <ToggleSwitch Grid.Column="1"
+                                      x:Name="AdvancedExeToggle"
+                                      IsOn="{x:Bind ViewModel.AllowAdvancedExecutables, Mode=OneWay}"
+                                      Toggled="AdvancedExeToggle_Toggled"
+                                      AutomationProperties.Name="Allow executable wallpapers switch" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Original Wallpaper Safeguard info -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingS}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -175,7 +435,7 @@
                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
                                   VerticalAlignment="Center" />
                         <TextBlock Grid.Column="1"
-                                   Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Backed-up wallpaper: Windows default / System managed'}"
+                                   Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Safeguard: Windows default / System managed wallpaper will restore upon stopping.'}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource GlassTextSecondaryBrush}"
                                    TextTrimming="CharacterEllipsis"

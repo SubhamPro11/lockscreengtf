@@ -24,9 +24,16 @@ internal static class DesktopNativeMethods
     public const uint WS_CLIPSIBLINGS = 0x04000000;
     public const uint WS_CLIPCHILDREN = 0x02000000;
     public const uint WS_POPUP = 0x80000000;
+    public const uint WS_CAPTION = 0x00C00000;
+    public const uint WS_THICKFRAME = 0x00040000;
+    public const uint WS_MINIMIZEBOX = 0x00020000;
+    public const uint WS_MAXIMIZEBOX = 0x00010000;
 
     public const uint WS_EX_TOOLWINDOW = 0x00000080;
     public const uint WS_EX_NOACTIVATE = 0x08000000;
+
+    public const int GWL_STYLE = -16;
+    public const int GWL_EXSTYLE = -20;
 
     public static readonly nint HWND_BOTTOM = new(1);
     public static readonly nint HWND_TOP = new(0);
@@ -44,6 +51,16 @@ internal static class DesktopNativeMethods
     public const uint WM_SIZE = 0x0005;
     public const uint WM_DPICHANGED = 0x02E0;
 
+    public const int WH_MOUSE_LL = 14;
+    public const uint WM_MOUSEMOVE = 0x0200;
+    public const uint WM_LBUTTONDOWN = 0x0201;
+    public const uint WM_LBUTTONUP = 0x0202;
+    public const uint WM_RBUTTONDOWN = 0x0204;
+    public const uint WM_RBUTTONUP = 0x0205;
+    public const uint WM_MBUTTONDOWN = 0x0207;
+    public const uint WM_MBUTTONUP = 0x0208;
+    public const uint WM_MOUSEWHEEL = 0x020A;
+
     public const uint RDW_INVALIDATE = 0x0001;
     public const uint RDW_INTERNALPAINT = 0x0002;
     public const uint RDW_ERASE = 0x0004;
@@ -57,6 +74,23 @@ internal static class DesktopNativeMethods
         public int Top;
         public int Right;
         public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSLLHOOKSTRUCT
+    {
+        public POINT pt;
+        public uint mouseData;
+        public uint flags;
+        public uint time;
+        public nint dwExtraInfo;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -90,6 +124,7 @@ internal static class DesktopNativeMethods
     public delegate bool EnumWindowsProc(nint hWnd, nint lParam);
     public delegate bool MonitorEnumProc(nint hMonitor, nint hdcMonitor, ref RECT lprcMonitor, nint dwData);
     public delegate nint WndProc(nint hWnd, uint msg, nint wParam, nint lParam);
+    public delegate nint HookProc(int nCode, nint wParam, nint lParam);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern nint FindWindow(string? lpClassName, string? lpWindowName);
@@ -219,5 +254,34 @@ internal static class DesktopNativeMethods
 
     [DllImport("user32.dll")]
     public static extern bool GetClientRect(nint hWnd, out RECT lpRect);
-}
 
+    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW", SetLastError = true)]
+    public static extern nint GetWindowLongPtr(nint hWnd, int nIndex);
+
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+    public static extern nint SetWindowLongPtr(nint hWnd, int nIndex, nint dwNewLong);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern nint SetWindowsHookEx(int idHook, HookProc lpfn, nint hMod, uint dwThreadId);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool UnhookWindowsHookEx(nint hhk);
+
+    [DllImport("user32.dll")]
+    public static extern nint CallNextHookEx(nint hhk, int nCode, nint wParam, nint lParam);
+
+    [DllImport("user32.dll")]
+    public static extern bool GetCursorPos(out POINT lpPoint);
+
+    [DllImport("user32.dll")]
+    public static extern nint WindowFromPoint(POINT Point);
+
+    [DllImport("user32.dll")]
+    public static extern bool ScreenToClient(nint hWnd, ref POINT lpPoint);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern uint GetWindowThreadProcessId(nint hWnd, out uint lpdwProcessId);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool PostMessage(nint hWnd, uint msg, nint wParam, nint lParam);
+}

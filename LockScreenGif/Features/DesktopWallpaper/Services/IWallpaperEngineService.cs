@@ -19,14 +19,22 @@ public interface IWallpaperEngineService
     DisplayMonitor? SelectedMonitor { get; set; }
     WallpaperLayoutMode LayoutMode { get; set; }
 
+    WallpaperItem? CurrentWallpaper { get; }
+    bool AllowAdvancedExecutables { get; set; }
+
     bool IsRunning { get; }
 
     Task<bool> StartAsync();
+    Task<bool> ApplyWallpaperAsync(WallpaperItem item);
     Task StopAsync();
     Task PauseAsync();
     Task ResumeAsync();
+    Task SetVolumeAsync(double volume);
+    Task SetMutedAsync(bool muted);
+    Task SetPlaybackRateAsync(double rate);
+    Task SetFitModeAsync(WallpaperFitMode fitMode);
+    Task SetForwardInputAsync(bool forwardInput);
     void RefreshMonitors();
 
     event EventHandler<WallpaperEngineStatus>? StatusChanged;
 }
-

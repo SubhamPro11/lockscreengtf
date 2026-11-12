@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +11,7 @@ using Microsoft.UI.Dispatching;
 namespace LockscreenGif.Features.DesktopWallpaper.ViewModels;
 
 /// <summary>
-/// ViewModel for the Desktop Wallpaper page.
+/// ViewModel for the Desktop Wallpaper page supporting video, web, image, and executable wallpapers.
 /// </summary>
 public sealed class DesktopWallpaperViewModel : ObservableObject
 {
@@ -34,8 +35,23 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             {
                 OnPropertyChanged(nameof(CanStart));
                 OnPropertyChanged(nameof(CanStop));
+                OnPropertyChanged(nameof(CanPauseResume));
                 OnPropertyChanged(nameof(StartButtonVisibility));
                 OnPropertyChanged(nameof(StopButtonVisibility));
+            }
+        }
+    }
+
+    private bool _isPaused;
+    public bool IsPaused
+    {
+        get => _isPaused;
+        set
+        {
+            if (SetProperty(ref _isPaused, value))
+            {
+                OnPropertyChanged(nameof(PauseResumeButtonText));
+                OnPropertyChanged(nameof(PauseResumeGlyph));
             }
         }
     }
@@ -50,6 +66,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             {
                 OnPropertyChanged(nameof(CanStart));
                 OnPropertyChanged(nameof(CanStop));
+                OnPropertyChanged(nameof(CanPauseResume));
                 OnPropertyChanged(nameof(StartButtonVisibility));
                 OnPropertyChanged(nameof(StopButtonVisibility));
             }
@@ -110,10 +127,169 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
+    private string _sourceInput = string.Empty;
+    public string SourceInput
+    {
+        get => _sourceInput;
+        set => SetProperty(ref _sourceInput, value);
+    }
+
+    private string _wallpaperTitle = "No wallpaper selected";
+    public string WallpaperTitle
+    {
+        get => _wallpaperTitle;
+        set => SetProperty(ref _wallpaperTitle, value);
+    }
+
+    private string _wallpaperTypeDescription = "None";
+    public string WallpaperTypeDescription
+    {
+        get => _wallpaperTypeDescription;
+        set => SetProperty(ref _wallpaperTypeDescription, value);
+    }
+
+    private bool _isMediaLoaded;
+    public bool IsMediaLoaded
+    {
+        get => _isMediaLoaded;
+        set
+        {
+            if (SetProperty(ref _isMediaLoaded, value))
+            {
+                OnPropertyChanged(nameof(CanApply));
+            }
+        }
+    }
+
+    private bool _isVideo;
+    public bool IsVideo
+    {
+        get => _isVideo;
+        set => SetProperty(ref _isVideo, value);
+    }
+
+    private bool _isWeb;
+    public bool IsWeb
+    {
+        get => _isWeb;
+        set => SetProperty(ref _isWeb, value);
+    }
+
+    private bool _isApplication;
+    public bool IsApplication
+    {
+        get => _isApplication;
+        set => SetProperty(ref _isApplication, value);
+    }
+
+    private int _fitModeIndex;
+    public int FitModeIndex
+    {
+        get => _fitModeIndex;
+        set
+        {
+            if (SetProperty(ref _fitModeIndex, value))
+            {
+                var mode = value switch
+                {
+                    1 => WallpaperFitMode.Fit,
+                    2 => WallpaperFitMode.Stretch,
+                    3 => WallpaperFitMode.Center,
+                    _ => WallpaperFitMode.Fill
+                };
+                _ = _engineService.SetFitModeAsync(mode);
+            }
+        }
+    }
+
+    private double _volume = 50.0;
+    public double Volume
+    {
+        get => _volume;
+        set
+        {
+            if (SetProperty(ref _volume, value))
+            {
+                _ = _engineService.SetVolumeAsync(value / 100.0);
+            }
+        }
+    }
+
+    private bool _isMuted = true;
+    public bool IsMuted
+    {
+        get => _isMuted;
+        set
+        {
+            if (SetProperty(ref _isMuted, value))
+            {
+                _ = _engineService.SetMutedAsync(value);
+            }
+        }
+    }
+
+    private int _speedIndex = 1; // 1.0x
+    public int SpeedIndex
+    {
+        get => _speedIndex;
+        set
+        {
+            if (SetProperty(ref _speedIndex, value))
+            {
+                var speed = value switch
+                {
+                    0 => 0.5,
+                    2 => 1.5,
+                    3 => 2.0,
+                    _ => 1.0
+                };
+                _ = _engineService.SetPlaybackRateAsync(speed);
+            }
+        }
+    }
+
+    private bool _loop = true;
+    public bool Loop
+    {
+        get => _loop;
+        set => SetProperty(ref _loop, value);
+    }
+
+    private bool _forwardInput;
+    public bool ForwardInput
+    {
+        get => _forwardInput;
+        set
+        {
+            if (SetProperty(ref _forwardInput, value))
+            {
+                _ = _engineService.SetForwardInputAsync(value);
+            }
+        }
+    }
+
+    private bool _allowAdvancedExecutables;
+    public bool AllowAdvancedExecutables
+    {
+        get => _allowAdvancedExecutables;
+        set
+        {
+            if (SetProperty(ref _allowAdvancedExecutables, value))
+            {
+                _engineService.AllowAdvancedExecutables = value;
+            }
+        }
+    }
+
     public ObservableCollection<DisplayMonitor> Monitors { get; } = [];
 
     public bool CanStart => !IsRunning && !IsBusy;
     public bool CanStop => IsRunning && !IsBusy;
+    public bool CanPauseResume => IsRunning && !IsBusy;
+    public bool CanApply => IsMediaLoaded && !IsBusy;
+
+    public string PauseResumeButtonText => IsPaused ? "Resume" : "Pause";
+    public string PauseResumeGlyph => IsPaused ? "\uE768" : "\uE769";
 
     public Microsoft.UI.Xaml.Visibility StartButtonVisibility =>
         IsRunning ? Microsoft.UI.Xaml.Visibility.Collapsed : Microsoft.UI.Xaml.Visibility.Visible;
@@ -123,7 +299,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
     public IAsyncRelayCommand StartCommand { get; }
     public IAsyncRelayCommand StopCommand { get; }
-    public IAsyncRelayCommand ToggleCommand { get; }
+    public IAsyncRelayCommand TogglePauseCommand { get; }
+    public IAsyncRelayCommand ApplyWallpaperCommand { get; }
     public IRelayCommand RefreshMonitorsCommand { get; }
 
     public DesktopWallpaperViewModel(IWallpaperEngineService engineService)
@@ -133,7 +310,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
         StartCommand = new AsyncRelayCommand(StartAsync, () => CanStart);
         StopCommand = new AsyncRelayCommand(StopAsync, () => CanStop);
-        ToggleCommand = new AsyncRelayCommand(ToggleAsync);
+        TogglePauseCommand = new AsyncRelayCommand(TogglePauseAsync, () => CanPauseResume);
+        ApplyWallpaperCommand = new AsyncRelayCommand(ApplyWallpaperAsync, () => CanApply);
         RefreshMonitorsCommand = new RelayCommand(RefreshMonitors);
 
         _engineService.StatusChanged += EngineService_StatusChanged;
@@ -148,6 +326,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public void RefreshFromEngine()
     {
         IsRunning = _engineService.IsRunning;
+        IsPaused = _engineService.Status == WallpaperEngineStatus.Paused;
+
         StatusText = _engineService.Status switch
         {
             WallpaperEngineStatus.Running => "Running",
@@ -178,10 +358,117 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
         StartCommand.NotifyCanExecuteChanged();
         StopCommand.NotifyCanExecuteChanged();
+        TogglePauseCommand.NotifyCanExecuteChanged();
+        ApplyWallpaperCommand.NotifyCanExecuteChanged();
+
         OnPropertyChanged(nameof(CanStart));
         OnPropertyChanged(nameof(CanStop));
+        OnPropertyChanged(nameof(CanPauseResume));
         OnPropertyChanged(nameof(StartButtonVisibility));
         OnPropertyChanged(nameof(StopButtonVisibility));
+    }
+
+    public void LoadSource(string pathOrUrl)
+    {
+        if (string.IsNullOrWhiteSpace(pathOrUrl))
+        {
+            return;
+        }
+
+        SourceInput = pathOrUrl;
+        var type = WallpaperItem.DetectType(pathOrUrl);
+
+        IsVideo = type == WallpaperType.Video;
+        IsWeb = type == WallpaperType.Web;
+        IsApplication = type == WallpaperType.Application;
+
+        WallpaperTypeDescription = type switch
+        {
+            WallpaperType.Video => "Video / Animated Loop",
+            WallpaperType.Web => "Web Page / WebGL / Interactive",
+            WallpaperType.Image => "Static Image",
+            WallpaperType.Application => "Executable Application (.exe)",
+            _ => "Media"
+        };
+
+        WallpaperTitle = pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? pathOrUrl
+            : Path.GetFileName(pathOrUrl);
+
+        IsMediaLoaded = true;
+        ApplyWallpaperCommand.NotifyCanExecuteChanged();
+
+        // If the engine is already running, seamlessly apply the newly selected wallpaper
+        if (IsRunning)
+        {
+            _ = ApplyWallpaperAsync();
+        }
+    }
+
+    public async Task ApplyWallpaperAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SourceInput))
+        {
+            return;
+        }
+
+        IsBusy = true;
+        ErrorMessage = null;
+        HasError = false;
+
+        try
+        {
+            UpdateEngineLayoutMode();
+            _engineService.SelectedMonitor = SelectedMonitor;
+
+            var type = WallpaperItem.DetectType(SourceInput);
+            var fitMode = FitModeIndex switch
+            {
+                1 => WallpaperFitMode.Fit,
+                2 => WallpaperFitMode.Stretch,
+                3 => WallpaperFitMode.Center,
+                _ => WallpaperFitMode.Fill
+            };
+
+            var speed = SpeedIndex switch
+            {
+                0 => 0.5,
+                2 => 1.5,
+                3 => 2.0,
+                _ => 1.0
+            };
+
+            var item = new WallpaperItem
+            {
+                SourcePathOrUrl = SourceInput,
+                Title = WallpaperTitle,
+                Type = type,
+                FitMode = fitMode,
+                Volume = Volume / 100.0,
+                IsMuted = IsMuted,
+                PlaybackSpeed = speed,
+                Loop = Loop,
+                ForwardInput = ForwardInput,
+                IsAdvancedExecutable = type == WallpaperType.Application
+            };
+
+            var success = await _engineService.ApplyWallpaperAsync(item);
+            if (!success)
+            {
+                ErrorMessage = _engineService.CurrentErrorMessage ?? "Failed to apply wallpaper.";
+                HasError = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+            HasError = true;
+        }
+        finally
+        {
+            IsBusy = false;
+            RefreshFromEngine();
+        }
     }
 
     private async Task StartAsync()
@@ -191,10 +478,13 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             return;
         }
 
-        IsBusy = true;
-        StartCommand.NotifyCanExecuteChanged();
-        StopCommand.NotifyCanExecuteChanged();
+        if (IsMediaLoaded)
+        {
+            await ApplyWallpaperAsync();
+            return;
+        }
 
+        IsBusy = true;
         try
         {
             UpdateEngineLayoutMode();
@@ -221,9 +511,6 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
 
         IsBusy = true;
-        StartCommand.NotifyCanExecuteChanged();
-        StopCommand.NotifyCanExecuteChanged();
-
         try
         {
             await _engineService.StopAsync();
@@ -240,16 +527,17 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
-    private async Task ToggleAsync()
+    private async Task TogglePauseAsync()
     {
-        if (IsRunning)
+        if (IsPaused)
         {
-            await StopAsync();
+            await _engineService.ResumeAsync();
         }
         else
         {
-            await StartAsync();
+            await _engineService.PauseAsync();
         }
+        RefreshFromEngine();
     }
 
     private void RefreshMonitors()
