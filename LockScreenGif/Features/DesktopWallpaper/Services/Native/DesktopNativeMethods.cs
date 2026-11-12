@@ -363,4 +363,7 @@ internal static class DesktopNativeMethods
 
     [DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(nint hWnd);
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern uint RegisterWindowMessage(string lpString);
 }

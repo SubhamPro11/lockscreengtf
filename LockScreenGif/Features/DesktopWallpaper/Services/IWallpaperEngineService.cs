@@ -28,6 +28,7 @@ public interface IWallpaperEngineService
 
     Task<bool> StartAsync();
     Task<bool> ApplyWallpaperAsync(WallpaperItem item);
+    Task RestartAsync();
     Task StopAsync();
     Task PauseAsync();
     Task ResumeAsync();

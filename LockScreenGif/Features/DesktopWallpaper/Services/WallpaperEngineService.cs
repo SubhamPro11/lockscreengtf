@@ -313,6 +313,19 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         }
     }
 
+    public async Task RestartAsync()
+    {
+        if (_currentWallpaper == null)
+        {
+            return;
+        }
+
+        var item = _currentWallpaper;
+        await StopAsync();
+        await Task.Delay(200);
+        await ApplyWallpaperAsync(item);
+    }
+
     public async Task StopAsync()
     {
         if (Status == WallpaperEngineStatus.Stopped)

@@ -20,6 +20,7 @@ public sealed class WallpaperTrayService : IDisposable
     private readonly IWallpaperEngineService _engineService;
     private readonly IWallpaperLibraryService _libraryService;
     private readonly DesktopNativeMethods.WndProc _wndProcDelegate;
+    private readonly uint _wmTaskbarCreated;
 
     private nint _messageHwnd;
     private bool _isIconVisible;
@@ -30,6 +31,7 @@ public sealed class WallpaperTrayService : IDisposable
         _engineService = engineService;
         _libraryService = libraryService;
         _wndProcDelegate = TrayWindowProc;
+        _wmTaskbarCreated = DesktopNativeMethods.RegisterWindowMessage("TaskbarCreated");
 
         CreateMessageWindow();
         ShowTrayIcon();
@@ -115,6 +117,36 @@ public sealed class WallpaperTrayService : IDisposable
 
     private nint TrayWindowProc(nint hWnd, uint msg, nint wParam, nint lParam)
     {
+        if (msg == _wmTaskbarCreated && _wmTaskbarCreated != 0)
+        {
+            _isIconVisible = false;
+            ShowTrayIcon();
+
+            if (_engineService.IsRunning && _engineService.CurrentWallpaper != null)
+            {
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(1000);
+                    await _engineService.RestartAsync();
+                });
+            }
+            return 0;
+        }
+
+        if (msg == 0x007E /* WM_DISPLAYCHANGE */)
+        {
+            _engineService.RefreshMonitors();
+            if (_engineService.IsRunning && _engineService.CurrentWallpaper != null)
+            {
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(500);
+                    await _engineService.RestartAsync();
+                });
+            }
+            return 0;
+        }
+
         if (msg == WM_TRAYICON)
         {
             var mouseMsg = (uint)(lParam.ToInt64() & 0xFFFF);
