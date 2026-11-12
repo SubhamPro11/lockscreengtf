@@ -2,7 +2,21 @@ using System.Text.Json;
 
 namespace LockscreenGif.Services;
 
-public sealed record RecentFileEntry(string Path, string FileName, bool IsVideo, DateTimeOffset LastUsed);
+public sealed record RecentFileEntry(string Path, string FileName, bool IsVideo, DateTimeOffset LastUsed)
+{
+    public string DisplayName => TrimMiddle(FileName, 20);
+
+    private static string TrimMiddle(string name, int maxLen = 20)
+    {
+        if (string.IsNullOrEmpty(name) || name.Length <= maxLen)
+        {
+            return name;
+        }
+        int keep = (maxLen - 3) / 2;
+        int rest = (maxLen - 3) - keep;
+        return string.Concat(name.AsSpan(0, keep), "...", name.AsSpan(name.Length - rest));
+    }
+}
 
 public sealed class RecentFilesService
 {

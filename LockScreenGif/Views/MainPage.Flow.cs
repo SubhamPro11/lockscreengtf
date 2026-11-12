@@ -160,8 +160,10 @@ public sealed partial class MainPage
     private void UpdateStep(Button button, Border currentIndicator, TextBlock currentLabel, MainFlowStage stage, string label)
     {
         var current = Flow.Stage == stage;
+        var canNavigate = Flow.CanNavigate(stage);
         button.Content = currentLabel.Text = label;
-        button.IsEnabled = Flow.CanNavigate(stage);
+        button.IsEnabled = canNavigate;
+        button.Opacity = canNavigate ? 1.0 : 0.45;
         button.Visibility = current ? Visibility.Collapsed : Visibility.Visible;
         currentIndicator.Visibility = current ? Visibility.Visible : Visibility.Collapsed;
     }

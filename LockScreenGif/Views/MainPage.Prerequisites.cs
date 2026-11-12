@@ -106,6 +106,19 @@ public sealed partial class MainPage
             SetPrerequisiteIcon(PicturePrerequisiteIcon, state.PictureAndCache.Satisfied);
             SetPrerequisiteIcon(FeaturePrerequisiteIcon, state.ImageFeature.Satisfied);
             PrerequisitesPanel.Style = (Style)Resources[state.Satisfied ? "PrerequisitesReadyStyle" : "PrerequisitesWarningStyle"];
+            if (state.Satisfied)
+            {
+                PrerequisitesHeaderIcon.Glyph = "\uE73E";
+                PrerequisitesHeaderIcon.Foreground = (Microsoft.UI.Xaml.Media.Brush)
+                    Application.Current.Resources["GlassStatusSuccessBrush"];
+                PrerequisitesHeaderText.Text = "System Prerequisites · All set";
+            }
+            else
+            {
+                PrerequisitesHeaderIcon.Glyph = "\uE7BA";
+                PrerequisitesHeaderIcon.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["GlassStatusAlertBrush"];
+                PrerequisitesHeaderText.Text = "System Prerequisites · Needs attention";
+            }
             UpdatePrerequisiteButtons();
         }
         catch (Exception ex)
@@ -121,6 +134,9 @@ public sealed partial class MainPage
             FeaturePrerequisiteDetail.Text = "The Windows feature status could not be checked. Run a diagnostic test for details.";
             SetPrerequisiteIcon(PicturePrerequisiteIcon, false);
             SetPrerequisiteIcon(FeaturePrerequisiteIcon, false);
+            PrerequisitesHeaderIcon.Glyph = "\uE7BA";
+            PrerequisitesHeaderIcon.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["GlassStatusAlertBrush"];
+            PrerequisitesHeaderText.Text = "System Prerequisites · Could not check";
             PrerequisitesPanel.Style = (Style)Resources["PrerequisitesWarningStyle"];
             UpdatePrerequisiteExpansion(false);
             DisableWindowsImageFeatureButton.IsEnabled = false;

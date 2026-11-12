@@ -25,7 +25,7 @@
             <Setter Property="Foreground" Value="{ThemeResource GlassStatusSuccessBrush}" />
         </Style>
         <Style x:Key="PrerequisiteWarningIconStyle" TargetType="FontIcon">
-            <Setter Property="Foreground" Value="{ThemeResource GlassAccentBrassBrush}" />
+            <Setter Property="Foreground" Value="{ThemeResource GlassStatusAlertBrush}" />
         </Style>
 
         <!-- Windows 11 Stepper Indicator Styles -->
@@ -52,7 +52,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="8" AutomationProperties.Name="Animation setup steps">
                             <Grid>
                                 <Button x:Name="ChooseStepButton" Content="1 · Choose" Click="ChooseStep_Click"
-                                        Style="{StaticResource GlassSubtleButtonStyle}"
+                                        Style="{StaticResource StepperButtonStyle}"
                                         AutomationProperties.Name="Choose source step" Visibility="Collapsed" IsEnabled="False" />
                                 <Border x:Name="ChooseStepCurrent" Style="{StaticResource CurrentStepStyle}">
                                     <TextBlock x:Name="ChooseStepCurrentText" Text="1 · Choose" Style="{StaticResource CurrentStepTextStyle}"
@@ -61,7 +61,7 @@
                             </Grid>
                             <Grid x:Name="EditStepItem" Visibility="Collapsed">
                                 <Button x:Name="EditStepButton" Content="2 · Edit" Click="EditStep_Click"
-                                        Style="{StaticResource GlassSubtleButtonStyle}"
+                                        Style="{StaticResource StepperButtonStyle}"
                                         AutomationProperties.Name="Edit video clip step" IsEnabled="False" />
                                 <Border x:Name="EditStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
                                     <TextBlock x:Name="EditStepCurrentText" Text="2 · Edit" Style="{StaticResource CurrentStepTextStyle}"
@@ -70,7 +70,7 @@
                             </Grid>
                             <Grid>
                                 <Button x:Name="SetStepButton" Content="Set" Click="SetStep_Click"
-                                        Style="{StaticResource GlassSubtleButtonStyle}"
+                                        Style="{StaticResource StepperButtonStyle}"
                                         AutomationProperties.Name="Set lock screen step" IsEnabled="False" />
                                 <Border x:Name="SetStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
                                     <TextBlock x:Name="SetStepCurrentText" Style="{StaticResource CurrentStepTextStyle}"
@@ -166,10 +166,10 @@
                                             <DataTemplate>
                                                 <Button Click="RecentFileButton_Click" Tag="{Binding Path}" Style="{StaticResource GlassButtonStyle}" Padding="10,6"
                                                         AutomationProperties.Name="{Binding FileName}"
-                                                        ToolTipService.ToolTip="{Binding Path}">
+                                                        ToolTipService.ToolTip="{Binding FileName}">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                                         <FontIcon Glyph="&#xE714;" FontSize="13" Foreground="{ThemeResource GlassAccentBrassBrush}" />
-                                                        <TextBlock Text="{Binding FileName}" MaxWidth="160" TextTrimming="CharacterEllipsis" FontSize="12" />
+                                                        <TextBlock Text="{Binding DisplayName}" MaxWidth="160" TextTrimming="CharacterEllipsis" FontSize="12" />
                                                     </StackPanel>
                                                 </Button>
                                             </DataTemplate>
@@ -180,7 +180,7 @@
 
                             <!-- System Prerequisites Panel (Clean collapsible card) -->
                             <Border x:Name="PrerequisitesPanel" Padding="14,10"
-                                    Style="{StaticResource PrerequisitesWarningStyle}">
+                                    Style="{StaticResource PrerequisitesReadyStyle}">
                                 <Expander x:Name="PrerequisitesExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                           Background="Transparent" AutomationProperties.Name="System Prerequisites">
                                     <Expander.Resources>
@@ -192,8 +192,8 @@
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <FontIcon Glyph="&#xE7BA;" FontSize="16" VerticalAlignment="Center" Foreground="{ThemeResource GlassAccentBrassBrush}" />
-                                            <TextBlock Grid.Column="1" Text="System Prerequisites (Windows 11 Picture Mode &amp; Cache)" FontSize="13" FontWeight="SemiBold"
+                                            <FontIcon x:Name="PrerequisitesHeaderIcon" Glyph="&#xE73E;" FontSize="16" VerticalAlignment="Center" Foreground="{ThemeResource GlassStatusSuccessBrush}" />
+                                            <TextBlock x:Name="PrerequisitesHeaderText" Grid.Column="1" Text="System Prerequisites · Checking…" FontSize="13" FontWeight="SemiBold"
                                                        Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
                                         </Grid>
                                     </Expander.Header>
@@ -665,7 +665,7 @@
                                 AccessKey="B"
                                 AutomationProperties.Name="Return to previous stage" />
                         <!-- Primary Action Buttons: Clear, unambiguous -->
-                        <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Right">
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
                             <Button x:Name="ContinueSelectionButton" Content="Continue" Click="ContinueSelection_Click"
                                     AccessKey="C"
                                     AutomationProperties.Name="Continue to editor"
