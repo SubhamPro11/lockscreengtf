@@ -45,6 +45,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 OnPropertyChanged(nameof(CanPauseResume));
                 OnPropertyChanged(nameof(StartButtonVisibility));
                 OnPropertyChanged(nameof(StopButtonVisibility));
+                OnPropertyChanged(nameof(BusyVisibility));
             }
         }
     }
@@ -78,6 +79,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 OnPropertyChanged(nameof(CanApplyBoth));
                 OnPropertyChanged(nameof(StartButtonVisibility));
                 OnPropertyChanged(nameof(StopButtonVisibility));
+                OnPropertyChanged(nameof(BusyVisibility));
                 StartCommand?.NotifyCanExecuteChanged();
                 StopCommand?.NotifyCanExecuteChanged();
                 TogglePauseCommand?.NotifyCanExecuteChanged();
@@ -457,6 +459,9 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public ObservableCollection<WallpaperLibraryEntry> LibraryItems { get; } = [];
     public ObservableCollection<WallpaperCustomProperty> CustomProperties { get; } = [];
 
+    public bool IsLibraryEmpty => LibraryItems.Count == 0;
+    public string LibraryCountText => $"{LibraryItems.Count} item{(LibraryItems.Count == 1 ? "" : "s")}";
+
     private string _searchQuery = string.Empty;
     public string SearchQuery
     {
@@ -557,6 +562,15 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public Microsoft.UI.Xaml.Visibility StopButtonVisibility =>
         IsRunning ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
 
+    public Microsoft.UI.Xaml.Visibility EmptyLibraryVisibility =>
+        LibraryItems.Count == 0 ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility LibraryListVisibility =>
+        LibraryItems.Count > 0 ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility BusyVisibility =>
+        IsBusy ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
     public IAsyncRelayCommand StartCommand { get; }
     public IAsyncRelayCommand StopCommand { get; }
     public IAsyncRelayCommand TogglePauseCommand { get; }
@@ -656,6 +670,11 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             LibraryItems.Add(item);
         }
+
+        OnPropertyChanged(nameof(IsLibraryEmpty));
+        OnPropertyChanged(nameof(LibraryCountText));
+        OnPropertyChanged(nameof(EmptyLibraryVisibility));
+        OnPropertyChanged(nameof(LibraryListVisibility));
     }
 
     private async Task ApplyLibraryEntryAsync(WallpaperLibraryEntry? entry)
@@ -781,8 +800,26 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             return;
         }
 
-        SourceInput = pathOrUrl;
+        if (!WallpaperItem.IsSupportedFormat(pathOrUrl))
+        {
+            ErrorMessage = "The selected file format is not supported. Please select an animated GIF, video (.mp4, .webm, .mkv, .avi, .mov), animated image (.webp), or web page (.html).";
+            HasError = true;
+            IsMediaLoaded = false;
+            return;
+        }
+
         var type = WallpaperItem.DetectType(pathOrUrl);
+        if (type == WallpaperType.Application && !AllowAdvancedExecutables)
+        {
+            ErrorMessage = "Executable (.exe) wallpapers are disabled by default for system security. You can enable them under 'Advanced Options & Safeguards'.";
+            HasError = true;
+            IsMediaLoaded = false;
+            return;
+        }
+
+        ErrorMessage = null;
+        HasError = false;
+        SourceInput = pathOrUrl;
 
         IsVideo = type == WallpaperType.Video;
         IsWeb = type == WallpaperType.Web;
@@ -803,6 +840,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
         IsMediaLoaded = true;
         ApplyWallpaperCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(CanApplyBoth));
+        ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
 
         // Add to library automatically if not already present
         _ = _libraryService.AddAsync(pathOrUrl, WallpaperTitle);
@@ -877,7 +916,18 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
+            if (ex.Message.Contains("WebView2", StringComparison.OrdinalIgnoreCase))
+            {
+                ErrorMessage = "Microsoft Edge WebView2 runtime is required to display this wallpaper. It is installed by default on Windows 11; if missing, please install the WebView2 Evergreen Runtime from Microsoft.";
+            }
+            else if (ex.Message.Contains("ffmpeg", StringComparison.OrdinalIgnoreCase))
+            {
+                ErrorMessage = "FFmpeg is required to remux this media format. Please ensure FFmpeg is available or choose an MP4, WebM, or GIF file.";
+            }
+            else
+            {
+                ErrorMessage = $"Could not apply wallpaper: {ex.Message}";
+            }
             HasError = true;
         }
         finally

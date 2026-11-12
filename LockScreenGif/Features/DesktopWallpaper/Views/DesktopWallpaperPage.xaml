@@ -37,6 +37,11 @@
                      Message="{x:Bind ViewModel.SyncNotice, Mode=OneWay}"
                      IsClosable="True" />
 
+            <!-- Activity / Loading ProgressBar -->
+            <ProgressBar IsIndeterminate="True"
+                         Visibility="{x:Bind ViewModel.BusyVisibility, Mode=OneWay}"
+                         HorizontalAlignment="Stretch" />
+
             <!-- Wallpaper Selection & Drop Target Card -->
             <Border x:Name="DropTargetCard"
                     Style="{StaticResource GlassCardStyle}"
@@ -188,8 +193,33 @@
                         </StackPanel>
                     </Grid>
 
+                    <!-- Empty State Placeholder -->
+                    <Border Visibility="{x:Bind ViewModel.EmptyLibraryVisibility, Mode=OneWay}"
+                            Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                            BorderBrush="{ThemeResource GlassBorderSubtleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource AppCornerRadiusControl}"
+                            Padding="24,28"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Spacing="{StaticResource AppSpacingS}" HorizontalAlignment="Center">
+                            <FontIcon Glyph="&#xE8B9;"
+                                      FontSize="32"
+                                      Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                      HorizontalAlignment="Center" />
+                            <TextBlock Text="No wallpapers in library yet"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="Choose a video, animated GIF, or web URL above to start building your collection."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
                     <!-- Library Items List / Grid -->
-                    <ListView ItemsSource="{x:Bind ViewModel.LibraryItems, Mode=OneWay}"
+                    <ListView Visibility="{x:Bind ViewModel.LibraryListVisibility, Mode=OneWay}"
+                              ItemsSource="{x:Bind ViewModel.LibraryItems, Mode=OneWay}"
                               SelectedItem="{x:Bind ViewModel.SelectedLibraryEntry, Mode=TwoWay}"
                               SelectionMode="Single"
                               MaxHeight="260"
