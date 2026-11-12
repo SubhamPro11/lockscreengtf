@@ -263,64 +263,269 @@
 
             <!-- Engine Status & Primary Control Card -->
             <Border Style="{StaticResource GlassCardStyle}">
-                <Grid RowSpacing="{StaticResource AppSpacingM}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <Grid RowSpacing="{StaticResource AppSpacingM}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                        <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
-                            <TextBlock Text="Wallpaper Engine Status"
-                                       Style="{StaticResource SubtitleTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
-                                    BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="{StaticResource AppCornerRadiusControl}"
-                                    Padding="8,2"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                                           FontSize="{StaticResource AppFontSizeCaption}"
-                                           FontWeight="Medium"
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
+                                <TextBlock Text="Wallpaper Engine Status"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontWeight="SemiBold"
                                            Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            </Border>
+                                <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                        BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                        Padding="8,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                                               FontSize="{StaticResource AppFontSizeCaption}"
+                                               FontWeight="Medium"
+                                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{x:Bind ViewModel.ActiveTargetDescription, Mode=OneWay, TargetNullValue='Engine is currently idle. Press Start or Apply to attach to the desktop background layer.'}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                         </StackPanel>
-                        <TextBlock Text="{x:Bind ViewModel.ActiveTargetDescription, Mode=OneWay, TargetNullValue='Engine is currently idle. Press Start or Apply to attach to the desktop background layer.'}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                    </StackPanel>
 
-                    <!-- Control Buttons -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
-                        <Button x:Name="PauseResumeButton"
-                                Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
-                                Style="{StaticResource GlassButtonStyle}"
-                                Command="{x:Bind ViewModel.TogglePauseCommand}"
-                                IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
-                                AutomationProperties.Name="Pause or resume wallpaper playback" />
+                        <!-- Control Buttons -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
+                            <Button x:Name="PauseResumeButton"
+                                    Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    Command="{x:Bind ViewModel.TogglePauseCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
+                                    AutomationProperties.Name="Pause or resume wallpaper playback" />
 
-                        <Button x:Name="StartEngineButton"
-                                Content="Start Engine"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Command="{x:Bind ViewModel.StartCommand}"
-                                IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
-                                AutomationProperties.Name="Start desktop wallpaper engine" />
+                            <Button x:Name="StartEngineButton"
+                                    Content="Start Engine"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    Command="{x:Bind ViewModel.StartCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
+                                    AutomationProperties.Name="Start desktop wallpaper engine" />
 
-                        <Button x:Name="StopEngineButton"
-                                Content="Stop Engine"
-                                Style="{StaticResource GlassButtonStyle}"
-                                Command="{x:Bind ViewModel.StopCommand}"
-                                IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
-                                AutomationProperties.Name="Stop desktop wallpaper engine" />
-                    </StackPanel>
-                </Grid>
+                            <Button x:Name="StopEngineButton"
+                                    Content="Stop Engine"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    Command="{x:Bind ViewModel.StopCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
+                                    AutomationProperties.Name="Stop desktop wallpaper engine" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Real-time Resource Usage Readout Row -->
+                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource AppCornerRadiusControl}"
+                            Padding="12,8">
+                        <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingXS}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE950;" FontSize="{StaticResource AppFontSizeCaption}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                <TextBlock Text="CPU:" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                <TextBlock Text="{x:Bind ViewModel.CpuUsageText, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingXS}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE8B9;" FontSize="{StaticResource AppFontSizeCaption}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                <TextBlock Text="RAM:" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                <TextBlock Text="{x:Bind ViewModel.MemoryUsageText, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2"
+                                       HorizontalAlignment="Right"
+                                       Text="{x:Bind ViewModel.AutoPausedReasonText, Mode=OneWay, TargetNullValue='Wallpaper running smoothly'}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Smart Performance & Power Rules Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <TextBlock Text="Smart Performance &amp; Power Rules"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+
+                    <!-- Rule 1: Fullscreen apps & games -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Pause when fullscreen app or game is focused"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Suspends video decoding and web rendering while gaming or using fullscreen applications."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.PauseWhenFullscreenAppActive, Mode=TwoWay}"
+                                      AutomationProperties.Name="Pause when fullscreen app is active" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Rule 2: Desktop Covered -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Pause when desktop is fully covered"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Pauses rendering when active windows are maximized over the desktop."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.PauseWhenDesktopCovered, Mode=TwoWay}"
+                                      AutomationProperties.Name="Pause when desktop is fully covered" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Rule 3: Battery & Battery Saver -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Pause in battery saver mode"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Automatically pauses wallpaper whenever Windows battery saver is turned on."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.PauseInBatterySaver, Mode=TwoWay}"
+                                      AutomationProperties.Name="Pause in battery saver mode" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Rule 4: Pause On Battery (General) -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Pause on battery power"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Always pause wallpaper playback when unplugged from AC power (default off)."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.PauseOnBattery, Mode=TwoWay}"
+                                      AutomationProperties.Name="Pause on battery power" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Rule 5: Screen Locked or Display Off -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Pause when PC is locked or display is turned off"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Stops rendering when the workstation is locked (Win+L) or monitors sleep."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.PauseWhenLockedOrDisplayOff, Mode=TwoWay}"
+                                      AutomationProperties.Name="Pause when PC is locked" />
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- FPS Limit & Decode Quality -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Frame rate limit"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Cap playback frame rate to reduce GPU utilization and thermals."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  SelectedIndex="{x:Bind ViewModel.FpsLimitIndex, Mode=TwoWay}"
+                                  Style="{StaticResource GlassComboBoxStyle}"
+                                  AutomationProperties.Name="Frame rate limit">
+                            <ComboBoxItem Content="60 FPS (Fluid)" />
+                            <ComboBoxItem Content="30 FPS (Standard)" />
+                            <ComboBoxItem Content="15 FPS (Power saving)" />
+                            <ComboBoxItem Content="Unlimited" />
+                        </ComboBox>
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Lower Decode Quality Toggle -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Lower decode quality"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Favors power efficiency over maximum resolution decoding for background video."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ToggleSwitch Grid.Column="1"
+                                      IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}"
+                                      AutomationProperties.Name="Lower decode quality" />
+                    </Grid>
+                </StackPanel>
             </Border>
 
             <!-- Multi-Monitor & Placement Card -->

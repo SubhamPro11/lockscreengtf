@@ -279,6 +279,32 @@ internal static class DesktopNativeMethods
     [DllImport("user32.dll")]
     public static extern bool ScreenToClient(nint hWnd, ref POINT lpPoint);
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct SYSTEM_POWER_STATUS
+    {
+        public byte ACLineStatus;
+        public byte BatteryFlag;
+        public byte BatteryLifePercent;
+        public byte SystemStatusFlag;
+        public int BatteryLifeTime;
+        public int BatteryFullLifeTime;
+    }
+
+    [DllImport("user32.dll")]
+    public static extern nint GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    public static extern bool GetWindowRect(nint hWnd, out RECT lpRect);
+
+    [DllImport("user32.dll")]
+    public static extern bool IsZoomed(nint hWnd);
+
+    [DllImport("user32.dll")]
+    public static extern nint MonitorFromWindow(nint hwnd, uint dwFlags);
+
+    [DllImport("kernel32.dll")]
+    public static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS lpSystemPowerStatus);
+
     [DllImport("user32.dll", SetLastError = true)]
     public static extern uint GetWindowThreadProcessId(nint hWnd, out uint lpdwProcessId);
 

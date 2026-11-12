@@ -281,6 +281,120 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
+    public bool PauseWhenFullscreenAppActive
+    {
+        get => _engineService.PerformanceMonitor.Rules.PauseWhenFullscreenAppActive;
+        set
+        {
+            _engineService.PerformanceMonitor.Rules.PauseWhenFullscreenAppActive = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool PauseWhenDesktopCovered
+    {
+        get => _engineService.PerformanceMonitor.Rules.PauseWhenDesktopCovered;
+        set
+        {
+            _engineService.PerformanceMonitor.Rules.PauseWhenDesktopCovered = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool PauseOnBattery
+    {
+        get => _engineService.PerformanceMonitor.Rules.PauseOnBattery;
+        set
+        {
+            _engineService.PerformanceMonitor.Rules.PauseOnBattery = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool PauseInBatterySaver
+    {
+        get => _engineService.PerformanceMonitor.Rules.PauseInBatterySaver;
+        set
+        {
+            _engineService.PerformanceMonitor.Rules.PauseInBatterySaver = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool PauseWhenLockedOrDisplayOff
+    {
+        get => _engineService.PerformanceMonitor.Rules.PauseWhenLockedOrDisplayOff;
+        set
+        {
+            _engineService.PerformanceMonitor.Rules.PauseWhenLockedOrDisplayOff = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _fpsLimitIndex; // 0: 60 FPS, 1: 30 FPS, 2: 15 FPS, 3: Unlimited
+    public int FpsLimitIndex
+    {
+        get => _fpsLimitIndex;
+        set
+        {
+            if (SetProperty(ref _fpsLimitIndex, value))
+            {
+                _engineService.PerformanceMonitor.Rules.TargetFps = value switch
+                {
+                    1 => 30,
+                    2 => 15,
+                    3 => 0,
+                    _ => 60
+                };
+            }
+        }
+    }
+
+    public bool LowerDecodeQuality
+    {
+        get => _engineService.PerformanceMonitor.Rules.LowerDecodeQuality;
+        set
+        {
+            _engineService.PerformanceMonitor.Rules.LowerDecodeQuality = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string _cpuUsageText = "0.0%";
+    public string CpuUsageText
+    {
+        get => _cpuUsageText;
+        set => SetProperty(ref _cpuUsageText, value);
+    }
+
+    private string _memoryUsageText = "0 MB";
+    public string MemoryUsageText
+    {
+        get => _memoryUsageText;
+        set => SetProperty(ref _memoryUsageText, value);
+    }
+
+    private string _gpuDescriptionText = "Hardware Accelerated";
+    public string GpuDescriptionText
+    {
+        get => _gpuDescriptionText;
+        set => SetProperty(ref _gpuDescriptionText, value);
+    }
+
+    private bool _isAutoPaused;
+    public bool IsAutoPaused
+    {
+        get => _isAutoPaused;
+        set => SetProperty(ref _isAutoPaused, value);
+    }
+
+    private string? _autoPausedReasonText;
+    public string? AutoPausedReasonText
+    {
+        get => _autoPausedReasonText;
+        set => SetProperty(ref _autoPausedReasonText, value);
+    }
+
     public ObservableCollection<DisplayMonitor> Monitors { get; } = [];
 
     public bool CanStart => !IsRunning && !IsBusy;
@@ -315,6 +429,26 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         RefreshMonitorsCommand = new RelayCommand(RefreshMonitors);
 
         _engineService.StatusChanged += EngineService_StatusChanged;
+
+        _engineService.PerformanceMonitor.ResourceUsageUpdated += (s, usage) =>
+        {
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                CpuUsageText = $"{usage.CpuPercent:F1}%";
+                MemoryUsageText = $"{usage.MemoryMegabytes} MB";
+                GpuDescriptionText = usage.GpuDescription;
+            });
+        };
+
+        _engineService.PerformanceMonitor.AutoPauseStateChanged += (s, e) =>
+        {
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                IsAutoPaused = e.IsPaused;
+                AutoPausedReasonText = e.Reason != null ? $"Auto-paused: {e.Reason}" : null;
+            });
+        };
+
         RefreshFromEngine();
     }
 

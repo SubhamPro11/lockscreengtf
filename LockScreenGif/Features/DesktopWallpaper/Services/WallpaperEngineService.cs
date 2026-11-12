@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.Models;
 using LockscreenGif.Features.DesktopWallpaper.Services.Input;
 using LockscreenGif.Features.DesktopWallpaper.Services.Native;
+using LockscreenGif.Features.DesktopWallpaper.Services.Performance;
 using LockscreenGif.Features.DesktopWallpaper.Services.Renderers;
 
 namespace LockscreenGif.Features.DesktopWallpaper.Services;
@@ -82,12 +83,16 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         set => _allowAdvancedExecutables = value;
     }
 
+    private readonly WallpaperPerformanceMonitor _performanceMonitor;
+    public WallpaperPerformanceMonitor PerformanceMonitor => _performanceMonitor;
+
     public bool IsRunning => Status == WallpaperEngineStatus.Running || Status == WallpaperEngineStatus.Paused;
 
     public event EventHandler<WallpaperEngineStatus>? StatusChanged;
 
     public WallpaperEngineService()
     {
+        _performanceMonitor = new WallpaperPerformanceMonitor(this);
         RefreshMonitors();
     }
 
@@ -170,6 +175,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             }
 
             Status = WallpaperEngineStatus.Running;
+            _performanceMonitor.Start();
             Logger.Info($"Wallpaper '{item.Title}' applied successfully.");
             return true;
         }
@@ -254,6 +260,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 }
 
                 Status = WallpaperEngineStatus.Running;
+                _performanceMonitor.Start();
                 Logger.Info($"Wallpaper engine host windows created: count={_hostWindows.Count}.");
                 return Task.FromResult(true);
             }
@@ -279,6 +286,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         try
         {
             Logger.Info("Stopping wallpaper engine...");
+            _performanceMonitor.Stop();
             _inputForwarder.Disable();
             await CleanRenderersAsync();
             CleanHostWindows();
@@ -439,6 +447,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         }
         _disposed = true;
 
+        _performanceMonitor.Dispose();
         _inputForwarder.Dispose();
         CleanRenderersAsync().GetAwaiter().GetResult();
         CleanHostWindows();
