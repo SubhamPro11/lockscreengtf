@@ -51,6 +51,11 @@ public class AppNotificationService : IAppNotificationService
 
     public void Unregister()
     {
-        AppNotificationManager.Default.Unregister();
+        try
+        {
+            AppNotificationManager.Default.NotificationInvoked -= OnNotificationInvoked;
+            AppNotificationManager.Default.Unregister();
+        }
+        catch { }
     }
 }

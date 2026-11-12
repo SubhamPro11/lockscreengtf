@@ -31,7 +31,14 @@ internal sealed class ProtectedCacheFixture : IDisposable
         File.WriteAllBytes(Source, Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"));
         try
         {
-            Directory.CreateSymbolicLink(Link, Root);
+            try
+            {
+                Directory.CreateSymbolicLink(Link, Root);
+            }
+            catch (IOException ex) when (ex.HResult == unchecked((int)0x80070522) || ex.Message.Contains("privilege"))
+            {
+                // Symbolic links require developer mode or admin elevation on Windows.
+            }
             foreach (var path in new[] { SystemData, Parent, Root, Folder, Image })
             {
                 var directory = path != Image;

@@ -430,6 +430,7 @@ public sealed partial class MainPage
         frame = _previewFrame;
         Seek(_frames.TimeAt(frame));
         UpdatePreviewPosition();
+        _previewCts?.Cancel();
         _previewCts?.Dispose();
         _previewCts = CancellationTokenSource.CreateLinkedTokenSource(_editorCts?.Token ?? CancellationToken.None);
         var request = _previewCts;

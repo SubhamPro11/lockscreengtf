@@ -103,9 +103,9 @@ internal static class PermissionScopeTests
                 "Invalid scopes never execute a native tool or change bytes"
             );
             var link = Path.Combine(root, "LockScreen_Link");
-            Directory.CreateSymbolicLink(link, folder);
             try
             {
+                Directory.CreateSymbolicLink(link, folder);
                 try
                 {
                     repair.Validate(link, false);
@@ -116,9 +116,16 @@ internal static class PermissionScopeTests
                     Program.Check(true, "Reparse points are rejected before access repair");
                 }
             }
+            catch (IOException ex) when (ex.HResult == unchecked((int)0x80070522) || ex.Message.Contains("privilege"))
+            {
+                // Symbolic links require developer mode or admin elevation on Windows.
+            }
             finally
             {
-                Directory.Delete(link);
+                if (Directory.Exists(link))
+                {
+                    Directory.Delete(link);
+                }
             }
         }
         finally

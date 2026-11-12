@@ -6,6 +6,7 @@ namespace LockscreenGif.Services;
 
 public class FfmpegService
 {
+    private static readonly object _trackedLock = new();
     private static readonly List<string> _tracked = [];
     private static readonly string _tempRoot = TempDirectoryService.GetAppTempRoot();
     private const string _prefix = "ffmpeg_temp_";
@@ -14,24 +15,35 @@ public class FfmpegService
     {
         var dir = Path.Combine(_tempRoot, $"{_prefix}{Guid.NewGuid()}");
         Directory.CreateDirectory(dir);
-        _tracked.Add(dir);
+        lock (_trackedLock)
+        {
+            _tracked.Add(dir);
+        }
         return dir;
     }
 
     public static void CleanupTempDirectories()
     {
+        List<string> toDelete;
+        lock (_trackedLock)
+        {
+            toDelete = [.. _tracked];
+            _tracked.Clear();
+        }
+
         // delete the ones we deliberately created this session
-        foreach (var dir in _tracked)
+        foreach (var dir in toDelete)
         {
             TryDelete(dir);
         }
 
-        _tracked.Clear();
-
         // delete any orphaned folders from previous runs
-        foreach (var dir in Directory.EnumerateDirectories(_tempRoot, $"{_prefix}*"))
+        if (Directory.Exists(_tempRoot))
         {
-            TryDelete(dir);
+            foreach (var dir in Directory.EnumerateDirectories(_tempRoot, $"{_prefix}*"))
+            {
+                TryDelete(dir);
+            }
         }
     }
 

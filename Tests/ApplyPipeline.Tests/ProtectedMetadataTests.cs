@@ -59,13 +59,16 @@ internal static class ProtectedMetadataTests
             "Post-repair validation uses metadata access without listing the protected parent."
         );
         ExpectDenied(() => Directory.GetDirectories(fixture.Parent));
-        await using var linked = new CachePermissions(fixture.Link, "S-1-5-21-0-0-0-1000", allowElevation: false);
-        try
+        if (Directory.Exists(fixture.Link))
         {
-            linked.ValidatePath(fixture.Link);
-            throw new Exception("Protected reparse point was accepted.");
+            await using var linked = new CachePermissions(fixture.Link, "S-1-5-21-0-0-0-1000", allowElevation: false);
+            try
+            {
+                linked.ValidatePath(fixture.Link);
+                throw new Exception("Protected reparse point was accepted.");
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or UnauthorizedAccessException) { }
         }
-        catch (Exception ex) when (ex is InvalidOperationException or UnauthorizedAccessException) { }
     }
 
     private static void ExpectDenied(Action action)

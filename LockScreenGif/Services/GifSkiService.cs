@@ -6,15 +6,18 @@ namespace LockscreenGif.Services;
 
 public class GifSkiService
 {
+    private static readonly object _trackedLock = new();
     private static readonly List<string> _tracked = [];
     private static readonly string _tempRoot = TempDirectoryService.GetAppTempRoot();
     private const string _prefix = "gifski_temp_";
     private static readonly object _libraryLock = new();
     private static nint _libraryHandle;
 
+    internal static Func<string>? GifskiDllResolver { get; set; }
+
     private static string EnsureLibraryLoaded()
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "Vendor", "gifski", "gifski.dll");
+        var path = GifskiDllResolver?.Invoke() ?? Path.Combine(AppContext.BaseDirectory, "Vendor", "gifski", "gifski.dll");
         lock (_libraryLock)
         {
             if (_libraryHandle == 0)
@@ -34,24 +37,35 @@ public class GifSkiService
     {
         var dir = Path.Combine(_tempRoot, $"{_prefix}{Guid.NewGuid()}");
         Directory.CreateDirectory(dir);
-        _tracked.Add(dir);
+        lock (_trackedLock)
+        {
+            _tracked.Add(dir);
+        }
         return dir;
     }
 
     public static void CleanupTempDirectories()
     {
+        List<string> toDelete;
+        lock (_trackedLock)
+        {
+            toDelete = [.. _tracked];
+            _tracked.Clear();
+        }
+
         // delete the ones we deliberately created this session
-        foreach (var dir in _tracked)
+        foreach (var dir in toDelete)
         {
             TryDelete(dir);
         }
 
-        _tracked.Clear();
-
         // delete any orphaned folders from previous runs
-        foreach (var dir in Directory.EnumerateDirectories(_tempRoot, $"{_prefix}*"))
+        if (Directory.Exists(_tempRoot))
         {
-            TryDelete(dir);
+            foreach (var dir in Directory.EnumerateDirectories(_tempRoot, $"{_prefix}*"))
+            {
+                TryDelete(dir);
+            }
         }
     }
 

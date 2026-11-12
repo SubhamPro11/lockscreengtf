@@ -208,7 +208,7 @@ public sealed partial class MainPage : Page
             return;
         }
 
-        var width = (int)((ComboBoxItem)ComboResolution.SelectedItem).Tag; // e.g. 480, 720, 1080
+        var width = (ComboResolution.SelectedItem as ComboBoxItem)?.Tag as int? ?? (int)_videoWidth;
         var fps = (double?)((ComboBoxItem)ComboFps.SelectedItem).Tag ?? 0;
 
         //   * preserve the source aspect ratio
@@ -362,14 +362,15 @@ public sealed partial class MainPage : Page
         var endFrame = _endFrame;
         var duration = _endSec - _startSec;
 
+        _generationCts?.Cancel();
         _generationCts?.Dispose();
         _generationCts = new CancellationTokenSource();
         var cancelToken = _generationCts.Token;
 
         try
         {
-            var chosenWidth = (int)((ComboBoxItem)ComboResolution.SelectedItem).Tag;
-            var chosenFps = (double)((ComboBoxItem)ComboFps.SelectedItem).Tag;
+            var chosenWidth = (ComboResolution.SelectedItem as ComboBoxItem)?.Tag as int? ?? (int)(_videoWidth > 0 ? _videoWidth : 1080);
+            var chosenFps = (ComboFps.SelectedItem as ComboBoxItem)?.Tag as double? ?? (_videoFps ?? 30.0);
             var chosenQuality = (uint)(QualitySlider?.Value ?? 85.0);
             operation = operation with
             {
