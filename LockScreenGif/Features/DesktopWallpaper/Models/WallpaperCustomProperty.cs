@@ -28,4 +28,3 @@ public sealed class WallpaperDescriptor
     public string Type { get; set; } = "web";
     public List<WallpaperCustomProperty> Properties { get; set; } = [];
 }
-

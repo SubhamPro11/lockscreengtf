@@ -9,6 +9,5 @@ public enum WallpaperEngineStatus
     Starting,
     Running,
     Paused,
-    Error
+    Error,
 }
-

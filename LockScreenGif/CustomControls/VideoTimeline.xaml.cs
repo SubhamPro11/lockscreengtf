@@ -208,7 +208,8 @@ public sealed partial class VideoTimeline : UserControl
 
     private double TrackWidth => Math.Max(0, Root.ActualWidth - 2 * TrackInset);
 
-    private double X(int frame) => TrackInset + (_index is null || _index.Duration <= 0 ? 0 : _index.TimeAt(frame) / _index.Duration * TrackWidth);
+    private double X(int frame) =>
+        TrackInset + (_index is null || _index.Duration <= 0 ? 0 : _index.TimeAt(frame) / _index.Duration * TrackWidth);
 
     private void Root_SizeChanged(object sender, SizeChangedEventArgs e) => Render();
 

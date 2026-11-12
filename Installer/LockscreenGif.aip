@@ -39,6 +39,9 @@
     <ROW Directory="Assets_1_Dir" Directory_Parent="Microsoft.UI.Xaml_Dir" DefaultDir="Assets" DirectoryOptions="3"/>
     <ROW Directory="Assets_Dir" Directory_Parent="APPDIR" DefaultDir="Assets" DirectoryOptions="3"/>
     <ROW Directory="CustomControls_Dir" Directory_Parent="APPDIR" DefaultDir="CUSTOM~1|CustomControls" DirectoryOptions="3"/>
+    <ROW Directory="Features_Dir" Directory_Parent="APPDIR" DefaultDir="Features" DirectoryOptions="3"/>
+    <ROW Directory="DesktopWallpaper_Dir" Directory_Parent="Features_Dir" DefaultDir="DESKTO~1|DesktopWallpaper" DirectoryOptions="3"/>
+    <ROW Directory="DesktopWallpaperViews_Dir" Directory_Parent="DesktopWallpaper_Dir" DefaultDir="Views" DirectoryOptions="3"/>
     <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="DESKTO~1|DesktopFolder" IsPseudoRoot="1"/>
     <ROW Directory="FFMPEG_Dir" Directory_Parent="Vendor_Dir" DefaultDir="FFMPEG" DirectoryOptions="3"/>
     <ROW Directory="Microsoft.UI.Xaml_Dir" Directory_Parent="APPDIR" DefaultDir="MICROS~1.XAM|Microsoft.UI.Xaml" DirectoryOptions="3"/>
@@ -147,6 +150,7 @@
     <ROW Component="AI_IA_ENABLE" ComponentId="{DDFA8C50-ADD2-45A0-9747-25BB39A38F82}" Directory_="APPDIR" Attributes="4" KeyPath="AI_IA_ENABLE" Options="1"/>
     <ROW Component="APPDIR" ComponentId="{9A510946-CD52-4703-9030-410EC5E47B53}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="App.xbf" ComponentId="{187D676C-D0C8-45B4-B08B-286C1767AB1E}" Directory_="APPDIR" Attributes="0" KeyPath="appsettings.json" Type="0"/>
+    <ROW Component="DesktopWallpaperPage.xbf" ComponentId="{B8A72F3E-9481-4C52-B4D1-72A093F56E21}" Directory_="DesktopWallpaperViews_Dir" Attributes="0" KeyPath="DesktopWallpaperPage.xbf" Type="0"/>
     <ROW Component="CommunityToolkit.Mvvm.dll" ComponentId="{28EE97B2-4AB1-42B4-8A3D-72C724ADEA90}" Directory_="APPDIR" Attributes="0" KeyPath="CommunityToolkit.Mvvm.dll"/>
     <ROW Component="CoreMessagingXP.dll" ComponentId="{DB5740C3-CD27-4E9B-97A2-47A8BC5B7A62}" Directory_="APPDIR" Attributes="256" KeyPath="CoreMessagingXP.dll"/>
     <ROW Component="DWriteCore.dll" ComponentId="{DDE84A0A-B034-4563-91EC-9C241D4761A6}" Directory_="APPDIR" Attributes="256" KeyPath="DWriteCore.dll"/>
@@ -786,6 +790,7 @@
     <ROW File="DiagnosticsPage.xbf" Component_="MainPage.xbf" FileName="DIAGNO~1.XBF|DiagnosticsPage.xbf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\artifacts\app\Views\DiagnosticsPage.xbf" SelfReg="false"/>
     <ROW File="ShellPage.xbf" Component_="MainPage.xbf" FileName="SHELLP~1.XBF|ShellPage.xbf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\artifacts\app\Views\ShellPage.xbf" SelfReg="false"/>
     <ROW File="VideoTimeline.xbf" Component_="VideoTimeline.xbf" FileName="VIDEOT~1.XBF|VideoTimeline.xbf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\artifacts\app\CustomControls\VideoTimeline.xbf" SelfReg="false"/>
+    <ROW File="DesktopWallpaperPage.xbf" Component_="DesktopWallpaperPage.xbf" FileName="DESKTO~1.XBF|DesktopWallpaperPage.xbf" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\artifacts\app\Features\DesktopWallpaper\Views\DesktopWallpaperPage.xbf" SelfReg="false"/>
       <ROW Version="65535.65535.65535.65535" FileName="PH000001.DLL|Dia2Lib.dll" SelfReg="false" Component_="PrivHelper_Dia2Lib_dll" File="PrivHelper_Dia2Lib_dll" Attributes="0" SourcePath="..\artifacts\app\Helpers\Privileged\Dia2Lib.dll"/>
       <ROW Version="65535.65535.65535.65535" FileName="PH000002.DLL|LockscreenGif.Privileged.Contracts.dll" SelfReg="false" Component_="PrivHelper_LockscreenGif_Privileged_Contracts_dll" File="PrivHelper_LockscreenGif_Privileged_Contracts_dll" Attributes="0" SourcePath="..\artifacts\app\Helpers\Privileged\LockscreenGif.Privileged.Contracts.dll"/>
       <ROW Version="65535.65535.65535.65535" FileName="PH000003.JSO|LockscreenGif.Privileged.Helper.deps.json" SelfReg="false" Component_="PrivHelper_LockscreenGif_Privileged_Helper_deps_json" File="PrivHelper_LockscreenGif_Privileged_Helper_deps_json" Attributes="0" SourcePath="..\artifacts\app\Helpers\Privileged\LockscreenGif.Privileged.Helper.deps.json"/>
@@ -1136,6 +1141,7 @@
     <ROW Feature_="MainFeature" Component_="System.Numerics.Tensors.dll"/>
     <ROW Feature_="MainFeature" Component_="NPUDetect.dll"/>
     <ROW Feature_="MainFeature" Component_="VideoTimeline.xbf"/>
+    <ROW Feature_="MainFeature" Component_="DesktopWallpaperPage.xbf"/>
       <ROW Component_="PrivHelper_Dia2Lib_dll" Feature_="MainFeature"/>
       <ROW Component_="PrivHelper_LockscreenGif_Privileged_Contracts_dll" Feature_="MainFeature"/>
       <ROW Component_="PrivHelper_LockscreenGif_Privileged_Helper_deps_json" Feature_="MainFeature"/>

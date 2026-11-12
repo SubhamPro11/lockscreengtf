@@ -24,4 +24,3 @@ public interface IWallpaperRenderer : IAsyncDisposable
     Task PostWebMessageAsJsonAsync(string json);
     Task CloseAsync();
 }
-

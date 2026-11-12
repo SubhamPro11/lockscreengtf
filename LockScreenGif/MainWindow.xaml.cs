@@ -36,7 +36,10 @@ public sealed partial class MainWindow : WindowEx
             catch { }
             try
             {
-                App.GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>().StopAsync().GetAwaiter().GetResult();
+                App.GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>()
+                    .StopAsync()
+                    .GetAwaiter()
+                    .GetResult();
             }
             catch { }
         };

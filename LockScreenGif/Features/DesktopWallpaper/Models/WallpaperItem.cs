@@ -29,7 +29,7 @@ public sealed class WallpaperItem
             Title = !string.IsNullOrWhiteSpace(title)
                 ? title
                 : (pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? pathOrUrl : Path.GetFileName(pathOrUrl)),
-            Type = DetectType(pathOrUrl)
+            Type = DetectType(pathOrUrl),
         };
     }
 
@@ -40,8 +40,10 @@ public sealed class WallpaperItem
             return WallpaperType.Video;
         }
 
-        if (pathOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-            pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        if (
+            pathOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+        )
         {
             return WallpaperType.Web;
         }
@@ -52,7 +54,7 @@ public sealed class WallpaperItem
             ".html" or ".htm" => WallpaperType.Web,
             ".png" or ".jpg" or ".jpeg" or ".bmp" => WallpaperType.Image,
             ".exe" => WallpaperType.Application,
-            _ => WallpaperType.Video // .mp4, .webm, .gif, .mkv, .avi, .mov, .webp
+            _ => WallpaperType.Video, // .mp4, .webm, .gif, .mkv, .avi, .mov, .webp
         };
     }
 
@@ -63,15 +65,29 @@ public sealed class WallpaperItem
             return false;
         }
 
-        if (pathOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-            pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        if (
+            pathOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+        )
         {
             return true;
         }
 
         var ext = Path.GetExtension(pathOrUrl).ToLowerInvariant();
-        return ext is ".mp4" or ".webm" or ".mkv" or ".avi" or ".mov" or ".gif" or ".webp"
-                   or ".html" or ".htm" or ".png" or ".jpg" or ".jpeg" or ".bmp" or ".exe";
+        return ext
+            is ".mp4"
+                or ".webm"
+                or ".mkv"
+                or ".avi"
+                or ".mov"
+                or ".gif"
+                or ".webp"
+                or ".html"
+                or ".htm"
+                or ".png"
+                or ".jpg"
+                or ".jpeg"
+                or ".bmp"
+                or ".exe";
     }
 }
-

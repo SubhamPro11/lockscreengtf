@@ -126,7 +126,8 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             return;
         }
 
-        var json = $"{{\"type\":\"audioSpectrum\",\"peak\":{data.Peak.ToString("F3", CultureInfo.InvariantCulture)},\"bands\":[{string.Join(",", data.Bands.Select(b => b.ToString("F3", CultureInfo.InvariantCulture)))}]}}";
+        var json =
+            $"{{\"type\":\"audioSpectrum\",\"peak\":{data.Peak.ToString("F3", CultureInfo.InvariantCulture)},\"bands\":[{string.Join(",", data.Bands.Select(b => b.ToString("F3", CultureInfo.InvariantCulture)))}]}}";
         foreach (var renderer in _renderers)
         {
             _ = renderer.PostWebMessageAsJsonAsync(json);
@@ -183,9 +184,8 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 var hostWindow = _hostWindows[i];
                 var (width, height) = GetWindowSize(hostWindow.Hwnd);
 
-                IWallpaperRenderer renderer = item.Type == WallpaperType.Application
-                    ? new AppWallpaperRenderer()
-                    : new WebView2WallpaperRenderer();
+                IWallpaperRenderer renderer =
+                    item.Type == WallpaperType.Application ? new AppWallpaperRenderer() : new WebView2WallpaperRenderer();
 
                 await renderer.InitializeAsync(hostWindow.Hwnd, 0, 0, width, height);
                 await renderer.LoadAsync(item);
@@ -249,7 +249,8 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 var target = DesktopAttachHelper.FindDesktopHost();
                 if (target == null || target.ParentHwnd == 0)
                 {
-                    _currentErrorMessage = "Unable to locate or initialize the Windows desktop background window hierarchy (Progman/WorkerW).";
+                    _currentErrorMessage =
+                        "Unable to locate or initialize the Windows desktop background window hierarchy (Progman/WorkerW).";
                     Logger.Error(_currentErrorMessage);
                     Status = WallpaperEngineStatus.Error;
                     return Task.FromResult(false);

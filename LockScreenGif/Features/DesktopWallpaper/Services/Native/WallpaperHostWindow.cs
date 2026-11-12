@@ -48,11 +48,14 @@ internal sealed class WallpaperHostWindow : IDisposable
                 hbrBackground = 0,
                 lpszMenuName = null,
                 lpszClassName = WindowClassName,
-                hIconSm = 0
+                hIconSm = 0,
             };
 
             var atom = DesktopNativeMethods.RegisterClassEx(ref wndClass);
-            if (atom != 0 || Marshal.GetLastWin32Error() == 1410 /* ERROR_CLASS_ALREADY_EXISTS */)
+            if (
+                atom != 0
+                || Marshal.GetLastWin32Error() == 1410 /* ERROR_CLASS_ALREADY_EXISTS */
+            )
             {
                 _classRegistered = true;
             }
@@ -66,13 +69,7 @@ internal sealed class WallpaperHostWindow : IDisposable
     /// <summary>
     /// Creates the window and attaches it behind the desktop icons.
     /// </summary>
-    public bool CreateAndAttach(
-        DesktopAttachTarget target,
-        int left,
-        int top,
-        int width,
-        int height
-    )
+    public bool CreateAndAttach(DesktopAttachTarget target, int left, int top, int width, int height)
     {
         if (_hwnd != 0)
         {
@@ -86,10 +83,10 @@ internal sealed class WallpaperHostWindow : IDisposable
                 DesktopNativeMethods.WS_EX_TOOLWINDOW | DesktopNativeMethods.WS_EX_NOACTIVATE,
                 WindowClassName,
                 "LockscreenGif Wallpaper Host",
-                DesktopNativeMethods.WS_CHILD |
-                DesktopNativeMethods.WS_CLIPCHILDREN |
-                DesktopNativeMethods.WS_CLIPSIBLINGS |
-                DesktopNativeMethods.WS_VISIBLE,
+                DesktopNativeMethods.WS_CHILD
+                    | DesktopNativeMethods.WS_CLIPCHILDREN
+                    | DesktopNativeMethods.WS_CLIPSIBLINGS
+                    | DesktopNativeMethods.WS_VISIBLE,
                 left,
                 top,
                 width,
@@ -239,4 +236,3 @@ internal sealed class WallpaperHostWindow : IDisposable
         GC.SuppressFinalize(this);
     }
 }
-

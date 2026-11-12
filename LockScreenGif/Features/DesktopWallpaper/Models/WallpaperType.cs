@@ -8,6 +8,5 @@ public enum WallpaperType
     Video,
     Web,
     Image,
-    Application
+    Application,
 }
-
