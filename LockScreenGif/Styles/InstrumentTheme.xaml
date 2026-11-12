@@ -267,6 +267,16 @@
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
+    <Style x:Key="GlassToggleButtonStyle" TargetType="ToggleButton">
+        <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+
     <Style x:Key="GlassPrimaryButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource GlassAccentBrassBrush}" />
         <Setter Property="Foreground" Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
