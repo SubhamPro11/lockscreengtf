@@ -134,7 +134,7 @@ internal static class LicensesDialog
             "LockscreenGif (Upstream Project)",
             "Copyright (c) 2026 Leapward-Koex",
             "MIT License",
-            "Original core architecture, privileged elevation concept, and lock-screen cache layout.",
+            "Based on LockscreenGif by Leapward-Koex (MIT). Original core architecture, privileged elevation concept, and lock-screen cache layout.",
             "https://github.com/Leapward-Koex/LockscreenGif"
         );
 

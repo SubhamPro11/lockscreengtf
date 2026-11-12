@@ -137,7 +137,7 @@ Download the latest release from the [GitHub Releases](https://github.com/Subham
 
 LockscreenGif is actively developed and maintained by **Subham Kumar ([SubhamPro11](https://github.com/SubhamPro11))**.
 
-The project originated as an enhanced fork of the original [LockscreenGif by Leapward-Koex](https://github.com/Leapward-Koex/LockscreenGif), which is licensed under the MIT License. The architectural pattern for elevated lock-screen cache manipulation is preserved and credited.
+The project is based on the original [LockscreenGif by Leapward-Koex](https://github.com/Leapward-Koex/LockscreenGif), which is licensed under the MIT License. The architectural pattern for elevated lock-screen cache manipulation is preserved and credited.
 
 Full third-party notices, license texts, and source availability information are documented in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and inside the app via **Settings > About > Open-source licenses**.
 
