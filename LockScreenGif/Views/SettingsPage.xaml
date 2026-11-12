@@ -17,7 +17,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Set lock screen through Windows API" Style="{StaticResource SettingTitleStyle}" />
@@ -43,7 +43,7 @@
                     <Grid ColumnSpacing="16" MinHeight="40">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            <ColumnDefinition Width="240" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
                             <TextBlock Text="Run at Windows startup" Style="{StaticResource SettingTitleStyle}" />
@@ -66,7 +66,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Application logs" Style="{StaticResource SettingTitleStyle}" />
@@ -99,7 +99,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Share anonymous usage analytics" Style="{StaticResource SettingTitleStyle}" />
@@ -172,7 +172,7 @@
                     <Grid ColumnSpacing="16" MinHeight="40">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            <ColumnDefinition Width="240" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
                             <TextBlock Text="Remove Animated Lockscreen" Style="{StaticResource SettingTitleStyle}"

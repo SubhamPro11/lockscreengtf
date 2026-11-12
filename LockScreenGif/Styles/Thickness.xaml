@@ -10,6 +10,7 @@
 
     <!-- Semantic Padding and Margins -->
     <Thickness x:Key="AppPageMargin">24,20,24,24</Thickness>
+    <Thickness x:Key="AppMarginPage">24,20,24,24</Thickness>
     <x:Double x:Key="AppPageMaxWidth">1000</x:Double>
     <x:Double x:Key="AppCardSpacing">16</x:Double>
     <Thickness x:Key="AppPaddingCard">16,16,16,16</Thickness>

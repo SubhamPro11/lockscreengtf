@@ -318,7 +318,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Automatic playlist rotation" Style="{StaticResource SettingTitleStyle}" />
@@ -360,7 +360,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Scaling mode" Style="{StaticResource SettingTitleStyle}" />
@@ -386,7 +386,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Audio playback" Style="{StaticResource SettingTitleStyle}" />
@@ -416,7 +416,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Speed &amp; repetition" Style="{StaticResource SettingTitleStyle}" />
@@ -453,7 +453,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Pause when fullscreen app or game is focused" Style="{StaticResource SettingTitleStyle}" />
@@ -472,7 +472,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Pause when desktop is fully covered" Style="{StaticResource SettingTitleStyle}" />
@@ -491,7 +491,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Pause in battery saver mode" Style="{StaticResource SettingTitleStyle}" />
@@ -510,7 +510,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Pause on battery power" Style="{StaticResource SettingTitleStyle}" />
@@ -529,7 +529,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Pause when PC is locked or display is off" Style="{StaticResource SettingTitleStyle}" />
@@ -548,7 +548,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Frame rate limit" Style="{StaticResource SettingTitleStyle}" />
@@ -573,7 +573,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Lower decode quality" Style="{StaticResource SettingTitleStyle}" />
@@ -598,7 +598,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Multi-monitor layout" Style="{StaticResource SettingTitleStyle}" />
@@ -623,7 +623,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Detected displays" Style="{StaticResource SettingTitleStyle}" />
@@ -663,7 +663,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Forward mouse input to web wallpapers" Style="{StaticResource SettingTitleStyle}" />
@@ -682,7 +682,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="System audio visualization" Style="{StaticResource SettingTitleStyle}" />
@@ -701,7 +701,7 @@
                         <Grid ColumnSpacing="16" MinHeight="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                                <ColumnDefinition Width="240" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
                                 <TextBlock Text="Allow executable (.exe) wallpapers" Style="{StaticResource SettingTitleStyle}" />

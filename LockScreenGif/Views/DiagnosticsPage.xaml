@@ -79,7 +79,7 @@
                     <Grid ColumnSpacing="16" MinHeight="40">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            <ColumnDefinition Width="240" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
                             <TextBlock Text="Source animation" Style="{StaticResource SettingTitleStyle}" />
@@ -109,7 +109,7 @@
                     <Grid ColumnSpacing="16" MinHeight="40">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                            <ColumnDefinition Width="240" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Spacing="2" VerticalAlignment="Center">
                             <TextBlock Text="Set lock screen through Windows first" Style="{StaticResource SettingTitleStyle}" />
