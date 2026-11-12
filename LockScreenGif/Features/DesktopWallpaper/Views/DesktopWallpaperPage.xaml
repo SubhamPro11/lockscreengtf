@@ -1,0 +1,189 @@
+<Page
+    x:Class="LockscreenGif.Features.DesktopWallpaper.Views.DesktopWallpaperPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:LockscreenGif.Features.DesktopWallpaper.ViewModels"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="{StaticResource AppSpacingL}" Margin="{StaticResource AppMarginPage}">
+
+            <!-- Page Header -->
+            <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                <TextBlock Text="Desktop Wallpaper"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                <TextBlock Text="Display animated wallpapers behind desktop icons on Windows 11."
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- Error InfoBar -->
+            <InfoBar x:Name="ErrorBanner"
+                     IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
+                     Severity="Error"
+                     Title="Desktop attachment notice"
+                     Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
+
+            <!-- Engine Status & Primary Control Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <Grid RowSpacing="{StaticResource AppSpacingM}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                        <StackPanel Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
+                            <TextBlock Text="Wallpaper Engine"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                    BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                    Padding="8,2"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                                           FontSize="{StaticResource AppFontSizeCaption}"
+                                           FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{x:Bind ViewModel.ActiveTargetDescription, Mode=OneWay, TargetNullValue='Engine is currently idle. Press Start to attach to the desktop background layer.'}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                    </StackPanel>
+
+                    <!-- Start / Stop Button -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}" VerticalAlignment="Center">
+                        <Button x:Name="StartEngineButton"
+                                Content="Start Engine"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.StartCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
+                                AutomationProperties.Name="Start desktop wallpaper engine" />
+
+                        <Button x:Name="StopEngineButton"
+                                Content="Stop Engine"
+                                Style="{StaticResource GlassButtonStyle}"
+                                Command="{x:Bind ViewModel.StopCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
+                                AutomationProperties.Name="Stop desktop wallpaper engine" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Multi-Monitor & Placement Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="{StaticResource AppSpacingM}">
+                    <TextBlock Text="Display &amp; Monitors"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+
+                    <!-- Layout Mode Selector -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="220" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Multi-monitor layout"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Choose whether to span wallpaper across all screens or select a specific monitor."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  SelectedIndex="{x:Bind ViewModel.LayoutModeIndex, Mode=TwoWay}"
+                                  Style="{StaticResource GlassComboBoxStyle}"
+                                  AutomationProperties.Name="Multi-monitor layout mode">
+                            <ComboBoxItem Content="Span all displays" />
+                            <ComboBoxItem Content="Single display" />
+                            <ComboBoxItem Content="Duplicate on each" />
+                        </ComboBox>
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource GlassBorderSubtleBrush}" />
+
+                    <!-- Monitor Selection -->
+                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
+                            <TextBlock Text="Detected displays"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            <TextBlock Text="Per-monitor DPI awareness and resolution detection."
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{StaticResource AppSpacingS}">
+                            <ComboBox x:Name="MonitorPicker"
+                                      ItemsSource="{x:Bind ViewModel.Monitors, Mode=OneWay}"
+                                      SelectedItem="{x:Bind ViewModel.SelectedMonitor, Mode=TwoWay}"
+                                      DisplayMemberPath="DisplayName"
+                                      MinWidth="260"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Selected display monitor" />
+
+                            <Button Content="Refresh"
+                                    Command="{x:Bind ViewModel.RefreshMonitorsCommand}"
+                                    Style="{StaticResource GlassButtonStyle}"
+                                    AutomationProperties.Name="Refresh display monitors" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- System Safeguards & Original Wallpaper Card -->
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="{StaticResource AppSpacingS}">
+                    <TextBlock Text="System Safeguards"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+
+                    <TextBlock Text="To ensure your desktop is never left with a black or blank screen, the engine records your active Windows wallpaper before starting and restores it automatically whenever playback stops or the app closes."
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+
+                    <Grid ColumnSpacing="{StaticResource AppSpacingS}" Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE72D;"
+                                  FontSize="{StaticResource AppFontSizeBody}"
+                                  Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                  VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Backed-up wallpaper: Windows default / System managed'}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

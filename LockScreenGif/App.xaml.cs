@@ -105,6 +105,11 @@ public partial class App : Application
                     services.AddTransient<DiagnosticsViewModel>();
                     services.AddTransient<DiagnosticsPage>();
 
+                    // Desktop Wallpaper Feature
+                    services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService, LockscreenGif.Features.DesktopWallpaper.Services.WallpaperEngineService>();
+                    services.AddTransient<LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel>();
+                    services.AddTransient<LockscreenGif.Features.DesktopWallpaper.Views.DesktopWallpaperPage>();
+
                     // Views and ViewModels
                     services.AddTransient<MainViewModel>();
                     services.AddTransient<MainPage>();

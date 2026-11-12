@@ -87,6 +87,7 @@ public static partial class VideoFrameService
         var lastDuration = 1 / nominalFps;
         var progressClock = Stopwatch.StartNew();
         await RunAsync(
+            (string[])
             [
                 "-i",
                 input,
@@ -148,6 +149,7 @@ public static partial class VideoFrameService
 
         using var output = new MemoryStream();
         await RunAsync(
+            (string[])
             [
                 "-i",
                 input,
@@ -192,6 +194,7 @@ public static partial class VideoFrameService
         var select = string.Join('+', frames.Select(n => $"eq(n\\,{n})"));
         using var output = new MemoryStream();
         await RunAsync(
+            (string[])
             [
                 "-i",
                 input,
@@ -292,6 +295,7 @@ public static partial class VideoFrameService
         var times = new List<double>();
         var duration = index.TimeAt(end) - index.TimeAt(start);
         await RunAsync(
+            (string[])
             [
                 "-i",
                 input,
@@ -332,6 +336,11 @@ public static partial class VideoFrameService
         return (directory, times.ToArray());
     }
 
+    internal static Func<string>? FfmpegPathResolver { get; set; }
+
+    internal static string GetFfmpegPath() =>
+        FfmpegPathResolver?.Invoke() ?? Path.Combine(AppContext.BaseDirectory, "Vendor", "FFMPEG", "ffmpeg.exe");
+
     internal static async Task RunAsync(
         IEnumerable<string> arguments,
         Action<string>? onLine,
@@ -339,7 +348,7 @@ public static partial class VideoFrameService
         Stream? output = null
     )
     {
-        var info = new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory, "Vendor", "FFMPEG", "ffmpeg.exe"))
+        var info = new ProcessStartInfo(GetFfmpegPath())
         {
             UseShellExecute = false,
             CreateNoWindow = true,
@@ -350,7 +359,7 @@ public static partial class VideoFrameService
         // an exact preview are decoding at the same time.
         var threads = Math.Clamp(Environment.ProcessorCount / 2, 1, 4).ToString(CultureInfo.InvariantCulture);
         var args = arguments.ToList();
-        args.InsertRange(args.Count - 1, ["-threads", threads]); // Output encoder.
+        args.InsertRange(args.Count - 1, (string[])["-threads", threads]); // Output encoder.
         foreach (
             var arg in new[]
             {
@@ -385,7 +394,7 @@ public static partial class VideoFrameService
             {
                 if (!process.HasExited)
                 {
-                    process.Kill();
+                    process.Kill(entireProcessTree: true);
                 }
             }
             catch (InvalidOperationException) { }
@@ -420,7 +429,7 @@ public static partial class VideoFrameService
         {
             if (!process.HasExited)
             {
-                process.Kill();
+                process.Kill(entireProcessTree: true);
             }
 
             await process.WaitForExitAsync().ConfigureAwait(false);

@@ -105,7 +105,7 @@ public static class GlassFallbackManager
             }
             else
             {
-                _window.SystemBackdrop = new DesktopAcrylicBackdrop();
+                _window.SystemBackdrop = new MicaBackdrop();
             }
         }
         catch
@@ -114,5 +114,11 @@ public static class GlassFallbackManager
         }
 
         FallbackStateChanged?.Invoke(null, IsFallbackActive);
+    }
+
+    public static void Shutdown()
+    {
+        _window = null;
+        _dispatcherQueue = null;
     }
 }

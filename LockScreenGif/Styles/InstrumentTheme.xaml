@@ -5,152 +5,144 @@
     <ResourceDictionary.ThemeDictionaries>
         <!-- Dark / Default Theme -->
         <ResourceDictionary x:Key="Default">
-            <!-- Glass Surfaces -->
-            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#B8161A22" />
-            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#D91C212B" />
-            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#50202633" />
-            <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="#181B20" />
+            <!-- Neutral Windows 11 Surfaces (Layered over Mica) -->
+            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#0DFFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#15FFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#08FFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="#202020" />
 
-            <!-- Specular Rim Gradients -->
-            <LinearGradientBrush x:Key="GlassBorderRimBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#38FFFFFF" Offset="0.0" />
-                <GradientStop Color="#1AFFFFFF" Offset="0.5" />
-                <GradientStop Color="#0AFFFFFF" Offset="1.0" />
-            </LinearGradientBrush>
-            <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="#2E333D" />
-            <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="#14FFFFFF" />
+            <!-- Clean Windows 11 1px Border Stroke -->
+            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="#14FFFFFF" />
+            <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="#2E2E2E" />
+            <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="Transparent" />
 
-            <!-- Text & Contrast -->
-            <SolidColorBrush x:Key="GlassTextPrimaryBrush" Color="#F1F5F9" />
-            <SolidColorBrush x:Key="GlassTextSecondaryBrush" Color="#94A3B8" />
-            <SolidColorBrush x:Key="GlassTextMonospaceBrush" Color="#7DD3FC" />
+            <!-- Typography & Content -->
+            <SolidColorBrush x:Key="GlassTextPrimaryBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="GlassTextSecondaryBrush" Color="#99FFFFFF" />
+            <SolidColorBrush x:Key="GlassTextMonospaceBrush" Color="#99FFFFFF" />
 
-            <!-- Accents & Status -->
-            <SolidColorBrush x:Key="GlassAccentBrassBrush" Color="#C9A66B" />
-            <SolidColorBrush x:Key="GlassAccentBrassHoverBrush" Color="#D4B57E" />
-            <SolidColorBrush x:Key="GlassAccentBrassPressedBrush" Color="#BA965A" />
-            <SolidColorBrush x:Key="GlassStatusSuccessBrush" Color="#34D399" />
-            <SolidColorBrush x:Key="GlassStatusAlertBrush" Color="#F87171" />
+            <!-- Single System Accent Color & Status -->
+            <SolidColorBrush x:Key="GlassAccentBrassBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="GlassAccentBrassHoverBrush" Color="{ThemeResource SystemAccentColorLight1}" />
+            <SolidColorBrush x:Key="GlassAccentBrassPressedBrush" Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="GlassStatusSuccessBrush" Color="#6CCB5F" />
+            <SolidColorBrush x:Key="GlassStatusAlertBrush" Color="#FF99A4" />
 
             <!-- WinUI Control Overrides -->
-            <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="#C9A66B" />
-            <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="#D4B57E" />
-            <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="#BA965A" />
-            <SolidColorBrush x:Key="SliderTrackValueFill" Color="#C9A66B" />
-            <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="#D4B57E" />
-            <SolidColorBrush x:Key="SliderThumbBackground" Color="#F1F5F9" />
-            <SolidColorBrush x:Key="ProgressBarForeground" Color="#C9A66B" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{ThemeResource SystemAccentColorLight1}" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="SliderTrackValueFill" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{ThemeResource SystemAccentColorLight1}" />
+            <SolidColorBrush x:Key="SliderThumbBackground" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="ProgressBarForeground" Color="{ThemeResource SystemAccentColor}" />
 
-            <!-- NavigationView Glass Styling -->
+            <!-- NavigationView Styling -->
             <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#20FFFFFF" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#F1F5F9" />
-            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="#C9A66B" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#12FFFFFF" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#F1F5F9" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#26FFFFFF" />
-            <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#94A3B8" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#12FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#0AFFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#18FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#99FFFFFF" />
 
-            <!-- ContentDialog, Flyout, ToolTip & Overlay Glass Theming -->
-            <SolidColorBrush x:Key="ContentDialogBackground" Color="#E5181C26" />
-            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="#30FFFFFF" />
-            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#B80B0E14" />
-            <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#E5181C26" />
-            <SolidColorBrush x:Key="FlyoutPresenterBorderBrush" Color="#30FFFFFF" />
-            <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#E5181C26" />
-            <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#30FFFFFF" />
-            <SolidColorBrush x:Key="ToolTipBackground" Color="#E5181C26" />
-            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#30FFFFFF" />
-            <SolidColorBrush x:Key="ToolTipForeground" Color="#F1F5F9" />
+            <!-- Dialogs, Flyouts & Overlays -->
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="#E5202020" />
+            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="#1AFFFFFF" />
+            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#80000000" />
+            <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#E5202020" />
+            <SolidColorBrush x:Key="FlyoutPresenterBorderBrush" Color="#1AFFFFFF" />
+            <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#E5202020" />
+            <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#1AFFFFFF" />
+            <SolidColorBrush x:Key="ToolTipBackground" Color="#E5202020" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#1AFFFFFF" />
+            <SolidColorBrush x:Key="ToolTipForeground" Color="#FFFFFF" />
 
-            <!-- Focus Visuals (High Contrast Accessibility on Glass) -->
-            <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="#C9A66B" />
-            <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="#0F172A" />
+            <!-- Accessible Focus Visuals -->
+            <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="#000000" />
 
-            <!-- Backward compatibility aliases for existing views -->
-            <SolidColorBrush x:Key="InstrumentBackgroundBrush" Color="#15171A" />
-            <SolidColorBrush x:Key="InstrumentSurfaceBrush" Color="#1C212B" />
-            <SolidColorBrush x:Key="InstrumentBorderBrush" Color="#30343A" />
-            <SolidColorBrush x:Key="InstrumentTextPrimaryBrush" Color="#F1F5F9" />
-            <SolidColorBrush x:Key="InstrumentTextMutedBrush" Color="#94A3B8" />
-            <SolidColorBrush x:Key="InstrumentAccentBrassBrush" Color="#C9A66B" />
-            <SolidColorBrush x:Key="InstrumentGaugeGreenBrush" Color="#34D399" />
-            <SolidColorBrush x:Key="InstrumentAlertRedBrush" Color="#F87171" />
+            <!-- Backward compatibility aliases -->
+            <SolidColorBrush x:Key="InstrumentBackgroundBrush" Color="#202020" />
+            <SolidColorBrush x:Key="InstrumentSurfaceBrush" Color="#282828" />
+            <SolidColorBrush x:Key="InstrumentBorderBrush" Color="#2E2E2E" />
+            <SolidColorBrush x:Key="InstrumentTextPrimaryBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="InstrumentTextMutedBrush" Color="#99FFFFFF" />
+            <SolidColorBrush x:Key="InstrumentAccentBrassBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="InstrumentGaugeGreenBrush" Color="#6CCB5F" />
+            <SolidColorBrush x:Key="InstrumentAlertRedBrush" Color="#FF99A4" />
         </ResourceDictionary>
 
         <!-- Light Theme -->
         <ResourceDictionary x:Key="Light">
-            <!-- Glass Surfaces -->
-            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#BFFFFFFF" />
-            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#E0FFFFFF" />
-            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#60F1F5F9" />
-            <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="#F8F9FA" />
+            <!-- Neutral Windows 11 Surfaces (Layered over Mica) -->
+            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#B3FFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#E6FFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#06000000" />
+            <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="#F3F3F3" />
 
-            <!-- Specular Rim Gradients -->
-            <LinearGradientBrush x:Key="GlassBorderRimBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#E6FFFFFF" Offset="0.0" />
-                <GradientStop Color="#20000000" Offset="0.5" />
-                <GradientStop Color="#14000000" Offset="1.0" />
-            </LinearGradientBrush>
-            <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="#E2E8F0" />
-            <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="#99FFFFFF" />
+            <!-- Clean Windows 11 1px Border Stroke -->
+            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="#0F000000" />
+            <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="#E5E5E5" />
+            <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="Transparent" />
 
-            <!-- Text & Contrast -->
-            <SolidColorBrush x:Key="GlassTextPrimaryBrush" Color="#0F172A" />
-            <SolidColorBrush x:Key="GlassTextSecondaryBrush" Color="#475569" />
-            <SolidColorBrush x:Key="GlassTextMonospaceBrush" Color="#0284C7" />
+            <!-- Typography & Content -->
+            <SolidColorBrush x:Key="GlassTextPrimaryBrush" Color="#E4000000" />
+            <SolidColorBrush x:Key="GlassTextSecondaryBrush" Color="#9E000000" />
+            <SolidColorBrush x:Key="GlassTextMonospaceBrush" Color="#9E000000" />
 
-            <!-- Accents & Status -->
-            <SolidColorBrush x:Key="GlassAccentBrassBrush" Color="#A27B38" />
-            <SolidColorBrush x:Key="GlassAccentBrassHoverBrush" Color="#B58B43" />
-            <SolidColorBrush x:Key="GlassAccentBrassPressedBrush" Color="#8F6C2E" />
-            <SolidColorBrush x:Key="GlassStatusSuccessBrush" Color="#059669" />
-            <SolidColorBrush x:Key="GlassStatusAlertBrush" Color="#DC2626" />
+            <!-- Single System Accent Color & Status -->
+            <SolidColorBrush x:Key="GlassAccentBrassBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="GlassAccentBrassHoverBrush" Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="GlassAccentBrassPressedBrush" Color="{ThemeResource SystemAccentColorDark2}" />
+            <SolidColorBrush x:Key="GlassStatusSuccessBrush" Color="#107C10" />
+            <SolidColorBrush x:Key="GlassStatusAlertBrush" Color="#C42B1C" />
 
             <!-- WinUI Control Overrides -->
-            <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="#A27B38" />
-            <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="#B58B43" />
-            <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="#8F6C2E" />
-            <SolidColorBrush x:Key="SliderTrackValueFill" Color="#A27B38" />
-            <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="#B58B43" />
-            <SolidColorBrush x:Key="SliderThumbBackground" Color="#0F172A" />
-            <SolidColorBrush x:Key="ProgressBarForeground" Color="#A27B38" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{ThemeResource SystemAccentColorDark2}" />
+            <SolidColorBrush x:Key="SliderTrackValueFill" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{ThemeResource SystemAccentColorDark1}" />
+            <SolidColorBrush x:Key="SliderThumbBackground" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="ProgressBarForeground" Color="{ThemeResource SystemAccentColor}" />
 
-            <!-- NavigationView Glass Styling -->
+            <!-- NavigationView Styling -->
             <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#14000000" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#0F172A" />
-            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="#A27B38" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#08000000" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#0F172A" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#1C000000" />
-            <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#475569" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#0A000000" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#E4000000" />
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#06000000" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#E4000000" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#10000000" />
+            <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#9E000000" />
 
-            <!-- ContentDialog, Flyout, ToolTip & Overlay Glass Theming -->
-            <SolidColorBrush x:Key="ContentDialogBackground" Color="#F0FFFFFF" />
-            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="#25000000" />
-            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#80000000" />
-            <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#F0FFFFFF" />
-            <SolidColorBrush x:Key="FlyoutPresenterBorderBrush" Color="#25000000" />
-            <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#F0FFFFFF" />
-            <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#25000000" />
-            <SolidColorBrush x:Key="ToolTipBackground" Color="#F0FFFFFF" />
-            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#25000000" />
-            <SolidColorBrush x:Key="ToolTipForeground" Color="#0F172A" />
+            <!-- Dialogs, Flyouts & Overlays -->
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="#F5FFFFFF" />
+            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="#0F000000" />
+            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#40000000" />
+            <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#F5FFFFFF" />
+            <SolidColorBrush x:Key="FlyoutPresenterBorderBrush" Color="#0F000000" />
+            <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#F5FFFFFF" />
+            <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#0F000000" />
+            <SolidColorBrush x:Key="ToolTipBackground" Color="#F5FFFFFF" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#0F000000" />
+            <SolidColorBrush x:Key="ToolTipForeground" Color="#E4000000" />
 
-            <!-- Focus Visuals (High Contrast Accessibility on Glass) -->
-            <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="#A27B38" />
+            <!-- Accessible Focus Visuals -->
+            <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{ThemeResource SystemAccentColor}" />
             <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="#FFFFFF" />
 
-            <!-- Backward compatibility aliases for existing views -->
-            <SolidColorBrush x:Key="InstrumentBackgroundBrush" Color="#F4F3EF" />
-            <SolidColorBrush x:Key="InstrumentSurfaceBrush" Color="#EAE7DF" />
-            <SolidColorBrush x:Key="InstrumentBorderBrush" Color="#D1CDC2" />
-            <SolidColorBrush x:Key="InstrumentTextPrimaryBrush" Color="#0F172A" />
-            <SolidColorBrush x:Key="InstrumentTextMutedBrush" Color="#475569" />
-            <SolidColorBrush x:Key="InstrumentAccentBrassBrush" Color="#A27B38" />
-            <SolidColorBrush x:Key="InstrumentGaugeGreenBrush" Color="#059669" />
-            <SolidColorBrush x:Key="InstrumentAlertRedBrush" Color="#DC2626" />
+            <!-- Backward compatibility aliases -->
+            <SolidColorBrush x:Key="InstrumentBackgroundBrush" Color="#F3F3F3" />
+            <SolidColorBrush x:Key="InstrumentSurfaceBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="InstrumentBorderBrush" Color="#E5E5E5" />
+            <SolidColorBrush x:Key="InstrumentTextPrimaryBrush" Color="#E4000000" />
+            <SolidColorBrush x:Key="InstrumentTextMutedBrush" Color="#9E000000" />
+            <SolidColorBrush x:Key="InstrumentAccentBrassBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="InstrumentGaugeGreenBrush" Color="#107C10" />
+            <SolidColorBrush x:Key="InstrumentAlertRedBrush" Color="#C42B1C" />
         </ResourceDictionary>
 
         <!-- High Contrast Theme -->
@@ -174,7 +166,6 @@
             <SolidColorBrush x:Key="GlassStatusSuccessBrush" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="GlassStatusAlertBrush" Color="{ThemeResource SystemColorHotlightColor}" />
 
-            <!-- WinUI Control Overrides -->
             <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{ThemeResource SystemColorHighlightColor}" />
@@ -183,7 +174,6 @@
             <SolidColorBrush x:Key="SliderThumbBackground" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="ProgressBarForeground" Color="{ThemeResource SystemColorHighlightColor}" />
 
-            <!-- NavigationView Glass Styling -->
             <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{ThemeResource SystemColorHighlightTextColor}" />
@@ -193,7 +183,6 @@
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{ThemeResource SystemColorWindowTextColor}" />
 
-            <!-- ContentDialog, Flyout, ToolTip & Overlay Glass Theming -->
             <SolidColorBrush x:Key="ContentDialogBackground" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
             <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#CC000000" />
@@ -205,11 +194,9 @@
             <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
             <SolidColorBrush x:Key="ToolTipForeground" Color="{ThemeResource SystemColorWindowTextColor}" />
 
-            <!-- Focus Visuals (High Contrast Accessibility on Glass) -->
             <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
 
-            <!-- Backward compatibility aliases for existing views -->
             <SolidColorBrush x:Key="InstrumentBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="InstrumentSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="InstrumentBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
@@ -222,19 +209,22 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <!-- Typography & Geometry -->
-    <FontFamily x:Key="GlassFontMonospace">Consolas, Cascadia Mono, Courier New</FontFamily>
-    <FontFamily x:Key="InstrumentMonoFont">Consolas, Cascadia Mono, Courier New</FontFamily>
+    <FontFamily x:Key="GlassFontMonospace">Cascadia Mono, Consolas, Courier New</FontFamily>
+    <FontFamily x:Key="InstrumentMonoFont">Cascadia Mono, Consolas, Courier New</FontFamily>
 
-    <CornerRadius x:Key="GlassCornerRadiusCard">12</CornerRadius>
-    <CornerRadius x:Key="GlassCornerRadiusControl">8</CornerRadius>
-    <CornerRadius x:Key="GlassCornerRadiusPill">16</CornerRadius>
+    <!-- Exactly Two Corner Radii Across System -->
+    <CornerRadius x:Key="AppCornerRadiusCard">8</CornerRadius>
+    <CornerRadius x:Key="AppCornerRadiusControl">4</CornerRadius>
+    <CornerRadius x:Key="GlassCornerRadiusCard">8</CornerRadius>
+    <CornerRadius x:Key="GlassCornerRadiusControl">4</CornerRadius>
+    <CornerRadius x:Key="GlassCornerRadiusPill">4</CornerRadius>
 
-    <!-- Glass Primitives: Cards -->
+    <!-- Native Windows 11 Card Surfaces -->
     <Style x:Key="GlassCardStyle" TargetType="Border">
         <Setter Property="Background" Value="{ThemeResource GlassSurfaceBaseBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusCard}" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusCard}" />
         <Setter Property="Padding" Value="16" />
     </Style>
 
@@ -242,7 +232,7 @@
         <Setter Property="Background" Value="{ThemeResource GlassSurfaceElevatedBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusCard}" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusCard}" />
         <Setter Property="Padding" Value="20" />
     </Style>
 
@@ -250,22 +240,21 @@
         <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
-        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+        <Setter Property="Padding" Value="8,2" />
     </Style>
 
-    <!-- Backward compatibility card style alias -->
     <Style x:Key="InstrumentCardStyle" TargetType="Border" BasedOn="{StaticResource GlassCardStyle}" />
 
-    <!-- Glass Primitives: Buttons -->
+    <!-- Native Windows 11 Buttons -->
     <Style x:Key="GlassButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
         <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
-        <Setter Property="Padding" Value="14,7" />
-        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
     <Style x:Key="GlassRepeatButtonStyle" TargetType="RepeatButton">
@@ -273,68 +262,55 @@
         <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
-        <Setter Property="Padding" Value="14,7" />
-        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
     <Style x:Key="GlassPrimaryButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource GlassAccentBrassBrush}" />
-        <Setter Property="Foreground" Value="#0F172A" />
+        <Setter Property="Foreground" Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
-        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+        <Setter Property="Padding" Value="16,7" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
     <Style x:Key="GlassSubtleButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource GlassTextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
         <Setter Property="Padding" Value="10,6" />
     </Style>
 
-    <!-- Glass Primitives: Controls -->
+    <!-- Standard Windows 11 Inputs -->
     <Style x:Key="GlassTextBoxStyle" TargetType="TextBox">
-        <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
-        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
-        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
     </Style>
 
     <Style x:Key="GlassComboBoxStyle" TargetType="ComboBox">
-        <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
-        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
-        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
     </Style>
 
     <Style x:Key="GlassSliderStyle" TargetType="Slider">
         <Setter Property="Foreground" Value="{ThemeResource GlassAccentBrassBrush}" />
     </Style>
 
-    <Style x:Key="GlassToggleSwitchStyle" TargetType="ToggleSwitch">
-        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-    </Style>
+    <Style x:Key="GlassToggleSwitchStyle" TargetType="ToggleSwitch" />
 
     <Style x:Key="GlassProgressBarStyle" TargetType="ProgressBar">
         <Setter Property="Foreground" Value="{ThemeResource GlassAccentBrassBrush}" />
-        <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
-        <Setter Property="CornerRadius" Value="3" />
-        <Setter Property="Height" Value="6" />
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="Height" Value="4" />
     </Style>
 
-    <!-- Readout style -->
+    <!-- Clean Monospace Telemetry / Readout -->
     <Style x:Key="GlassReadoutTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource GlassFontMonospace}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{ThemeResource GlassTextMonospaceBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
     </Style>
 
     <Style x:Key="InstrumentReadoutTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GlassReadoutTextStyle}" />

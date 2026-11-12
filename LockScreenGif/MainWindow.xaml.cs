@@ -26,7 +26,15 @@ public sealed partial class MainWindow : WindowEx
         settings.ColorValuesChanged += Settings_ColorValuesChanged; // cannot use FrameworkElement.ActualThemeChanged event
 
         Activated += MainWindow_Activated;
-        Closed += (_, _) => GlassFallbackManager.Shutdown();
+        Closed += (_, _) =>
+        {
+            GlassFallbackManager.Shutdown();
+            try
+            {
+                App.GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>().StopAsync().GetAwaiter().GetResult();
+            }
+            catch { }
+        };
         GlassFallbackManager.Initialize(this);
     }
 

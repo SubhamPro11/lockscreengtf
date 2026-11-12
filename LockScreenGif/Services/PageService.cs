@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LockscreenGif.Contracts.Services;
+using LockscreenGif.Features.DesktopWallpaper.ViewModels;
+using LockscreenGif.Features.DesktopWallpaper.Views;
 using LockscreenGif.ViewModels;
 using LockscreenGif.Views;
 using Microsoft.UI.Xaml.Controls;
@@ -13,6 +15,7 @@ public class PageService : IPageService
     public PageService()
     {
         Configure<MainViewModel, MainPage>();
+        Configure<DesktopWallpaperViewModel, DesktopWallpaperPage>();
         Configure<DiagnosticsViewModel, DiagnosticsPage>();
         Configure<SettingsViewModel, SettingsPage>();
     }

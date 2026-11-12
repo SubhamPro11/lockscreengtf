@@ -8,18 +8,18 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <!-- Liquid Glass Prerequisite State Styles -->
+        <!-- Windows 11 Prerequisite State Styles -->
         <Style x:Key="PrerequisitesReadyStyle" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
+            <Setter Property="Background" Value="{ThemeResource GlassSurfaceBaseBrush}" />
             <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
+            <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusCard}" />
         </Style>
         <Style x:Key="PrerequisitesWarningStyle" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
+            <Setter Property="Background" Value="{ThemeResource GlassSurfaceBaseBrush}" />
             <Setter Property="BorderBrush" Value="{ThemeResource GlassStatusAlertBrush}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusControl}" />
+            <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusCard}" />
         </Style>
         <Style x:Key="PrerequisiteCompleteIconStyle" TargetType="FontIcon">
             <Setter Property="Foreground" Value="{ThemeResource GlassStatusSuccessBrush}" />
@@ -28,14 +28,14 @@
             <Setter Property="Foreground" Value="{ThemeResource GlassAccentBrassBrush}" />
         </Style>
 
-        <!-- Liquid Glass Step Pill Styles -->
+        <!-- Windows 11 Stepper Indicator Styles -->
         <Style x:Key="CurrentStepStyle" TargetType="Border">
             <Setter Property="Background" Value="{ThemeResource GlassAccentBrassBrush}" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Padding" Value="14,6" />
+            <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+            <Setter Property="Padding" Value="12,5" />
         </Style>
         <Style x:Key="CurrentStepTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#0F172A" />
+            <Setter Property="Foreground" Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -44,20 +44,23 @@
 
     <Grid>
         <ContentControl x:Name="PageContent" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <Grid MaxWidth="1000" Margin="24,16,24,24" RowSpacing="18">
+            <Grid MaxWidth="920" Margin="20,14,20,20" RowSpacing="14">
                 <Grid.RowDefinitions>
+                    <!-- Stepper & Stage Header -->
                     <RowDefinition Height="Auto" />
+                    <!-- Scrollable Stage Content -->
                     <RowDefinition Height="*" />
+                    <!-- Sticky Action Bar -->
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Stage Header and Step Navigation -->
-                <StackPanel Grid.Row="0" Spacing="10">
+                <StackPanel Grid.Row="0" Spacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8" AutomationProperties.Name="Animation setup steps">
                         <Grid>
                             <Button x:Name="ChooseStepButton" Content="1 · Choose" Click="ChooseStep_Click"
                                     Style="{StaticResource GlassSubtleButtonStyle}"
-                                    AutomationProperties.Name="Choose source" Visibility="Collapsed" IsEnabled="False" />
+                                    AutomationProperties.Name="Choose source step" Visibility="Collapsed" IsEnabled="False" />
                             <Border x:Name="ChooseStepCurrent" Style="{StaticResource CurrentStepStyle}">
                                 <TextBlock x:Name="ChooseStepCurrentText" Text="1 · Choose" Style="{StaticResource CurrentStepTextStyle}"
                                            AutomationProperties.Name="Choose, current step" />
@@ -66,7 +69,7 @@
                         <Grid x:Name="EditStepItem" Visibility="Collapsed">
                             <Button x:Name="EditStepButton" Content="2 · Edit" Click="EditStep_Click"
                                     Style="{StaticResource GlassSubtleButtonStyle}"
-                                    AutomationProperties.Name="Edit video" IsEnabled="False" />
+                                    AutomationProperties.Name="Edit video clip step" IsEnabled="False" />
                             <Border x:Name="EditStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
                                 <TextBlock x:Name="EditStepCurrentText" Text="2 · Edit" Style="{StaticResource CurrentStepTextStyle}"
                                            AutomationProperties.Name="Edit, current step" />
@@ -75,7 +78,7 @@
                         <Grid>
                             <Button x:Name="SetStepButton" Content="Set" Click="SetStep_Click"
                                     Style="{StaticResource GlassSubtleButtonStyle}"
-                                    AutomationProperties.Name="Preview and set lock screen" IsEnabled="False" />
+                                    AutomationProperties.Name="Set lock screen step" IsEnabled="False" />
                             <Border x:Name="SetStepCurrent" Style="{StaticResource CurrentStepStyle}" Visibility="Collapsed">
                                 <TextBlock x:Name="SetStepCurrentText" Style="{StaticResource CurrentStepTextStyle}"
                                            AutomationProperties.Name="Set, current step" />
@@ -92,127 +95,77 @@
                                    Foreground="{ThemeResource GlassTextPrimaryBrush}"
                                    TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level1" />
                     </ContentControl>
-                    <TextBlock x:Name="StageDescription" Text="Start with a video or an existing GIF."
-                               Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                    <TextBlock x:Name="StageDescription" Text="Pick a video or an existing GIF to play on your lock screen."
+                               Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="13" />
                 </StackPanel>
 
                 <!-- Scrollable Main Stage Content -->
                 <ScrollViewer x:Name="StageScrollViewer" Grid.Row="1" IsTabStop="False" HorizontalContentAlignment="Stretch"
-                            HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                              HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="16" Padding="0,0,4,8">
+                        <StackPanel.ChildrenTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition IsStaggeringEnabled="False" />
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </StackPanel.ChildrenTransitions>
+                        <!-- Global In-Flow Feedback Status (Errors, Warnings, Success) -->
                         <InfoBar x:Name="OperationStatus" Severity="Informational" IsOpen="False"
-                                 Background="{ThemeResource GlassSurfaceElevatedBrush}"
-                                 BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                 BorderThickness="1"
-                                 CornerRadius="{StaticResource GlassCornerRadiusControl}"
                                  AutomationProperties.LiveSetting="Polite" />
 
                         <!-- STAGE 1: Choose / Import State -->
                         <StackPanel x:Name="ChooseStagePanel" Spacing="16">
                             <InfoBar x:Name="EnvironmentStatusInfoBar" IsOpen="False" IsClosable="True" Severity="Warning"
-                                     Background="{ThemeResource GlassSurfaceElevatedBrush}"
-                                     BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                     BorderThickness="1"
-                                     CornerRadius="{StaticResource GlassCornerRadiusControl}" />
+                                     AutomationProperties.LiveSetting="Assertive" />
 
-                            <!-- Prerequisites Panel -->
-                            <Border x:Name="PrerequisitesPanel" Padding="14,10"
-                                    Style="{StaticResource PrerequisitesWarningStyle}">
-                                <Expander x:Name="PrerequisitesExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                          Background="Transparent" AutomationProperties.Name="System Prerequisites">
-                                    <Expander.Resources>
-                                        <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
-                                    </Expander.Resources>
-                                    <Expander.Header>
-                                        <Grid ColumnSpacing="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <FontIcon Glyph="&#xE7BA;" FontSize="16" VerticalAlignment="Center" Foreground="{ThemeResource GlassAccentBrassBrush}" />
-                                            <TextBlock Grid.Column="1" Text="System Prerequisites (Windows 11 24H2+ &amp; Picture Mode)" FontSize="14" FontWeight="SemiBold"
-                                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
-                                        </Grid>
-                                    </Expander.Header>
-                                    <StackPanel Spacing="12" Margin="0,12,0,0">
-                                        <Grid ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <FontIcon x:Name="PicturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
-                                                      Glyph="&#xE7BA;" FontSize="20" VerticalAlignment="Top" Margin="0,3,0,0" />
-                                            <StackPanel Grid.Column="1" Spacing="4">
-                                                <TextBlock Text="Picture lock screen and image cache" FontWeight="SemiBold" TextWrapping="Wrap"
-                                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                                <TextBlock x:Name="PicturePrerequisiteDetail" Text="Checking Picture mode and the lock-screen cache…"
-                                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
-                                            </StackPanel>
-                                            <Button x:Name="OpenLockscreenSettingsButton" Grid.Column="2" Content="Open lock-screen settings"
-                                                    Style="{StaticResource GlassButtonStyle}"
-                                                    Click="OpenLockscreenSettings_Click" VerticalAlignment="Center" />
-                                        </Grid>
-                                        <Grid ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <FontIcon x:Name="FeaturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
-                                                      Glyph="&#xE7BA;" FontSize="20" VerticalAlignment="Top" Margin="0,3,0,0" />
-                                            <StackPanel Grid.Column="1" Spacing="4">
-                                                <TextBlock Text="Animated GIF support on Windows 11 25H2 or later" FontWeight="SemiBold" TextWrapping="Wrap"
-                                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                                <TextBlock x:Name="FeaturePrerequisiteDetail" Text="Checking the Windows lock-screen feature…"
-                                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
-                                            </StackPanel>
-                                            <Button x:Name="DisableWindowsImageFeatureButton" Grid.Column="2" Content="Disable Windows feature"
-                                                    Style="{StaticResource GlassButtonStyle}"
-                                                    Click="DisableWindowsImageFeature_Click" VerticalAlignment="Center" IsEnabled="False" />
-                                        </Grid>
-                                    </StackPanel>
-                                </Expander>
-                            </Border>
-
-                            <!-- Liquid Glass Drag and Drop Target Card -->
+                            <!-- Hero Drag and Drop Target Card (Obvious in 3 seconds) -->
                             <Border x:Name="DropTargetCard" Style="{StaticResource GlassCardElevatedStyle}"
                                     AllowDrop="True" DragOver="DropTarget_DragOver" DragLeave="DropTarget_DragLeave" Drop="DropTarget_Drop"
                                     AutomationProperties.Name="Drop zone for video or GIF file"
-                                    Padding="36,28" HorizontalAlignment="Stretch">
+                                    Padding="28,32" HorizontalAlignment="Stretch">
                                 <StackPanel Spacing="16" HorizontalAlignment="Center">
                                     <FontIcon Glyph="&#xE8B9;" FontSize="42" Foreground="{ThemeResource GlassAccentBrassBrush}" HorizontalAlignment="Center" />
-                                    <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                        <TextBlock Text="Drop a video or animated GIF here"
+                                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                        <TextBlock Text="Drag and drop a video or GIF here"
                                                    FontSize="18" FontWeight="SemiBold"
                                                    Foreground="{ThemeResource GlassTextPrimaryBrush}" TextAlignment="Center" />
-                                        <TextBlock Text="Supported: MP4 · WEBM · MOV · MKV · AVI · GIF (up to 4K)"
-                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" TextAlignment="Center" FontSize="12" />
+                                        <TextBlock Text="or choose a file from your computer"
+                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" TextAlignment="Center" FontSize="13" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,6,0,0">
                                         <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Style="{StaticResource GlassPrimaryButtonStyle}"
-                                                AutomationProperties.Name="Choose video file to animate">
+                                                AutomationProperties.Name="Choose video file to animate"
+                                                AccessKey="V" ToolTipService.ToolTip="Select a video file to trim and animate (Alt+V)">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <FontIcon Glyph="&#xE714;" FontSize="16" />
+                                                <FontIcon Glyph="&#xE714;" FontSize="15" />
                                                 <TextBlock Text="Choose Video…" FontWeight="SemiBold" />
                                             </StackPanel>
                                         </Button>
                                         <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Style="{StaticResource GlassButtonStyle}"
-                                                AutomationProperties.Name="Choose existing GIF file to animate">
+                                                AutomationProperties.Name="Choose existing GIF file to animate"
+                                                AccessKey="G" ToolTipService.ToolTip="Select an existing animated GIF file (Alt+G)">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <FontIcon Glyph="&#xE8B9;" FontSize="16" />
+                                                <FontIcon Glyph="&#xE8B9;" FontSize="15" />
                                                 <TextBlock Text="Choose GIF…" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
+                                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                            Padding="10,4" Margin="0,4,0,0" HorizontalAlignment="Center">
+                                        <TextBlock Text="Supported: MP4 · WEBM · MOV · MKV · AVI · GIF (up to 4K)"
+                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="11" />
+                                    </Border>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Recent Files Section -->
-                            <Border x:Name="RecentFilesSection" Style="{StaticResource GlassCardStyle}" Visibility="Collapsed" Padding="16,12">
-                                <StackPanel Spacing="8">
-                                    <TextBlock Text="RECENT ANIMATIONS" FontSize="11" FontWeight="SemiBold"
-                                               Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
+                            <!-- Recent Animations Section -->
+                            <Border x:Name="RecentFilesSection" Style="{StaticResource GlassCardStyle}" Visibility="Collapsed" Padding="16,14">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="Recent animations" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                                     <ItemsControl x:Name="RecentFilesItemsControl">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -222,9 +175,10 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Click="RecentFileButton_Click" Tag="{Binding Path}" Style="{StaticResource GlassButtonStyle}" Padding="10,6"
+                                                        AutomationProperties.Name="{Binding FileName}"
                                                         ToolTipService.ToolTip="{Binding Path}">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
-                                                        <FontIcon Glyph="&#xE714;" FontSize="14" Foreground="{ThemeResource GlassAccentBrassBrush}" />
+                                                        <FontIcon Glyph="&#xE714;" FontSize="13" Foreground="{ThemeResource GlassAccentBrassBrush}" />
                                                         <TextBlock Text="{Binding FileName}" MaxWidth="160" TextTrimming="CharacterEllipsis" FontSize="12" />
                                                     </StackPanel>
                                                 </Button>
@@ -234,65 +188,99 @@
                                 </StackPanel>
                             </Border>
 
+                            <!-- System Prerequisites Panel (Clean collapsible card) -->
+                            <Border x:Name="PrerequisitesPanel" Padding="14,10"
+                                    Style="{StaticResource PrerequisitesWarningStyle}">
+                                <Expander x:Name="PrerequisitesExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                          Background="Transparent" AutomationProperties.Name="System Prerequisites">
+                                    <Expander.Resources>
+                                        <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+                                    </Expander.Resources>
+                                    <Expander.Header>
+                                        <Grid ColumnSpacing="10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon Glyph="&#xE7BA;" FontSize="16" VerticalAlignment="Center" Foreground="{ThemeResource GlassAccentBrassBrush}" />
+                                            <TextBlock Grid.Column="1" Text="System Prerequisites (Windows 11 Picture Mode &amp; Cache)" FontSize="13" FontWeight="SemiBold"
+                                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Expander.Header>
+                                    <StackPanel Spacing="12" Margin="0,10,0,0">
+                                        <Grid ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon x:Name="PicturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
+                                                      Glyph="&#xE7BA;" FontSize="18" VerticalAlignment="Top" Margin="0,2,0,0" />
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock Text="Picture lock screen and image cache" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                                <TextBlock x:Name="PicturePrerequisiteDetail" Text="Checking Picture mode and the lock-screen cache…"
+                                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="12" />
+                                            </StackPanel>
+                                            <Button x:Name="OpenLockscreenSettingsButton" Grid.Column="2" Content="Open settings"
+                                                    Style="{StaticResource GlassButtonStyle}"
+                                                    AutomationProperties.Name="Open Windows lock-screen settings"
+                                                    Click="OpenLockscreenSettings_Click" VerticalAlignment="Center" />
+                                        </Grid>
+                                        <Grid ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon x:Name="FeaturePrerequisiteIcon" Style="{StaticResource PrerequisiteWarningIconStyle}"
+                                                      Glyph="&#xE7BA;" FontSize="18" VerticalAlignment="Top" Margin="0,2,0,0" />
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock Text="Animated GIF support on Windows 11 25H2 or later" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                                <TextBlock x:Name="FeaturePrerequisiteDetail" Text="Checking the Windows lock-screen feature…"
+                                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="12" />
+                                            </StackPanel>
+                                            <Button x:Name="DisableWindowsImageFeatureButton" Grid.Column="2" Content="Disable feature"
+                                                    Style="{StaticResource GlassButtonStyle}"
+                                                    AutomationProperties.Name="Disable Windows lock-screen image feature"
+                                                    Click="DisableWindowsImageFeature_Click" VerticalAlignment="Center" IsEnabled="False" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander>
+                            </Border>
+
                             <TextBlock x:Name="CurrentSelectionSummary" Visibility="Collapsed" TextWrapping="Wrap"
                                        Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <HyperlinkButton x:Name="RemoveAnimationLink" Content="Restore Windows default lock screen"
-                                             Click="RestoreDefaultLockscreen_Click" HorizontalAlignment="Left" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+
+                            <!-- Separated, quieter Revert / Destructive Action -->
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0,6,0,0">
+                                <FontIcon Glyph="&#xE777;" FontSize="13" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
+                                <HyperlinkButton x:Name="RemoveAnimationLink" Content="Restore Windows default lock screen"
+                                                 Click="RestoreDefaultLockscreen_Click"
+                                                 AutomationProperties.Name="Restore Windows default lock screen"
+                                                 Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            </StackPanel>
                         </StackPanel>
 
-                        <!-- STAGE 2: Video Trim & Quality Controls -->
+                        <!-- STAGE 2: Video Trim & Controls -->
                         <StackPanel x:Name="EditStagePanel" Spacing="16" Visibility="Collapsed">
-                            <!-- Crisp Video Preview Surface Container -->
+                            <!-- Clean Video Preview Surface -->
                             <Border MaxWidth="800" MaxHeight="340"
                                     BorderBrush="{ThemeResource GlassBorderRimBrush}" BorderThickness="1"
-                                    CornerRadius="{StaticResource GlassCornerRadiusControl}" Background="Black">
+                                    CornerRadius="{StaticResource AppCornerRadiusCard}" Background="Black">
                                 <Grid x:Name="VideoPreviewPanel" Visibility="Collapsed">
                                     <MediaPlayerElement x:Name="VideoPreview" AreTransportControlsEnabled="False" />
                                     <Image x:Name="PreviewStill" Stretch="Uniform" Visibility="Collapsed" IsHitTestVisible="False" />
                                     <Border x:Name="PreviewLoadingPanel" Visibility="Collapsed"
                                             Background="{ThemeResource GlassSurfaceElevatedBrush}"
-                                            CornerRadius="{StaticResource GlassCornerRadiusControl}" IsHitTestVisible="False">
+                                            CornerRadius="{StaticResource AppCornerRadiusCard}" IsHitTestVisible="False">
                                         <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
                                             <ProgressRing x:Name="PreviewLoadingRing" Width="32" Height="32" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False" />
                                             <TextBlock x:Name="PreviewLoadingText" Text="Loading frame…" Foreground="{ThemeResource GlassTextPrimaryBrush}" TextAlignment="Center" TextWrapping="Wrap" />
-                                            <TextBlock Text="You can keep adjusting the clip." Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" TextAlignment="Center" TextWrapping="Wrap" />
+                                            <TextBlock Text="You can keep adjusting your clip." Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" TextAlignment="Center" TextWrapping="Wrap" />
                                         </StackPanel>
                                     </Border>
-                                </Grid>
-                            </Border>
-
-                            <!-- Monospace Telemetry Gauge Strip -->
-                            <Border Style="{StaticResource GlassCardStyle}" Padding="16,12">
-                                <Grid ColumnSpacing="16" RowSpacing="6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Grid.Column="0" Spacing="2">
-                                        <TextBlock Text="CLIP DURATION" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
-                                        <TextBlock x:Name="TelemetryDurationText" Text="00:00.000" Style="{StaticResource GlassReadoutTextStyle}" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Spacing="2">
-                                        <TextBlock Text="FRAMES" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
-                                        <TextBlock x:Name="TelemetryFramesText" Text="0 frames" Style="{StaticResource GlassReadoutTextStyle}" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2" Spacing="2">
-                                        <TextBlock Text="TARGET RATE" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
-                                        <TextBlock x:Name="TelemetryFpsText" Text="Original" Style="{StaticResource GlassReadoutTextStyle}" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="3" Spacing="2">
-                                        <TextBlock Text="EST. GIF SIZE" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
-                                        <TextBlock x:Name="TelemetrySizeText" Text="~0 MB" Style="{StaticResource GlassReadoutTextStyle}" />
-                                    </StackPanel>
-                                    <TextBlock x:Name="TelemetryImpactText" Grid.Row="1" Grid.ColumnSpan="4"
-                                               FontSize="11" Margin="0,4,0,0" FontFamily="{StaticResource GlassFontMonospace}"
-                                               Foreground="{ThemeResource GlassStatusSuccessBrush}" TextWrapping="Wrap" />
                                 </Grid>
                             </Border>
 
@@ -304,28 +292,30 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Spacing="4" VerticalAlignment="Center">
-                                            <TextBlock Text="Choose your clip" Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="Select your clip range" Style="{ThemeResource BodyStrongTextBlockStyle}"
                                                        Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                            <TextBlock x:Name="SelectionSummary" TextWrapping="Wrap" Foreground="{ThemeResource GlassTextSecondaryBrush}" AutomationProperties.LiveSetting="Polite" />
+                                            <TextBlock x:Name="SelectionSummary" TextWrapping="Wrap" Foreground="{ThemeResource GlassTextSecondaryBrush}" AutomationProperties.LiveSetting="Polite" FontSize="12" />
                                         </StackPanel>
-                                        <Button Grid.Column="1" Content="Reset trim" Click="ResetTrim_Click" VerticalAlignment="Center"
+                                        <Button Content="Reset trim" Click="ResetTrim_Click" VerticalAlignment="Center"
                                                 Style="{StaticResource GlassButtonStyle}"
+                                                AutomationProperties.Name="Reset trim selection to full video"
                                                 ToolTipService.ToolTip="Select the full video and return the preview to its first frame" />
                                     </Grid>
 
-                                    <!-- Video Timeline Control -->
+                                    <!-- Video Timeline Filmstrip Control -->
                                     <local:VideoTimeline x:Name="TrimTimeline"
                                         InteractionStarted="Timeline_InteractionStarted"
                                         InteractionCompleted="Timeline_InteractionCompleted"
                                         FrameChanged="Timeline_FrameChanged" />
 
                                     <!-- Transport Controls -->
-                                    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                                        <Button x:Name="SelectionStartButton" Click="SkipToSelectionBoundary_Click" MinWidth="88"
+                                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                        <Button x:Name="SelectionStartButton" Click="SkipToSelectionBoundary_Click" MinWidth="84"
                                                 Style="{StaticResource GlassButtonStyle}"
+                                                AccessKey="["
                                                 AutomationProperties.Name="Jump to start of selection"
-                                                ToolTipService.ToolTip="Jump to the first frame of the selection">
+                                                ToolTipService.ToolTip="Jump to first frame of selection ([)">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
                                                 <SymbolIcon Symbol="Previous" />
                                                 <TextBlock Text="Start" VerticalAlignment="Center" />
@@ -333,11 +323,14 @@
                                         </Button>
                                         <Button x:Name="PlaySelectionButton" Content="Play" Click="PlaySelection_Click" MinWidth="96"
                                                 Style="{StaticResource GlassPrimaryButtonStyle}"
-                                                ToolTipService.ToolTip="Play or pause the selected clip. Playback loops automatically." />
-                                        <Button x:Name="SelectionEndButton" Click="SkipToSelectionBoundary_Click" MinWidth="88"
+                                                AccessKey="P"
+                                                AutomationProperties.Name="Play or pause selected clip"
+                                                ToolTipService.ToolTip="Play or pause the selected clip (P). Loops automatically." />
+                                        <Button x:Name="SelectionEndButton" Click="SkipToSelectionBoundary_Click" MinWidth="84"
                                                 Style="{StaticResource GlassButtonStyle}"
+                                                AccessKey="]"
                                                 AutomationProperties.Name="Jump to end of selection"
-                                                ToolTipService.ToolTip="Jump to the last frame of the selection">
+                                                ToolTipService.ToolTip="Jump to last frame of selection (])">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
                                                 <TextBlock Text="End" VerticalAlignment="Center" />
                                                 <SymbolIcon Symbol="Next" />
@@ -348,7 +341,7 @@
                                     <TextBlock x:Name="PreviewStatus" Visibility="Collapsed" Foreground="{ThemeResource GlassStatusAlertBrush}"
                                                TextWrapping="Wrap" FontSize="12" AutomationProperties.LiveSetting="Polite" />
 
-                                    <!-- Start and End Boundary Glass Cards -->
+                                    <!-- Start and End Boundary Cards -->
                                     <Grid x:Name="TrimBoundaryGrid">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" />
@@ -365,7 +358,7 @@
                                                     <TextBlock x:Name="StartFrameLabel" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                                Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" TextWrapping="Wrap" />
                                                 </Grid>
-                                                <TextBox x:Name="StartTimeTextBox" AutomationProperties.Name="Clip start time" AutomationProperties.LabeledBy="{Binding ElementName=StartTimeHeading}"
+                                                <TextBox x:Name="StartTimeTextBox" AutomationProperties.Name="Clip start timestamp" AutomationProperties.LabeledBy="{Binding ElementName=StartTimeHeading}"
                                                          Style="{StaticResource GlassTextBoxStyle}"
                                                          TextChanged="TimeTextBox_TextChanged" LostFocus="TimeTextBox_LostFocus" KeyDown="TimeTextBox_KeyDown" PlaceholderText="Seconds or mm:ss.fff" />
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -376,7 +369,9 @@
                                                                   Style="{StaticResource GlassRepeatButtonStyle}"
                                                                   AutomationProperties.Name="Move start one frame later" ToolTipService.ToolTip="Move start exactly one frame later" />
                                                 </StackPanel>
-                                                <Button Click="StartHere_Click" Style="{StaticResource GlassButtonStyle}" ToolTipService.ToolTip="Use the current preview frame as the first included frame">
+                                                <Button Click="StartHere_Click" Style="{StaticResource GlassButtonStyle}"
+                                                        AutomationProperties.Name="Set clip start to current frame"
+                                                        ToolTipService.ToolTip="Use the current preview frame as the first included frame">
                                                     <TextBlock Text="Set start to current frame" TextWrapping="Wrap" />
                                                 </Button>
                                             </StackPanel>
@@ -392,7 +387,7 @@
                                                     <TextBlock x:Name="EndFrameLabel" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                                Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" TextWrapping="Wrap" />
                                                 </Grid>
-                                                <TextBox x:Name="EndTimeTextBox" AutomationProperties.Name="Clip end time" AutomationProperties.LabeledBy="{Binding ElementName=EndTimeHeading}"
+                                                <TextBox x:Name="EndTimeTextBox" AutomationProperties.Name="Clip end timestamp" AutomationProperties.LabeledBy="{Binding ElementName=EndTimeHeading}"
                                                          Style="{StaticResource GlassTextBoxStyle}"
                                                          ToolTipService.ToolTip="End time is just after the last included frame."
                                                          TextChanged="TimeTextBox_TextChanged" LostFocus="TimeTextBox_LostFocus" KeyDown="TimeTextBox_KeyDown" PlaceholderText="Seconds or mm:ss.fff" />
@@ -404,7 +399,9 @@
                                                                   Style="{StaticResource GlassRepeatButtonStyle}"
                                                                   AutomationProperties.Name="Move end one frame later" ToolTipService.ToolTip="Move end exactly one frame later" />
                                                 </StackPanel>
-                                                <Button Click="EndHere_Click" Style="{StaticResource GlassButtonStyle}" ToolTipService.ToolTip="Include the current preview frame as the last frame">
+                                                <Button Click="EndHere_Click" Style="{StaticResource GlassButtonStyle}"
+                                                        AutomationProperties.Name="Set clip end to current frame"
+                                                        ToolTipService.ToolTip="Include the current preview frame as the last frame">
                                                     <TextBlock Text="Set end to current frame" TextWrapping="Wrap" />
                                                 </Button>
                                             </StackPanel>
@@ -414,47 +411,85 @@
                                 </StackPanel>
                             </ContentControl>
 
-                            <!-- Output Gauges & Quality Card -->
+                            <!-- Advanced Conversion Options (Collapsed by default, one click away) -->
                             <ContentControl x:Name="VideoSettingsHost" HorizontalContentAlignment="Stretch">
                                 <Border Style="{StaticResource GlassCardStyle}">
-                                    <StackPanel Spacing="14">
-                                        <TextBlock Text="OUTPUT GAUGES &amp; QUALITY" FontSize="11" FontWeight="SemiBold"
-                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
-                                        <Grid ColumnSpacing="16" x:Name="ComboSettingsStack" Visibility="Visible">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="1.4*" />
-                                            </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="ComboResolution" Header="Resolution" HorizontalAlignment="Stretch"
-                                                      Style="{StaticResource GlassComboBoxStyle}"
-                                                      AutomationProperties.Name="Target resolution"
-                                                      SelectionChanged="ComboResolution_SelectionChanged" />
-                                            <ComboBox x:Name="ComboFps" Grid.Column="1" Header="Frame rate" HorizontalAlignment="Stretch"
-                                                      Style="{StaticResource GlassComboBoxStyle}"
-                                                      AutomationProperties.Name="Target frame rate"
-                                                      SelectionChanged="ComboResolution_SelectionChanged" />
-                                            <StackPanel Grid.Column="2" Spacing="4">
-                                                <Grid>
-                                                    <TextBlock Text="Quality" Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                                               Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="12" />
-                                                    <TextBlock x:Name="QualityValueText" Text="High (85)" HorizontalAlignment="Right"
-                                                               FontSize="12" Style="{StaticResource GlassReadoutTextStyle}" />
-                                                </Grid>
-                                                <Slider x:Name="QualitySlider" Minimum="70" Maximum="100" Value="85" StepFrequency="5"
-                                                        Style="{StaticResource GlassSliderStyle}"
-                                                        ValueChanged="QualitySlider_ValueChanged" AutomationProperties.Name="GIF color quality" />
-                                            </StackPanel>
-                                        </Grid>
-                                        <TextBlock x:Name="OutputSettingsSummary" Visibility="Collapsed" Text="" />
-                                    </StackPanel>
+                                    <Expander Header="Advanced conversion options" IsExpanded="False"
+                                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                              AutomationProperties.Name="Advanced conversion options"
+                                              Background="Transparent">
+                                        <Expander.Resources>
+                                            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+                                        </Expander.Resources>
+                                        <StackPanel Spacing="16" Margin="0,12,0,0">
+                                            <!-- Telemetry Strip -->
+                                            <Grid ColumnSpacing="16" RowSpacing="6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <StackPanel Grid.Column="0" Spacing="2">
+                                                    <TextBlock Text="DURATION" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
+                                                    <TextBlock x:Name="TelemetryDurationText" Text="00:00.000" Style="{StaticResource GlassReadoutTextStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="2">
+                                                    <TextBlock Text="FRAMES" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
+                                                    <TextBlock x:Name="TelemetryFramesText" Text="0 frames" Style="{StaticResource GlassReadoutTextStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" Spacing="2">
+                                                    <TextBlock Text="TARGET RATE" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
+                                                    <TextBlock x:Name="TelemetryFpsText" Text="Original" Style="{StaticResource GlassReadoutTextStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="3" Spacing="2">
+                                                    <TextBlock Text="EST. GIF SIZE" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" FontFamily="{StaticResource GlassFontMonospace}" />
+                                                    <TextBlock x:Name="TelemetrySizeText" Text="~0 MB" Style="{StaticResource GlassReadoutTextStyle}" />
+                                                </StackPanel>
+                                                <TextBlock x:Name="TelemetryImpactText" Grid.Row="1" Grid.ColumnSpan="4"
+                                                           FontSize="11" Margin="0,4,0,0" FontFamily="{StaticResource GlassFontMonospace}"
+                                                           Foreground="{ThemeResource GlassStatusSuccessBrush}" TextWrapping="Wrap" />
+                                            </Grid>
+
+                                            <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
+
+                                            <!-- Controls -->
+                                            <Grid ColumnSpacing="16" x:Name="ComboSettingsStack" Visibility="Visible">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="1.4*" />
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox x:Name="ComboResolution" Header="Resolution" HorizontalAlignment="Stretch"
+                                                          Style="{StaticResource GlassComboBoxStyle}"
+                                                          AutomationProperties.Name="Target resolution"
+                                                          SelectionChanged="ComboResolution_SelectionChanged" />
+                                                <ComboBox x:Name="ComboFps" Grid.Column="1" Header="Frame rate" HorizontalAlignment="Stretch"
+                                                          Style="{StaticResource GlassComboBoxStyle}"
+                                                          AutomationProperties.Name="Target frame rate"
+                                                          SelectionChanged="ComboResolution_SelectionChanged" />
+                                                <StackPanel Grid.Column="2" Spacing="4">
+                                                    <Grid>
+                                                        <TextBlock Text="Quality" Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" FontSize="12" />
+                                                        <TextBlock x:Name="QualityValueText" Text="High (85)" HorizontalAlignment="Right"
+                                                                   FontSize="12" Style="{StaticResource GlassReadoutTextStyle}" />
+                                                    </Grid>
+                                                    <Slider x:Name="QualitySlider" Minimum="70" Maximum="100" Value="85" StepFrequency="5"
+                                                            Style="{StaticResource GlassSliderStyle}"
+                                                            ValueChanged="QualitySlider_ValueChanged" AutomationProperties.Name="GIF color quality" />
+                                                </StackPanel>
+                                            </Grid>
+                                            <TextBlock x:Name="OutputSettingsSummary" Visibility="Collapsed" Text="" />
+                                        </StackPanel>
+                                    </Expander>
                                 </Border>
                             </ContentControl>
                             <InfoBar x:Name="FileSizeWarning" Title="Temporary space estimate" IsClosable="False"
-                                     Background="{ThemeResource GlassSurfaceElevatedBrush}"
-                                     BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                     BorderThickness="1"
-                                     CornerRadius="{StaticResource GlassCornerRadiusControl}"
                                      IsOpen="False" Message="" Severity="Warning" />
                         </StackPanel>
 
@@ -462,36 +497,38 @@
                         <StackPanel x:Name="PreviewStagePanel" Spacing="16" Visibility="Collapsed">
                             <InfoBar x:Name="CompletionPanel" Title="Applied successfully" IsOpen="True" IsClosable="False"
                                      Visibility="Collapsed" Severity="Success"
-                                     Background="{ThemeResource GlassSurfaceElevatedBrush}"
-                                     BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                     BorderThickness="1"
-                                     CornerRadius="{StaticResource GlassCornerRadiusControl}"
                                      AutomationProperties.LiveSetting="Polite"
                                      Message="The lock-screen files were updated. Lock your PC to check the animation." />
 
-                            <!-- Post-Apply Success Glass Card -->
+                            <!-- Post-Apply Success Card -->
                             <Border x:Name="ApplySuccessCard" Style="{StaticResource GlassCardElevatedStyle}" Visibility="Collapsed" Padding="20,18">
                                 <StackPanel Spacing="16">
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="False" />
+                                            <RepositionThemeTransition />
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Spacing="4">
-                                            <TextBlock Text="LOCK SCREEN UPDATED SUCCESSFULLY"
-                                                       FontFamily="{StaticResource GlassFontMonospace}" FontSize="12" FontWeight="Bold"
+                                            <TextBlock Text="Lock screen updated successfully"
+                                                       FontSize="16" FontWeight="SemiBold"
                                                        Foreground="{ThemeResource GlassStatusSuccessBrush}" />
-                                            <TextBlock Text="Frames committed to Windows SystemData cache. Windows handles playback natively with zero ongoing battery or CPU drain."
-                                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="12" />
+                                            <TextBlock Text="Frames committed to Windows lock-screen cache. Windows plays the animation natively with zero ongoing battery or CPU drain."
+                                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="13" />
                                         </StackPanel>
-                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" FontSize="26"
+                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" FontSize="24"
                                                   Foreground="{ThemeResource GlassStatusSuccessBrush}" VerticalAlignment="Top" />
                                     </Grid>
 
                                     <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" Margin="0,2" />
 
-                                    <TextBlock Text="NEXT STEPS" FontFamily="{StaticResource GlassFontMonospace}" FontSize="10"
-                                               Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                    <TextBlock Text="Next steps" FontWeight="SemiBold" FontSize="13"
+                                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
 
                                     <Grid ColumnSpacing="12" RowSpacing="10">
                                         <Grid.ColumnDefinitions>
@@ -500,78 +537,80 @@
                                         </Grid.ColumnDefinitions>
                                         <Border Style="{StaticResource GlassCardStyle}" Padding="14,12">
                                             <StackPanel Spacing="6">
-                                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                                    <Border Style="{StaticResource GlassPillStyle}" Padding="8,2">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Border Style="{StaticResource GlassPillStyle}">
                                                         <TextBlock Text="Win + L" FontFamily="{StaticResource GlassFontMonospace}" FontSize="11" FontWeight="Bold"
                                                                    Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                                                     </Border>
-                                                    <TextBlock Text="Lock PC Now" FontWeight="SemiBold" FontSize="12"
+                                                    <TextBlock Text="Lock PC Now" FontWeight="SemiBold" FontSize="13"
                                                                Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
                                                 </StackPanel>
-                                                <TextBlock Text="Press Win+L on your keyboard anytime to view your animated lock screen."
-                                                           FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="Press Win+L anytime on your keyboard to view your live lock screen."
+                                                           FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
                                             </StackPanel>
                                         </Border>
 
                                         <Border Grid.Column="1" Style="{StaticResource GlassCardStyle}" Padding="14,12">
                                             <StackPanel Spacing="6">
-                                                <Button Click="RunLiveTest_Click" Style="{StaticResource GlassPrimaryButtonStyle}" Padding="12,6">
+                                                <Button Click="RunLiveTest_Click" Style="{StaticResource GlassPrimaryButtonStyle}" Padding="12,6"
+                                                        AutomationProperties.Name="Start 5-second countdown lock test">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                                         <FontIcon Glyph="&#xE768;" FontSize="13" />
                                                         <TextBlock Text="5s Live Test" FontSize="12" FontWeight="SemiBold" />
                                                     </StackPanel>
                                                 </Button>
-                                                <TextBlock Text="Starts a 5-second countdown and locks screen to confirm animation."
-                                                           FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="Starts a 5-second countdown and locks screen to confirm playback."
+                                                           FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
                                             </StackPanel>
                                         </Border>
                                     </Grid>
 
                                     <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
-                                        <Button Click="RestoreDefaultLockscreen_Click" Style="{StaticResource GlassButtonStyle}" Padding="12,6">
+                                        <Button Click="RestoreDefaultLockscreen_Click" Style="{StaticResource GlassButtonStyle}" Padding="12,6"
+                                                AutomationProperties.Name="Restore Windows default lock screen">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
                                                 <FontIcon Glyph="&#xE777;" FontSize="14" />
                                                 <TextBlock Text="Restore Default Lock Screen" FontSize="12" />
                                             </StackPanel>
                                         </Button>
                                         <TextBlock Text="Revert back to standard Windows lock screen anytime."
-                                                   FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
+                                                   FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Prepared GIF Preview Surface -->
-                            <Border MaxHeight="340" MinHeight="120" HorizontalAlignment="Stretch" Padding="4"
+                            <!-- Prepared Animation Preview Surface -->
+                            <Border MaxHeight="340" MinHeight="140" HorizontalAlignment="Stretch" Padding="4"
                                     BorderBrush="{ThemeResource GlassBorderRimBrush}" BorderThickness="1"
-                                    CornerRadius="{StaticResource GlassCornerRadiusControl}" Background="Black">
+                                    CornerRadius="{StaticResource AppCornerRadiusCard}" Background="Black">
                                 <Image x:Name="currentImage" Stretch="Uniform" MaxHeight="330"
                                        AutomationProperties.Name="Prepared lock-screen animation" />
                             </Border>
 
                             <TextBlock x:Name="PreparedSummary" TextWrapping="Wrap"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="13" />
+
                             <InfoBar x:Name="SetModeWarning" Title="Check your lock screen mode" IsClosable="False"
-                                     Background="{ThemeResource GlassSurfaceElevatedBrush}"
-                                     BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                     BorderThickness="1"
-                                     CornerRadius="{StaticResource GlassCornerRadiusControl}"
                                      IsOpen="False" Severity="Warning"
                                      Message="Windows may be using Slideshow or Spotlight. Choose Picture in Windows Settings before setting your animation." />
 
                             <StackPanel x:Name="SaveGeneratedGifPanel" Spacing="6" Visibility="Collapsed">
                                 <Button x:Name="SaveGeneratedGifButton" Click="SaveGeneratedGifButton_Click"
                                         Style="{StaticResource GlassButtonStyle}"
+                                        AutomationProperties.Name="Save copy of generated GIF to disk"
                                         ToolTipService.ToolTip="Save a copy of the generated GIF to a folder you choose">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <FontIcon Glyph="&#xE74E;" FontSize="16" />
-                                        <TextBlock Text="Save GIF…" />
+                                        <FontIcon Glyph="&#xE74E;" FontSize="15" />
+                                        <TextBlock Text="Save GIF copy…" />
                                     </StackPanel>
                                 </Button>
-                                <TextBlock Text="Keep a copy to use again with Choose GIF."
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="Keep a copy to use again anytime."
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" FontSize="12" />
                             </StackPanel>
+
                             <Button x:Name="DiagnosticsButton" Content="Open Diagnostics" Click="OpenDiagnostics_Click"
                                     Style="{StaticResource GlassButtonStyle}"
+                                    AutomationProperties.Name="Open Diagnostics page"
                                     Visibility="Collapsed" HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>
@@ -585,17 +624,23 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ProgressRing x:Name="OperationProgressRing" Width="20" Height="20" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False" />
+                            <ProgressRing x:Name="OperationProgressRing" Width="18" Height="18" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False" />
                             <TextBlock x:Name="OperationProgressText" Grid.Column="1" VerticalAlignment="Center"
                                        Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                                       TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+                                       TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" FontSize="13" />
                         </Grid>
                     </StackPanel>
 
-                    <!-- Conversion Progress Card -->
+                    <!-- Real-Time Conversion Progress Card with Cancel -->
                     <Border x:Name="ConversionProgressCard" Visibility="Collapsed"
-                            Style="{StaticResource GlassCardElevatedStyle}" Margin="0,4,0,4">
+                            Style="{StaticResource GlassCardElevatedStyle}" Margin="0,2,0,2" Padding="16,14">
                         <StackPanel Spacing="10">
+                            <StackPanel.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </StackPanel.ChildrenTransitions>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -603,9 +648,9 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Spacing="2">
                                     <TextBlock x:Name="ConversionPhaseTitle" Text="Converting animation…"
-                                               Foreground="{ThemeResource GlassTextPrimaryBrush}" FontWeight="SemiBold" />
+                                               Foreground="{ThemeResource GlassTextPrimaryBrush}" FontWeight="SemiBold" FontSize="13" />
                                     <TextBlock x:Name="ConversionProgressDetail" Text="Preparing frames…"
-                                               Style="{StaticResource GlassReadoutTextStyle}" />
+                                               Style="{StaticResource GlassReadoutTextStyle}" FontSize="12" />
                                 </StackPanel>
                                 <Button x:Name="CancelConversionButton" Grid.Column="1" Content="Cancel"
                                         Style="{StaticResource GlassButtonStyle}"
@@ -618,47 +663,54 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Navigation Action Buttons -->
+                    <!-- Primary Action Row -->
                     <Grid ColumnSpacing="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <!-- Back button: quiet secondary action -->
                         <Button x:Name="BackButton" Content="Back" Click="Back_Click" Visibility="Collapsed"
                                 Style="{StaticResource GlassButtonStyle}"
+                                AccessKey="B"
                                 AutomationProperties.Name="Return to previous stage" />
+                        <!-- Primary Action Buttons: Clear, unambiguous -->
                         <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Right">
                             <Button x:Name="ContinueSelectionButton" Content="Continue" Click="ContinueSelection_Click"
+                                    AccessKey="C"
                                     AutomationProperties.Name="Continue to editor"
                                     Visibility="Collapsed" Style="{StaticResource GlassPrimaryButtonStyle}" />
                             <Button x:Name="GenerateButton" Content="Continue" Click="GenerateButton_Click" IsEnabled="False"
+                                    AccessKey="C"
                                     AutomationProperties.Name="Generate lock screen animation"
                                     Visibility="Collapsed" Style="{StaticResource GlassPrimaryButtonStyle}" />
                             <Button x:Name="ApplyButton" Content="Set lock screen" Click="SetLockscreenButton_click" IsEnabled="False"
-                                    AutomationProperties.Name="Set animated GIF as lock screen"
+                                    AccessKey="S"
+                                    AutomationProperties.Name="Set animated GIF as Windows lock screen"
                                     Visibility="Collapsed" Style="{StaticResource GlassPrimaryButtonStyle}" />
                         </StackPanel>
+                        <!-- Visually quiet help icon button -->
                         <Button x:Name="HelpButton" Grid.Column="2" Width="36" Height="36" Padding="0"
                                 Style="{StaticResource GlassButtonStyle}"
-                                ToolTipService.ToolTip="Lock-screen help" AutomationProperties.Name="Lock-screen help">
-                            <FontIcon FontSize="16" Glyph="&#xE897;" />
+                                ToolTipService.ToolTip="Lock-screen help and FAQ" AutomationProperties.Name="Lock-screen help and FAQ">
+                            <FontIcon FontSize="15" Glyph="&#xE897;" />
                             <Button.Flyout>
                                 <Flyout Placement="Top">
                                     <StackPanel MaxWidth="280" Margin="8" Spacing="12">
                                         <StackPanel Spacing="4">
                                             <TextBlock FontWeight="SemiBold" Text="How does this work?" TextWrapping="Wrap" />
-                                            <TextBlock Text="Choose a video or GIF. For video, edit the clip and select Continue to generate a preview. Then select Set lock screen."
-                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="Choose a video or GIF. For video, choose your clip and select Continue to generate a preview. Then select Set lock screen."
+                                                       TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                                         </StackPanel>
                                         <StackPanel Spacing="4">
                                             <TextBlock FontWeight="SemiBold" Text="Animation not showing?" TextWrapping="Wrap" />
-                                            <TextBlock Text="Choose a picture in Windows lock-screen settings first, then try Set lock screen again. A successful apply confirms the files were updated; lock your PC to check playback."
-                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="Choose a picture in Windows lock-screen settings first, then try Set lock screen again. Lock your PC with Win+L to check playback."
+                                                       TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                                         </StackPanel>
                                         <StackPanel Spacing="4">
-                                            <TextBlock FontWeight="SemiBold" Text="Changed your monitor resolution?" TextWrapping="Wrap" />
-                                            <TextBlock Text="Set the GIF again after changing your primary monitor's resolution." TextWrapping="Wrap" />
+                                            <TextBlock FontWeight="SemiBold" Text="Changed screen resolution?" TextWrapping="Wrap" />
+                                            <TextBlock Text="Set the GIF again after changing your primary monitor's resolution." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Flyout>
@@ -669,25 +721,25 @@
             </Grid>
         </ContentControl>
 
-        <!-- Outside ScrollView: Translucent Glass Video Loading Scrim & Modal Dialog -->
-        <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#B00B0E14"
+        <!-- Outside ScrollView: Translucent Video Loading Scrim & Modal Dialog -->
+        <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#80000000"
               KeyDown="VideoLoadPanel_KeyDown" TabFocusNavigation="Cycle">
-            <Border MaxWidth="440" Margin="24" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Style="{StaticResource GlassCardElevatedStyle}" CornerRadius="16">
-                <StackPanel Spacing="16">
-                    <ProgressRing x:Name="VideoLoadRing" Width="44" Height="44" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False"
+            <Border MaxWidth="420" Margin="24" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Style="{StaticResource GlassCardElevatedStyle}" CornerRadius="{StaticResource AppCornerRadiusCard}">
+                <StackPanel Spacing="14">
+                    <ProgressRing x:Name="VideoLoadRing" Width="40" Height="40" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False"
                                   AutomationProperties.Name="Preparing video" />
                     <TextBlock Text="Preparing your video" Style="{ThemeResource SubtitleTextBlockStyle}"
                                Foreground="{ThemeResource GlassTextPrimaryBrush}"
                                TextAlignment="Center" TextWrapping="Wrap" />
                     <TextBlock x:Name="VideoLoadFileName" TextTrimming="CharacterEllipsis" TextAlignment="Center"
-                               Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                    <TextBlock Text="Reading the video so you can select exact frames. Editing will be available when this finishes. Longer videos can take a little while."
+                               Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Text="Reading video frames so you can select exact boundaries. Longer videos may take a little while."
                                Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                               TextWrapping="Wrap" TextAlignment="Center" />
+                               TextWrapping="Wrap" TextAlignment="Center" FontSize="12" />
                     <TextBlock x:Name="VideoLoadStatus" Text="Reading video details…" TextWrapping="Wrap"
                                Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                               TextAlignment="Center" AutomationProperties.LiveSetting="Polite" />
+                               TextAlignment="Center" AutomationProperties.LiveSetting="Polite" FontSize="12" />
                     <Button x:Name="CancelVideoLoadButton" Content="Cancel" Click="CancelVideoLoad_Click"
                             Style="{StaticResource GlassButtonStyle}"
                             HorizontalAlignment="Center" MinWidth="120" AutomationProperties.Name="Cancel video loading" />

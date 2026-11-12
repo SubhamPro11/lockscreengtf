@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using LockscreenGif.Contracts.Services;
 using LockscreenGif.Contracts.ViewModels;
 using LockscreenGif.Helpers;

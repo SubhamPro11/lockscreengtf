@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System.Web;
 using LockscreenGif.Contracts.Services;
 using LockscreenGif.ViewModels;

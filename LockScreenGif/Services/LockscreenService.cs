@@ -20,19 +20,37 @@ public sealed class LockscreenService : ILockscreenService
     private SelectedImage? _selectedImage;
 
     public LockscreenService(AnalyticsService analytics, LockscreenPreferences preferences)
+        : this(analytics, preferences, null, null)
+    {
+    }
+
+    internal LockscreenService(
+        AnalyticsService analytics,
+        LockscreenPreferences preferences,
+        string? userSid,
+        string? cacheDirectory
+    )
     {
         _analytics = analytics;
         _preferences = preferences;
-        using var identity = WindowsIdentity.GetCurrent();
-        _userSid = identity.User?.Value ?? throw new InvalidOperationException("Unable to obtain the current user's SID.");
-        CacheDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-            "Microsoft",
-            "Windows",
-            "SystemData",
-            _userSid,
-            "ReadOnly"
-        );
+        if (userSid is not null && cacheDirectory is not null)
+        {
+            _userSid = userSid;
+            CacheDirectory = cacheDirectory;
+        }
+        else
+        {
+            using var identity = WindowsIdentity.GetCurrent();
+            _userSid = identity.User?.Value ?? throw new InvalidOperationException("Unable to obtain the current user's SID.");
+            CacheDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "Microsoft",
+                "Windows",
+                "SystemData",
+                _userSid,
+                "ReadOnly"
+            );
+        }
     }
 
     public void SetCurrentImage(StorageFile file, LockscreenSourceKind sourceKind) =>
