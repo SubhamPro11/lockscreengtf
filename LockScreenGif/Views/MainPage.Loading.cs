@@ -15,7 +15,10 @@ public sealed partial class MainPage
     {
         _isVideoLoading = true;
         PageContent.IsEnabled = false;
-        VideoLoadFileName.Text = fileName;
+        PageContent.IsHitTestVisible = false;
+        PageContent.Opacity = 0.15;
+        VideoLoadFileName.Text = FormatMiddleTruncate(System.IO.Path.GetFileName(fileName), 38);
+        Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(VideoLoadFileName, fileName);
         VideoLoadStatus.Text = "Reading video details…";
         CancelVideoLoadButton.Content = "Cancel";
         CancelVideoLoadButton.IsEnabled = true;
@@ -29,12 +32,25 @@ public sealed partial class MainPage
         _isVideoLoading = false;
         VideoLoadRing.IsActive = false;
         VideoLoadPanel.Visibility = Visibility.Collapsed;
+        PageContent.Opacity = 1.0;
+        PageContent.IsHitTestVisible = true;
         PageContent.IsEnabled = true;
         if (IsLoaded)
         {
             RefreshFlowUi();
             FocusStage();
         }
+    }
+
+    private static string FormatMiddleTruncate(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length <= maxLength || maxLength < 10)
+        {
+            return text;
+        }
+
+        var partLength = (maxLength - 3) / 2;
+        return string.Concat(text.AsSpan(0, partLength), "...", text.AsSpan(text.Length - partLength));
     }
 
     private async void CancelVideoLoad_Click(object sender, RoutedEventArgs e) => await CancelVideoLoadingAsync();

@@ -277,17 +277,17 @@
                             <!-- Trim Controls & Boundary Cards -->
                             <ContentControl x:Name="TrimEditorHost" HorizontalContentAlignment="Stretch">
                                 <StackPanel x:Name="TrimControlsPanel" Spacing="12" Visibility="Collapsed" SizeChanged="TrimControlsPanel_SizeChanged">
-                                    <Grid Margin="0,4,0,0" ColumnSpacing="12">
+                                    <Grid Margin="0,4,0,14" ColumnSpacing="16">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                                        <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
                                             <TextBlock Text="Select your clip range" Style="{ThemeResource BodyStrongTextBlockStyle}"
                                                        Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                                             <TextBlock x:Name="SelectionSummary" TextWrapping="Wrap" Foreground="{ThemeResource GlassTextSecondaryBrush}" AutomationProperties.LiveSetting="Polite" FontSize="12" />
                                         </StackPanel>
-                                        <Button Content="Reset trim" Click="ResetTrim_Click" VerticalAlignment="Center"
+                                        <Button Grid.Column="1" Content="Reset trim" Click="ResetTrim_Click" VerticalAlignment="Center" HorizontalAlignment="Right"
                                                 Style="{StaticResource GlassButtonStyle}"
                                                 AutomationProperties.Name="Reset trim selection to full video"
                                                 ToolTipService.ToolTip="Select the full video and return the preview to its first frame" />
@@ -452,7 +452,7 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="1.4*" />
+                                                    <ColumnDefinition Width="2*" />
                                                 </Grid.ColumnDefinitions>
                                                 <ComboBox x:Name="ComboResolution" Header="Resolution" HorizontalAlignment="Stretch"
                                                           Style="{StaticResource GlassComboBoxStyle}"
@@ -711,13 +711,17 @@
         </ContentControl>
     </ScrollViewer>
 
-        <!-- Outside ScrollView: Translucent Video Loading Scrim & Modal Dialog -->
-        <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#80000000"
+        <!-- Outside ScrollView: Dimmed Scrim & Modal Solid Dialog -->
+        <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#B3000000"
               KeyDown="VideoLoadPanel_KeyDown" TabFocusNavigation="Cycle">
-            <Border MaxWidth="420" Margin="24" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Style="{StaticResource GlassCardElevatedStyle}" CornerRadius="{StaticResource AppCornerRadiusCard}">
+            <Border MaxWidth="440" Margin="24" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{ThemeResource GlassSurfaceSolidFallbackBrush}"
+                    BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource AppCornerRadiusCard}">
                 <StackPanel Spacing="14">
-                    <ProgressRing x:Name="VideoLoadRing" Width="40" Height="40" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False"
+                    <ProgressRing x:Name="VideoLoadRing" Width="32" Height="32" Foreground="{ThemeResource GlassAccentBrassBrush}" IsActive="False"
+                                  HorizontalAlignment="Center"
                                   AutomationProperties.Name="Preparing video" />
                     <TextBlock Text="Preparing your video" Style="{ThemeResource SubtitleTextBlockStyle}"
                                Foreground="{ThemeResource GlassTextPrimaryBrush}"

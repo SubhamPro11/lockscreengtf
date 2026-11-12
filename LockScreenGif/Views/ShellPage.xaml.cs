@@ -110,7 +110,73 @@ public sealed partial class ShellPage : Page
     {
         App.AppTitlebar = AppTitleBar;
         App.MainWindow.SetTitleBar(AppTitleBar);
+        UpdateCaptionButtonSpacer();
+        if (App.MainWindow.AppWindow is { } appWindow)
+        {
+            appWindow.Changed += (_, args) =>
+            {
+                if (args.DidSizeChange)
+                {
+                    DispatcherQueue.TryEnqueue(UpdateCaptionButtonSpacer);
+                }
+            };
+        }
         Helpers.TitleBarHelper.ApplySystemThemeToCaptionButtons();
+    }
+
+    private void UpdateCaptionButtonSpacer()
+    {
+        if (App.MainWindow?.AppWindow?.TitleBar is { } titleBar && CaptionButtonSpacer != null)
+        {
+            var scale = XamlRoot?.RasterizationScale ?? 1.0;
+            var inset = titleBar.RightInset > 0 ? titleBar.RightInset / scale : 140;
+            CaptionButtonSpacer.Width = Math.Max(48, inset);
+        }
+    }
+
+    private void ShellPage_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        var ctrl = Microsoft
+            .UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control)
+            .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
+        if (!ctrl)
+        {
+            return;
+        }
+
+        var shift = Microsoft
+            .UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift)
+            .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
+
+        switch (e.Key)
+        {
+            case Windows.System.VirtualKey.Number1:
+                Navigation.SelectedItem = LockscreenItem;
+                e.Handled = true;
+                break;
+            case Windows.System.VirtualKey.Number2:
+                Navigation.SelectedItem = WallpaperItem;
+                e.Handled = true;
+                break;
+            case Windows.System.VirtualKey.Number3:
+                Navigation.SelectedItem = DiagnosticsItem;
+                e.Handled = true;
+                break;
+            case Windows.System.VirtualKey.Number4:
+                Navigation.SelectedItem = SettingsItem;
+                e.Handled = true;
+                break;
+            case Windows.System.VirtualKey.Tab:
+                var items = new[] { LockscreenItem, WallpaperItem, DiagnosticsItem, SettingsItem };
+                var index = Array.IndexOf(items, Navigation.SelectedItem);
+                if (index >= 0)
+                {
+                    var nextIndex = shift ? (index - 1 + items.Length) % items.Length : (index + 1) % items.Length;
+                    Navigation.SelectedItem = items[nextIndex];
+                    e.Handled = true;
+                }
+                break;
+        }
     }
 
     private void ShellPage_ActualThemeChanged(Microsoft.UI.Xaml.FrameworkElement sender, object args)

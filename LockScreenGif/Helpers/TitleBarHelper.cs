@@ -102,18 +102,44 @@ internal class TitleBarHelper
     {
         var res = Application.Current.Resources;
         var frame = App.AppTitlebar as FrameworkElement;
-        if (frame != null)
+        var theme = frame?.ActualTheme ?? ElementTheme.Default;
+        if (theme == ElementTheme.Default)
         {
-            if (frame.ActualTheme == ElementTheme.Dark)
-            {
-                res["WindowCaptionForeground"] = Colors.White;
-            }
-            else
-            {
-                res["WindowCaptionForeground"] = Colors.Black;
-            }
-
-            UpdateTitleBar(frame.ActualTheme);
+            theme = Application.Current.RequestedTheme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
         }
+
+        if (theme == ElementTheme.Dark)
+        {
+            res["WindowCaptionForeground"] = Colors.White;
+        }
+        else
+        {
+            res["WindowCaptionForeground"] = Colors.Black;
+        }
+
+        UpdateTitleBar(theme);
+
+        try
+        {
+            if (App.MainWindow?.AppWindow?.TitleBar is { } titleBar)
+            {
+                var isDark = theme == ElementTheme.Dark;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                titleBar.ButtonForegroundColor = isDark ? Colors.White : Colors.Black;
+                titleBar.ButtonInactiveForegroundColor = isDark
+                    ? Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF)
+                    : Color.FromArgb(0x66, 0x00, 0x00, 0x00);
+                titleBar.ButtonHoverBackgroundColor = isDark
+                    ? Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF)
+                    : Color.FromArgb(0x33, 0x00, 0x00, 0x00);
+                titleBar.ButtonHoverForegroundColor = isDark ? Colors.White : Colors.Black;
+                titleBar.ButtonPressedBackgroundColor = isDark
+                    ? Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF)
+                    : Color.FromArgb(0x66, 0x00, 0x00, 0x00);
+                titleBar.ButtonPressedForegroundColor = isDark ? Colors.White : Colors.Black;
+            }
+        }
+        catch { }
     }
 }

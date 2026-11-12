@@ -215,6 +215,17 @@
                                                    FontWeight="SemiBold"
                                                    Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                                     </Border>
+                                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
+                                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="{StaticResource AppCornerRadiusControl}"
+                                            Padding="6,2"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="Windows 11"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                    </Border>
                                 </StackPanel>
                                 <TextBlock Text="Maintained &amp; developed by Subham Kumar (SubhamPro11)"
                                            FontSize="12"

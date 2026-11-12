@@ -6,13 +6,13 @@
         <!-- Dark / Default Theme -->
         <ResourceDictionary x:Key="Default">
             <!-- Neutral Windows 11 Surfaces (Layered over Mica) -->
-            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#0DFFFFFF" />
-            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#15FFFFFF" />
-            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#08FFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#202020" />
+            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#282828" />
+            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#2E2E2E" />
             <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="#202020" />
 
             <!-- Clean Windows 11 1px Border Stroke -->
-            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="#14FFFFFF" />
+            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="#1FFFFFFF" />
             <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="#2E2E2E" />
             <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="Transparent" />
 
@@ -78,13 +78,13 @@
         <!-- Light Theme -->
         <ResourceDictionary x:Key="Light">
             <!-- Neutral Windows 11 Surfaces (Layered over Mica) -->
-            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#B3FFFFFF" />
-            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#E6FFFFFF" />
-            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#06000000" />
+            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="#FBFBFB" />
+            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="#F0F0F0" />
             <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="#F3F3F3" />
 
             <!-- Clean Windows 11 1px Border Stroke -->
-            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="#0F000000" />
+            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="#1F000000" />
             <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="#E5E5E5" />
             <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="Transparent" />
 
@@ -214,6 +214,11 @@
     <!-- Typography & Geometry -->
     <FontFamily x:Key="GlassFontMonospace">Cascadia Mono, Consolas, Courier New</FontFamily>
     <FontFamily x:Key="InstrumentMonoFont">Cascadia Mono, Consolas, Courier New</FontFamily>
+
+    <!-- Compact Header & Navigation Dimensions -->
+    <x:Double x:Key="TopNavigationViewItemMinHeight">36</x:Double>
+    <x:Double x:Key="TopNavigationViewItemHeight">36</x:Double>
+    <x:Double x:Key="TopNavigationViewPaneHeight">48</x:Double>
 
     <!-- Exactly Two Corner Radii Across System -->
     <CornerRadius x:Key="AppCornerRadiusCard">8</CornerRadius>

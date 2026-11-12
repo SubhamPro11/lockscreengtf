@@ -1,101 +1,91 @@
 <Page
     x:Class="LockscreenGif.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    KeyDown="ShellPage_KeyDown">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <!-- Title Bar -->
-            <RowDefinition Height="Auto" />
-            <!-- Analytics Notification -->
-            <RowDefinition Height="Auto" />
-            <!-- Lockscreen Verification Status -->
-            <RowDefinition Height="Auto" />
-            <!-- Navigation and Content -->
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!-- Windows 11 Native Title Bar Drag Region -->
-        <Border Grid.Row="0"
-                x:Name="AppTitleBar"
-                Height="40"
-                Background="Transparent"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top">
-            <Grid Margin="16,0,16,0" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Image Source="ms-appx:///Assets/WindowIcon.png" Width="16" Height="16" VerticalAlignment="Center" />
-                    <TextBlock Text="LockscreenGif"
-                               FontWeight="SemiBold"
-                               FontSize="12"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                               VerticalAlignment="Center" />
-                    <Border Background="{ThemeResource GlassSurfaceSubtleBrush}"
-                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                            BorderThickness="1"
-                            CornerRadius="{StaticResource AppCornerRadiusControl}"
-                            Padding="6,1"
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center">
-                        <TextBlock Text="Windows 11"
-                                   FontSize="10"
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                    </Border>
-                </StackPanel>
-
-                <!-- Draggable Client Space -->
-                <Grid Grid.Column="1" Background="Transparent" />
-            </Grid>
-        </Border>
-
-        <!-- Analytics Notification InfoBar -->
-        <InfoBar Grid.Row="1"
-                 x:Name="AnalyticsNotice"
-                 Margin="16,2,16,6"
-                 IsOpen="False"
-                 Severity="Informational"
-                 Title="Usage analytics are enabled"
-                 Message="LockscreenGif shares feature use and operation outcomes with PostHog in the EU to help improve the app. You can opt out in Settings > Analytics. Filenames, media, and diagnostic logs are never included.">
-            <InfoBar.ActionButton>
-                <Button Content="Open settings" Click="OpenAnalyticsSettings_Click" Style="{StaticResource GlassButtonStyle}" />
-            </InfoBar.ActionButton>
-        </InfoBar>
-
-        <!-- Lockscreen Verification Status InfoBar -->
-        <InfoBar Grid.Row="2"
-                 x:Name="LockscreenVerificationStatus"
-                 Margin="16,2,16,6"
-                 IsOpen="False"
-                 Severity="Informational" />
-
-        <!-- Windows 11 Top Navigation & Content Frame -->
-        <NavigationView Grid.Row="3"
-                        x:Name="Navigation"
+        <!-- Windows 11 Unified Compact Top Navigation & Title Bar (Height ~48px) -->
+        <NavigationView x:Name="Navigation"
                         PaneDisplayMode="Top"
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
                         IsPaneToggleButtonVisible="False"
                         SelectionChanged="Navigation_SelectionChanged">
+            <NavigationView.PaneHeader>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="12,0,12,0" VerticalAlignment="Center" Height="48">
+                    <Image Source="ms-appx:///Assets/WindowIcon.png" Width="18" Height="18" VerticalAlignment="Center" />
+                    <TextBlock Text="LockscreenGif"
+                               FontWeight="SemiBold"
+                               FontSize="13"
+                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </NavigationView.PaneHeader>
+
+            <NavigationView.PaneCustomContent>
+                <!-- Draggable Client Space between Tabs and Caption Buttons -->
+                <Grid x:Name="AppTitleBar" Background="Transparent" MinWidth="48" HorizontalAlignment="Stretch" Height="48" />
+            </NavigationView.PaneCustomContent>
+
+            <NavigationView.PaneFooter>
+                <!-- Reserved space for Windows system caption buttons (minimize, maximize, close) -->
+                <Grid x:Name="CaptionButtonSpacer" Width="140" Height="48" Background="Transparent" />
+            </NavigationView.PaneFooter>
+
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Name="LockscreenItem" Content="Lockscreen" Tag="Lockscreen">
+                <NavigationViewItem x:Name="LockscreenItem" Content="Lockscreen" Tag="Lockscreen"
+                                    AutomationProperties.Name="Lockscreen tab">
                     <NavigationViewItem.Icon><SymbolIcon Symbol="Pictures" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="WallpaperItem" Content="Desktop Wallpaper" Tag="Wallpaper">
+                <NavigationViewItem x:Name="WallpaperItem" Content="Desktop Wallpaper" Tag="Wallpaper"
+                                    AutomationProperties.Name="Desktop Wallpaper tab">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE7F8;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="DiagnosticsItem" Content="Diagnostics" Tag="Diagnostics">
+                <NavigationViewItem x:Name="DiagnosticsItem" Content="Diagnostics" Tag="Diagnostics"
+                                    AutomationProperties.Name="Diagnostics tab">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE9D9;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="SettingsItem" Content="Settings" Tag="Settings">
+                <NavigationViewItem x:Name="SettingsItem" Content="Settings" Tag="Settings"
+                                    AutomationProperties.Name="Settings tab">
                     <NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+
+            <!-- Content Area: InfoBars and Content Frame -->
+            <Grid Margin="0,4,0,0">
+                <Grid.RowDefinitions>
+                    <!-- Analytics Notification -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Lockscreen Verification Status -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Page Content Frame -->
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Analytics Notification InfoBar -->
+                <InfoBar Grid.Row="0"
+                         x:Name="AnalyticsNotice"
+                         Margin="16,4,16,8"
+                         IsOpen="False"
+                         Severity="Informational"
+                         Title="Usage analytics are enabled"
+                         Message="LockscreenGif shares feature use and operation outcomes with PostHog in the EU to help improve the app. You can opt out in Settings > Analytics. Filenames, media, and diagnostic logs are never included.">
+                    <InfoBar.ActionButton>
+                        <Button Content="Open settings" Click="OpenAnalyticsSettings_Click" Style="{StaticResource GlassButtonStyle}" />
+                    </InfoBar.ActionButton>
+                </InfoBar>
+
+                <!-- Lockscreen Verification Status InfoBar -->
+                <InfoBar Grid.Row="1"
+                         x:Name="LockscreenVerificationStatus"
+                         Margin="16,0,16,8"
+                         IsOpen="False"
+                         Severity="Informational" />
+
+                <!-- Content Frame -->
+                <Frame Grid.Row="2" x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+            </Grid>
         </NavigationView>
     </Grid>
 </Page>
