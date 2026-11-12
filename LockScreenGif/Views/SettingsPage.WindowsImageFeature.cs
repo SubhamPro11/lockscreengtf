@@ -228,6 +228,31 @@ public sealed partial class SettingsPage
         }
     }
 
+    private async Task<bool> ConfirmEnableFeatureAsync()
+    {
+        if (!_loaded || XamlRoot is null)
+        {
+            return false;
+        }
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            RequestedTheme = (XamlRoot.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default,
+            Title = "Enable Windows lock-screen feature?",
+            Content = new TextBlock
+            {
+                Text =
+                    "Enabling this Windows feature will break animated GIF lock screens on Windows 11 25H2 and later. The lock screen will revert to a static image. Are you sure you want to proceed?",
+                TextWrapping = TextWrapping.Wrap,
+            },
+            PrimaryButtonText = "Enable feature",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
+        };
+        var result = await dialog.ShowAsync();
+        return _loaded && result == ContentDialogResult.Primary;
+    }
+
     private void ShowFeatureIdStatus(string title, string message, InfoBarSeverity severity)
     {
         FeatureIdStatus.Title = title;
@@ -249,6 +274,12 @@ public sealed partial class SettingsPage
             FeatureActionStatus.IsOpen = true;
             return;
         }
+
+        if (!await ConfirmEnableFeatureAsync())
+        {
+            return;
+        }
+
         _busy = true;
         EnableWindowsImageFeatureButton.IsEnabled = false;
         UpdatePreferenceControls();

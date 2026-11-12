@@ -58,6 +58,11 @@ public sealed partial class SettingsPage
             return;
         }
 
+        if (!await ConfirmRemoveLockscreenAsync())
+        {
+            return;
+        }
+
         _removalPending = true;
         _busy = true;
         UpdatePreferenceControls();
@@ -126,5 +131,30 @@ public sealed partial class SettingsPage
         RemovalStatus.Message = message;
         RemovalStatus.Severity = severity;
         RemovalStatus.IsOpen = true;
+    }
+
+    private async Task<bool> ConfirmRemoveLockscreenAsync()
+    {
+        if (XamlRoot is null)
+        {
+            return false;
+        }
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            RequestedTheme = (XamlRoot.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default,
+            Title = "Remove animated lock screen?",
+            Content = new TextBlock
+            {
+                Text =
+                    "This will clear the animated GIF from the Windows lock screen cache and restore your standard Windows static lock screen. Are you sure you want to proceed?",
+                TextWrapping = TextWrapping.Wrap,
+            },
+            PrimaryButtonText = "Remove",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
+        };
+        var result = await dialog.ShowAsync();
+        return result == ContentDialogResult.Primary;
     }
 }

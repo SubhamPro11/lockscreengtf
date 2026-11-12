@@ -721,27 +721,7 @@
                                    Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                     </StackPanel>
 
-                    <!-- Run at Windows Startup Toggle -->
-                    <Grid ColumnSpacing="{StaticResource AppSpacingM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="{StaticResource AppSpacingXXS}">
-                            <TextBlock Text="Run at Windows startup"
-                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Automatically launch LockscreenGif in the background and restore your active wallpaper when signing into Windows."
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
 
-                        <ToggleSwitch Grid.Column="1"
-                                      IsOn="{x:Bind ViewModel.IsRunAtStartup, Mode=TwoWay}"
-                                      AutomationProperties.Name="Run at Windows startup toggle" />
-                    </Grid>
-
-                    <Border Height="1" Background="{ThemeResource GlassBorderRimBrush}" />
 
                     <!-- Audio-Reactive Toggle -->
                     <Grid ColumnSpacing="{StaticResource AppSpacingM}">

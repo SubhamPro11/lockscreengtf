@@ -9,9 +9,9 @@
             <!-- Page Title -->
             <TextBlock Text="Settings" Style="{StaticResource PageTitleStyle}" />
 
-            <!-- Lockscreen Section -->
+            <!-- Lock Screen Behavior Section -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Lockscreen" Style="{StaticResource SectionTitleStyle}" />
+                <TextBlock Text="Lock screen behavior" Style="{StaticResource SectionTitleStyle}" />
                 <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
                         <Grid ColumnSpacing="16" MinHeight="40">
@@ -20,18 +20,41 @@
                                 <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Enable Windows lock-screen API" Style="{StaticResource SettingTitleStyle}" />
-                                <TextBlock Text="Windows sets the lock-screen image before the app applies the GIF. Off by default. Saved between restarts."
+                                <TextBlock Text="Set lock screen through Windows API" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Text="Asks Windows to apply an image before LockscreenGif writes animation files, helping Windows detect file changes."
                                            Style="{StaticResource SettingDescriptionStyle}" />
                             </StackPanel>
                             <ToggleSwitch x:Name="WindowsApiToggle" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                           Style="{StaticResource GlassToggleSwitchStyle}"
-                                          IsOn="{x:Bind ViewModel.Preferences.UseWindowsApi, Mode=TwoWay}" />
+                                          IsOn="{x:Bind ViewModel.Preferences.UseWindowsApi, Mode=TwoWay}"
+                                          AutomationProperties.Name="Set lock screen through Windows API" />
                         </Grid>
                         <InfoBar IsOpen="{x:Bind ViewModel.Preferences.HasSaveError, Mode=OneWay}"
                                  IsClosable="False" Severity="Warning" Title="Could not save preference"
                                  Message="The setting applies for this session, but could not be saved to disk." />
                     </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- System Startup Section -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="System startup" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource GlassCardStyle}">
+                    <Grid ColumnSpacing="16" MinHeight="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="{StaticResource AppSettingControlColumnWidth}" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                            <TextBlock Text="Run at Windows startup" Style="{StaticResource SettingTitleStyle}" />
+                            <TextBlock Text="Automatically launches LockscreenGif in the background and restores your active wallpaper when signing into Windows."
+                                       Style="{StaticResource SettingDescriptionStyle}" />
+                        </StackPanel>
+                        <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                      Style="{StaticResource GlassToggleSwitchStyle}"
+                                      IsOn="{x:Bind ViewModel.IsRunAtStartup, Mode=TwoWay}"
+                                      AutomationProperties.Name="Run at Windows startup" />
+                    </Grid>
                 </Border>
             </StackPanel>
 
@@ -98,6 +121,9 @@
             <!-- Advanced Windows Feature Settings -->
             <StackPanel Spacing="8">
                 <TextBlock Text="Advanced system settings" Style="{StaticResource SectionTitleStyle}" />
+                <InfoBar IsOpen="True" IsClosable="False" Severity="Warning"
+                         Title="Notice"
+                         Message="Enabling the Windows image feature will break animated GIF lock screens on Windows 11 25H2 and later. Keep it disabled for animations to play." />
 
                 <!-- Feature ID Card -->
                 <Border Style="{StaticResource GlassCardStyle}">
@@ -124,10 +150,9 @@
                 <!-- Re-enable Windows Feature Card -->
                 <Border Style="{StaticResource GlassCardStyle}">
                     <StackPanel Spacing="14">
-                        <TextBlock Text="Windows lock-screen image feature" Style="{StaticResource SettingTitleStyle}" />
-                        <InfoBar IsOpen="True" IsClosable="False" Severity="Warning"
-                                 Title="Notice"
-                                 Message="Enabling this feature will break animated GIF lock screens on Windows 11 25H2 or later. Keep disabled for animations to play." />
+                        <TextBlock Text="Windows 11 image feature override" Style="{StaticResource SettingTitleStyle}" />
+                        <TextBlock Text="Controls the internal Windows feature (ID 48433719). Keeping it enabled forces static picture rendering and blocks GIF animations."
+                                   Style="{StaticResource SettingDescriptionStyle}" />
                         <TextBlock x:Name="FeatureStateText" Text="Reading current feature state…"
                                    Foreground="{ThemeResource GlassTextPrimaryBrush}" TextWrapping="Wrap" FontSize="12" />
                         <Button x:Name="EnableWindowsImageFeatureButton" Content="Enable Windows image feature"
@@ -183,7 +208,8 @@
                                             CornerRadius="{StaticResource AppCornerRadiusControl}"
                                             Padding="6,2"
                                             VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind helpers:BuildInfo.DisplayVersion, Mode=OneTime}"
+                                        <TextBlock Text="{x:Bind helpers:BuildInfo.ShortDisplayVersion, Mode=OneTime}"
+                                                   ToolTipService.ToolTip="{x:Bind helpers:BuildInfo.DisplayVersion, Mode=OneTime}"
                                                    FontFamily="{StaticResource GlassFontMonospace}"
                                                    FontSize="11"
                                                    FontWeight="SemiBold"
