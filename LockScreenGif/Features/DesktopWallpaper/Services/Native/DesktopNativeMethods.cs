@@ -44,6 +44,7 @@ internal static class DesktopNativeMethods
     public const uint SWP_NOACTIVATE = 0x0010;
     public const uint SWP_FRAMECHANGED = 0x0020;
     public const uint SWP_SHOWWINDOW = 0x0040;
+    public const int SW_SHOWNOACTIVATE = 4;
 
     public const uint WM_PAINT = 0x000F;
     public const uint WM_ERASEBKGND = 0x0014;

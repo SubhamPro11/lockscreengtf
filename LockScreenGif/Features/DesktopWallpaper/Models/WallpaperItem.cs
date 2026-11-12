@@ -21,20 +21,48 @@ public sealed class WallpaperItem
     public string? ThumbnailPath { get; set; }
     public bool IsAdvancedExecutable { get; set; }
 
+    public static string NormalizePathOrUrl(string pathOrUrl)
+    {
+        if (string.IsNullOrWhiteSpace(pathOrUrl))
+        {
+            return string.Empty;
+        }
+
+        pathOrUrl = pathOrUrl.Trim();
+
+        // Guard against accidentally prepended https:// to Windows drive paths like https://C:\...
+        if (
+            pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            || pathOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            var schemeLen = pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ? 8 : 7;
+            var afterScheme = pathOrUrl[schemeLen..];
+            if (afterScheme.Length >= 2 && char.IsLetter(afterScheme[0]) && afterScheme[1] == ':')
+            {
+                return afterScheme;
+            }
+        }
+
+        return pathOrUrl;
+    }
+
     public static WallpaperItem FromPathOrUrl(string pathOrUrl, string? title = null)
     {
+        var normalized = NormalizePathOrUrl(pathOrUrl);
         return new WallpaperItem
         {
-            SourcePathOrUrl = pathOrUrl,
+            SourcePathOrUrl = normalized,
             Title = !string.IsNullOrWhiteSpace(title)
                 ? title
-                : (pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? pathOrUrl : Path.GetFileName(pathOrUrl)),
-            Type = DetectType(pathOrUrl),
+                : (normalized.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? normalized : Path.GetFileName(normalized)),
+            Type = DetectType(normalized),
         };
     }
 
     public static WallpaperType DetectType(string pathOrUrl)
     {
+        pathOrUrl = NormalizePathOrUrl(pathOrUrl);
         if (string.IsNullOrWhiteSpace(pathOrUrl))
         {
             return WallpaperType.Video;
@@ -52,14 +80,15 @@ public sealed class WallpaperItem
         return ext switch
         {
             ".html" or ".htm" => WallpaperType.Web,
-            ".png" or ".jpg" or ".jpeg" or ".bmp" => WallpaperType.Image,
+            ".png" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".webp" => WallpaperType.Image,
             ".exe" => WallpaperType.Application,
-            _ => WallpaperType.Video, // .mp4, .webm, .gif, .mkv, .avi, .mov, .webp
+            _ => WallpaperType.Video, // .mp4, .webm, .mkv, .avi, .mov
         };
     }
 
     public static bool IsSupportedFormat(string pathOrUrl)
     {
+        pathOrUrl = NormalizePathOrUrl(pathOrUrl);
         if (string.IsNullOrWhiteSpace(pathOrUrl))
         {
             return false;

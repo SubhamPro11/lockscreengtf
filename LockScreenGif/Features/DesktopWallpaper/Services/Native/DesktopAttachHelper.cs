@@ -38,8 +38,9 @@ internal static class DesktopAttachHelper
         }
 
         // 2. Send 0x052C to Progman to prompt the shell to initialize/spawn the background layer.
-        // Try with 0x0000000D (Windows 10/11) and fallback to 0x0.
+        // In Windows, both 0x0000000D and 0 are used to trigger WorkerW creation.
         DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, new nint(0x0000000D), 0, 0, 1000, out _);
+        DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, 0, 0, 0, 1000, out _);
 
         // 3. Scan for a WorkerW window that hosts SHELLDLL_DefView.
         // If found, the sibling WorkerW behind it is our target (Classic Win10/11 path).
@@ -57,6 +58,7 @@ internal static class DesktopAttachHelper
                     if (defView != 0)
                     {
                         workerWithDefView = hwnd;
+                        return false;
                     }
                 }
                 return true;
@@ -66,25 +68,30 @@ internal static class DesktopAttachHelper
 
         if (workerWithDefView != 0)
         {
-            // Find the WorkerW that sits directly behind the one hosting the icons
-            DesktopNativeMethods.EnumWindows(
-                (hwnd, _) =>
-                {
-                    var sb = new StringBuilder(256);
-                    DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
-                    if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
+            // Find the WorkerW directly behind the one hosting the icons
+            workerTarget = DesktopNativeMethods.FindWindowEx(0, workerWithDefView, "WorkerW", null);
+
+            if (workerTarget == 0)
+            {
+                DesktopNativeMethods.EnumWindows(
+                    (hwnd, _) =>
                     {
-                        var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
-                        if (defView == 0 && hwnd != workerWithDefView)
+                        var sb = new StringBuilder(256);
+                        DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
+                        if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
                         {
-                            workerTarget = hwnd;
-                            return false; // Found our target!
+                            var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
+                            if (defView == 0 && hwnd != workerWithDefView)
+                            {
+                                workerTarget = hwnd;
+                                return false; // Found our target!
+                            }
                         }
-                    }
-                    return true;
-                },
-                0
-            );
+                        return true;
+                    },
+                    0
+                );
+            }
 
             if (workerTarget != 0)
             {
@@ -96,17 +103,23 @@ internal static class DesktopAttachHelper
             }
         }
 
-        // 4. Windows 11 24H2+ path:
-        // In Windows 11 24H2 (Build 26100+), SHELLDLL_DefView is directly inside Progman
-        // and Progman itself acts as the parent container.
+        // 4. Windows 11 path:
+        // In Windows 11, SHELLDLL_DefView may be directly inside Progman.
         var defViewInProgman = DesktopNativeMethods.FindWindowEx(progman, 0, "SHELLDLL_DefView", null);
         if (defViewInProgman != 0)
         {
-            return new DesktopAttachTarget(
-                progman,
-                IsDirectProgmanParent: true,
-                "Progman container (Windows 11 24H2+ direct desktop parent)"
-            );
+            // Check if a WorkerW was spawned directly behind Progman
+            var workerBehindProgman = DesktopNativeMethods.FindWindowEx(0, progman, "WorkerW", null);
+            if (workerBehindProgman != 0)
+            {
+                return new DesktopAttachTarget(
+                    workerBehindProgman,
+                    IsDirectProgmanParent: false,
+                    "WorkerW background layer behind Progman"
+                );
+            }
+
+            return new DesktopAttachTarget(progman, IsDirectProgmanParent: true, "Progman container (Windows 11 direct desktop parent)");
         }
 
         // 5. Fallback: If Progman exists, use it directly

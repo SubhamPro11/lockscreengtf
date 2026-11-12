@@ -167,7 +167,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="UrlInputBox"
                                      PlaceholderText="Enter a web wallpaper URL (e.g. https://… or http://localhost:…)"
-                                     Text="{x:Bind ViewModel.SourceInput, Mode=TwoWay}"
+                                     Text="{x:Bind ViewModel.WebUrlInput, Mode=TwoWay}"
                                      Style="{StaticResource GlassTextBoxStyle}"
                                      AutomationProperties.Name="Web wallpaper URL input" />
                             <Button Grid.Column="1"
@@ -272,6 +272,8 @@
                                   ItemsSource="{x:Bind ViewModel.LibraryItems, Mode=OneWay}"
                                   SelectedItem="{x:Bind ViewModel.SelectedLibraryEntry, Mode=TwoWay}"
                                   SelectionMode="Single"
+                                  IsItemClickEnabled="True"
+                                  ItemClick="LibraryList_ItemClick"
                                   MaxHeight="240"
                                   AutomationProperties.Name="Saved wallpaper library list">
                             <ListView.ItemTemplate>
@@ -280,6 +282,7 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
@@ -295,13 +298,19 @@
                                             <TextBlock Text="{x:Bind SourcePathOrUrl, Mode=OneWay}" Style="{StaticResource SettingDescriptionStyle}" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
                                         <Button Grid.Column="2"
+                                                Content="Apply"
+                                                Click="LibraryEntry_Apply_Click"
+                                                Style="{StaticResource GlassPrimaryButtonStyle}"
+                                                Padding="10,4"
+                                                AutomationProperties.Name="Apply wallpaper from library" />
+                                        <Button Grid.Column="3"
                                                 Click="LibraryEntry_Favorite_Click"
                                                 Style="{StaticResource GlassButtonStyle}"
                                                 Padding="8,4"
                                                 AutomationProperties.Name="Toggle favorite">
                                             <FontIcon Glyph="{x:Bind FavoriteGlyph, Mode=OneWay}" FontSize="12" />
                                         </Button>
-                                        <Button Grid.Column="3"
+                                        <Button Grid.Column="4"
                                                 Content="Delete"
                                                 Click="LibraryEntry_Delete_Click"
                                                 Style="{StaticResource GlassButtonStyle}"

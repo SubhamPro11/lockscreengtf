@@ -20,6 +20,45 @@ public sealed partial class DesktopWallpaperPage : Page
     {
         ViewModel = App.GetService<DesktopWallpaperViewModel>();
         InitializeComponent();
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        UpdatePrimaryButtonState();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(DesktopWallpaperViewModel.IsMediaLoaded))
+        {
+            UpdatePrimaryButtonState();
+        }
+    }
+
+    private void UpdatePrimaryButtonState()
+    {
+        if (
+            Application.Current.Resources.TryGetValue(
+                ViewModel.IsMediaLoaded ? "GlassPrimaryButtonStyle" : "GlassButtonStyle",
+                out var applyStyle
+            )
+            && Application.Current.Resources.TryGetValue(
+                ViewModel.IsMediaLoaded ? "GlassButtonStyle" : "GlassPrimaryButtonStyle",
+                out var chooseStyle
+            )
+        )
+        {
+            ApplyWallpaperButton.Style = (Style)applyStyle;
+            ChooseFileButton.Style = (Style)chooseStyle;
+        }
     }
 
     private async void ChooseFile_Click(object sender, RoutedEventArgs e)
@@ -70,17 +109,26 @@ public sealed partial class DesktopWallpaperPage : Page
     private void LoadUrl_Click(object sender, RoutedEventArgs e)
     {
         var text = UrlInputBox.Text?.Trim();
-        if (!string.IsNullOrWhiteSpace(text))
+        if (string.IsNullOrWhiteSpace(text))
         {
-            if (
-                !text.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
-                && !text.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                text = "https://" + text;
-            }
-            ViewModel.LoadSource(text);
+            return;
         }
+
+        // If user entered or pasted a local file path, don't prepend https://
+        if (File.Exists(text) || Path.IsPathRooted(text) || text.Contains(@":\") || text.StartsWith(@"\\"))
+        {
+            ViewModel.LoadSource(text);
+            return;
+        }
+
+        if (
+            !text.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            && !text.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            text = "https://" + text;
+        }
+        ViewModel.LoadSource(text);
     }
 
     private void DropTarget_DragOver(object sender, DragEventArgs e)
@@ -163,6 +211,22 @@ public sealed partial class DesktopWallpaperPage : Page
         else if (!toggle.IsOn && ViewModel.AllowAdvancedExecutables)
         {
             ViewModel.AllowAdvancedExecutables = false;
+        }
+    }
+
+    private async void LibraryList_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is LockscreenGif.Features.DesktopWallpaper.Models.WallpaperLibraryEntry entry)
+        {
+            await ViewModel.ApplyLibraryEntryCommand.ExecuteAsync(entry);
+        }
+    }
+
+    private async void LibraryEntry_Apply_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: LockscreenGif.Features.DesktopWallpaper.Models.WallpaperLibraryEntry entry })
+        {
+            await ViewModel.ApplyLibraryEntryCommand.ExecuteAsync(entry);
         }
     }
 

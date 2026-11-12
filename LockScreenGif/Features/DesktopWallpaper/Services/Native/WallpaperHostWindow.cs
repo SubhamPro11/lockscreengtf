@@ -121,6 +121,8 @@ internal sealed class WallpaperHostWindow : IDisposable
                 DesktopNativeMethods.SWP_NOACTIVATE | DesktopNativeMethods.SWP_SHOWWINDOW
             );
 
+            DesktopNativeMethods.ShowWindow(_hwnd, DesktopNativeMethods.SW_SHOWNOACTIVATE);
+
             return true;
         }
         catch (Exception ex)

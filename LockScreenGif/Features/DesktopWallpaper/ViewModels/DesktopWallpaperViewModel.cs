@@ -191,6 +191,13 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
+    private string _webUrlInput = string.Empty;
+    public string WebUrlInput
+    {
+        get => _webUrlInput;
+        set => SetProperty(ref _webUrlInput, value);
+    }
+
     private string _wallpaperTitle = "No wallpaper selected";
     public string WallpaperTitle
     {
@@ -854,6 +861,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             return;
         }
+
+        pathOrUrl = WallpaperItem.NormalizePathOrUrl(pathOrUrl);
 
         if (!WallpaperItem.IsSupportedFormat(pathOrUrl))
         {

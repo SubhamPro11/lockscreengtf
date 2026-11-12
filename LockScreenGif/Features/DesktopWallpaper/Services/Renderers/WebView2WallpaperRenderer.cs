@@ -81,6 +81,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
             {
                 var folder = Path.GetDirectoryName(Path.GetFullPath(source)) ?? string.Empty;
                 var fileName = Path.GetFileName(source);
+                var encodedFileName = Uri.EscapeDataString(fileName);
 
                 _controller.CoreWebView2.SetVirtualHostNameToFolderMapping(
                     "wallpaper.local",
@@ -88,7 +89,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
                     CoreWebView2HostResourceAccessKind.Allow
                 );
 
-                _controller.CoreWebView2.Navigate($"https://wallpaper.local/{fileName}");
+                _controller.CoreWebView2.Navigate($"https://wallpaper.local/{encodedFileName}");
             }
             else
             {
@@ -104,6 +105,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
             var folder = Path.GetDirectoryName(Path.GetFullPath(source)) ?? string.Empty;
             var fileName = Path.GetFileName(source);
+            var encodedFileName = Uri.EscapeDataString(fileName);
 
             _controller.CoreWebView2.SetVirtualHostNameToFolderMapping("image.local", folder, CoreWebView2HostResourceAccessKind.Allow);
 
@@ -125,7 +127,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
                   </style>
                 </head>
                 <body>
-                  <img id="media" src="https://image.local/{{fileName}}" alt="Wallpaper" />
+                  <img id="media" src="https://image.local/{{encodedFileName}}" alt="Wallpaper" />
                   <script>
                     window.setFitMode = function(mode) {
                       const media = document.getElementById('media');
@@ -142,7 +144,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
             _controller.CoreWebView2.NavigateToString(html);
         }
-        else // WallpaperType.Video (mp4, webm, mkv, avi, mov, gif, animated webp)
+        else // WallpaperType.Video (mp4, webm, mkv, avi, mov)
         {
             var playbackSource = await WallpaperMediaHelper.PrepareMediaForPlaybackAsync(source);
             if (!File.Exists(playbackSource))
@@ -152,6 +154,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
             var folder = Path.GetDirectoryName(Path.GetFullPath(playbackSource)) ?? string.Empty;
             var fileName = Path.GetFileName(playbackSource);
+            var encodedFileName = Uri.EscapeDataString(fileName);
 
             _controller.CoreWebView2.SetVirtualHostNameToFolderMapping("video.local", folder, CoreWebView2HostResourceAccessKind.Allow);
 
@@ -178,12 +181,13 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
                   </style>
                 </head>
                 <body>
-                  <video id="media" src="https://video.local/{{fileName}}" autoplay {{isLoopAttr}} {{isMutedAttr}} playsinline></video>
+                  <video id="media" src="https://video.local/{{encodedFileName}}" autoplay {{isLoopAttr}} {{isMutedAttr}} playsinline></video>
                   <script>
                     const media = document.getElementById('media');
                     if (media) {
                       media.volume = {{volumeVal}};
                       media.playbackRate = {{speedVal}};
+                      media.play().catch(function(e) { console.warn('Autoplay error:', e); });
                     }
 
                     window.setVolume = function(v) { if (media) media.volume = v; };
@@ -196,7 +200,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
                       else if (mode === 'Stretch') media.style.objectFit = 'fill';
                       else media.style.objectFit = 'none';
                     };
-                    window.playMedia = function() { if (media && media.play) media.play(); };
+                    window.playMedia = function() { if (media && media.play) media.play().catch(function() {}); };
                     window.pauseMedia = function() { if (media && media.pause) media.pause(); };
                   </script>
                 </body>

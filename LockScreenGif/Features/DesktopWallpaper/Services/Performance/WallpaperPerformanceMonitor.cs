@@ -229,6 +229,13 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
             return false;
         }
 
+        // Never pause for the LockscreenGif application itself
+        DesktopNativeMethods.GetWindowThreadProcessId(fgWnd, out var pid);
+        if (pid == Environment.ProcessId)
+        {
+            return false;
+        }
+
         if (IsShellOrDesktopWindow(fgWnd))
         {
             return false;
@@ -252,11 +259,25 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         if (DesktopNativeMethods.GetMonitorInfo(hMonitor, ref mi))
         {
             var monRect = mi.rcMonitor;
-            // Fullscreen check: window covers monitor bounds completely
-            return windowRect.Left <= monRect.Left
+            // Fullscreen check: window covers monitor bounds completely and lacks standard window caption
+            var isCovering =
+                windowRect.Left <= monRect.Left
                 && windowRect.Top <= monRect.Top
                 && windowRect.Right >= monRect.Right
                 && windowRect.Bottom >= monRect.Bottom;
+
+            if (!isCovering)
+            {
+                return false;
+            }
+
+            // Normal maximized windows have WS_CAPTION and are governed by PauseWhenDesktopCovered, not FullscreenGame
+            var style = (long)DesktopNativeMethods.GetWindowLongPtr(fgWnd, DesktopNativeMethods.GWL_STYLE);
+            var isBorderlessFullscreen =
+                (
+                    style & 0x00C00000 /* WS_CAPTION */
+                ) != 0x00C00000;
+            return isBorderlessFullscreen;
         }
 
         return false;
@@ -266,6 +287,13 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
     {
         var fgWnd = DesktopNativeMethods.GetForegroundWindow();
         if (fgWnd == 0)
+        {
+            return false;
+        }
+
+        // Never pause for the LockscreenGif application itself
+        DesktopNativeMethods.GetWindowThreadProcessId(fgWnd, out var pid);
+        if (pid == Environment.ProcessId)
         {
             return false;
         }
