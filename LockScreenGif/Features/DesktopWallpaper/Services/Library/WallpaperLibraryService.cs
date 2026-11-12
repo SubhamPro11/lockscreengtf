@@ -90,9 +90,7 @@ public sealed class WallpaperLibraryService : IWallpaperLibraryService, IDisposa
         var type = WallpaperItem.DetectType(pathOrUrl);
         var title = !string.IsNullOrWhiteSpace(customTitle)
             ? customTitle
-            : (pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                ? pathOrUrl
-                : Path.GetFileNameWithoutExtension(pathOrUrl));
+            : (pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? pathOrUrl : Path.GetFileNameWithoutExtension(pathOrUrl));
 
         string? thumbnail = null;
         if (File.Exists(pathOrUrl))
@@ -106,7 +104,7 @@ public sealed class WallpaperLibraryService : IWallpaperLibraryService, IDisposa
             SourcePathOrUrl = pathOrUrl,
             Type = type,
             ThumbnailPath = thumbnail,
-            Tags = tags ?? []
+            Tags = tags ?? [],
         };
 
         // Check for descriptor in folder
@@ -390,4 +388,3 @@ public sealed class WallpaperLibraryService : IWallpaperLibraryService, IDisposa
         _lock.Dispose();
     }
 }
-

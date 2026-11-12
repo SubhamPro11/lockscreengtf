@@ -53,7 +53,8 @@ public sealed partial class ShellPage : Page
         var viewModel =
             ReferenceEquals(args.SelectedItem, SettingsItem) ? typeof(SettingsViewModel)
             : ReferenceEquals(args.SelectedItem, DiagnosticsItem) ? typeof(DiagnosticsViewModel)
-            : ReferenceEquals(args.SelectedItem, WallpaperItem) ? typeof(LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel)
+            : ReferenceEquals(args.SelectedItem, WallpaperItem)
+                ? typeof(LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel)
             : typeof(MainViewModel);
         _navigationService.NavigateTo(viewModel.FullName!, clearNavigation: true);
     }

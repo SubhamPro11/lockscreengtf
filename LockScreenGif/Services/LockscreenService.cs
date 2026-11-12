@@ -20,16 +20,9 @@ public sealed class LockscreenService : ILockscreenService
     private SelectedImage? _selectedImage;
 
     public LockscreenService(AnalyticsService analytics, LockscreenPreferences preferences)
-        : this(analytics, preferences, null, null)
-    {
-    }
+        : this(analytics, preferences, null, null) { }
 
-    internal LockscreenService(
-        AnalyticsService analytics,
-        LockscreenPreferences preferences,
-        string? userSid,
-        string? cacheDirectory
-    )
+    internal LockscreenService(AnalyticsService analytics, LockscreenPreferences preferences, string? userSid, string? cacheDirectory)
     {
         _analytics = analytics;
         _preferences = preferences;

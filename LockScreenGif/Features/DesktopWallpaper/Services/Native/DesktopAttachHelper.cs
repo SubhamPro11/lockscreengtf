@@ -8,11 +8,7 @@ namespace LockscreenGif.Features.DesktopWallpaper.Services.Native;
 /// <summary>
 /// Result of finding the desktop wallpaper attachment host.
 /// </summary>
-internal sealed record DesktopAttachTarget(
-    nint ParentHwnd,
-    bool IsDirectProgmanParent,
-    string Description
-);
+internal sealed record DesktopAttachTarget(nint ParentHwnd, bool IsDirectProgmanParent, string Description);
 
 /// <summary>
 /// Handles finding and preparing the desktop host window (Progman / WorkerW)
@@ -43,54 +39,52 @@ internal static class DesktopAttachHelper
 
         // 2. Send 0x052C to Progman to prompt the shell to initialize/spawn the background layer.
         // Try with 0x0000000D (Windows 10/11) and fallback to 0x0.
-        DesktopNativeMethods.SendMessageTimeout(
-            progman,
-            WM_SPAWN_WORKER,
-            new nint(0x0000000D),
-            0,
-            0,
-            1000,
-            out _
-        );
+        DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, new nint(0x0000000D), 0, 0, 1000, out _);
 
         // 3. Scan for a WorkerW window that hosts SHELLDLL_DefView.
         // If found, the sibling WorkerW behind it is our target (Classic Win10/11 path).
         nint workerWithDefView = 0;
         nint workerTarget = 0;
 
-        DesktopNativeMethods.EnumWindows((hwnd, _) =>
-        {
-            var sb = new StringBuilder(256);
-            DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
-            if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
-            {
-                var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
-                if (defView != 0)
-                {
-                    workerWithDefView = hwnd;
-                }
-            }
-            return true;
-        }, 0);
-
-        if (workerWithDefView != 0)
-        {
-            // Find the WorkerW that sits directly behind the one hosting the icons
-            DesktopNativeMethods.EnumWindows((hwnd, _) =>
+        DesktopNativeMethods.EnumWindows(
+            (hwnd, _) =>
             {
                 var sb = new StringBuilder(256);
                 DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
                 if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
                 {
                     var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
-                    if (defView == 0 && hwnd != workerWithDefView)
+                    if (defView != 0)
                     {
-                        workerTarget = hwnd;
-                        return false; // Found our target!
+                        workerWithDefView = hwnd;
                     }
                 }
                 return true;
-            }, 0);
+            },
+            0
+        );
+
+        if (workerWithDefView != 0)
+        {
+            // Find the WorkerW that sits directly behind the one hosting the icons
+            DesktopNativeMethods.EnumWindows(
+                (hwnd, _) =>
+                {
+                    var sb = new StringBuilder(256);
+                    DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
+                    if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
+                    {
+                        var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
+                        if (defView == 0 && hwnd != workerWithDefView)
+                        {
+                            workerTarget = hwnd;
+                            return false; // Found our target!
+                        }
+                    }
+                    return true;
+                },
+                0
+            );
 
             if (workerTarget != 0)
             {
@@ -116,11 +110,7 @@ internal static class DesktopAttachHelper
         }
 
         // 5. Fallback: If Progman exists, use it directly
-        return new DesktopAttachTarget(
-            progman,
-            IsDirectProgmanParent: true,
-            "Progman fallback parent"
-        );
+        return new DesktopAttachTarget(progman, IsDirectProgmanParent: true, "Progman fallback parent");
     }
 
     /// <summary>
@@ -170,10 +160,10 @@ internal static class DesktopAttachHelper
                     progman,
                     0,
                     0,
-                    DesktopNativeMethods.RDW_INVALIDATE |
-                    DesktopNativeMethods.RDW_ERASE |
-                    DesktopNativeMethods.RDW_UPDATENOW |
-                    DesktopNativeMethods.RDW_ALLCHILDREN
+                    DesktopNativeMethods.RDW_INVALIDATE
+                        | DesktopNativeMethods.RDW_ERASE
+                        | DesktopNativeMethods.RDW_UPDATENOW
+                        | DesktopNativeMethods.RDW_ALLCHILDREN
                 );
             }
         }
@@ -192,41 +182,55 @@ internal static class DesktopAttachHelper
 
         try
         {
-            DesktopNativeMethods.EnumDisplayMonitors(0, 0, (nint hMon, nint hdc, ref DesktopNativeMethods.RECT rc, nint data) =>
-            {
-                var mi = new DesktopNativeMethods.MONITORINFOEX();
-                mi.cbSize = global::System.Runtime.InteropServices.Marshal.SizeOf(typeof(DesktopNativeMethods.MONITORINFOEX));
-                if (DesktopNativeMethods.GetMonitorInfo(hMon, ref mi))
+            DesktopNativeMethods.EnumDisplayMonitors(
+                0,
+                0,
+                (nint hMon, nint hdc, ref DesktopNativeMethods.RECT rc, nint data) =>
                 {
-                    var isPrimary = (mi.dwFlags & 1) != 0;
-                    uint dpiX = 96, dpiY = 96;
-
-                    try
+                    var mi = new DesktopNativeMethods.MONITORINFOEX();
+                    mi.cbSize = global::System.Runtime.InteropServices.Marshal.SizeOf(typeof(DesktopNativeMethods.MONITORINFOEX));
+                    if (DesktopNativeMethods.GetMonitorInfo(hMon, ref mi))
                     {
-                        DesktopNativeMethods.GetDpiForMonitor(hMon, 0 /* MDT_EFFECTIVE_DPI */, out dpiX, out dpiY);
-                    }
-                    catch
-                    {
-                        // Fall back to 96 DPI if GetDpiForMonitor is unavailable
-                    }
+                        var isPrimary = (mi.dwFlags & 1) != 0;
+                        uint dpiX = 96,
+                            dpiY = 96;
 
-                    var width = mi.rcMonitor.Right - mi.rcMonitor.Left;
-                    var height = mi.rcMonitor.Bottom - mi.rcMonitor.Top;
+                        try
+                        {
+                            DesktopNativeMethods.GetDpiForMonitor(
+                                hMon,
+                                0 /* MDT_EFFECTIVE_DPI */
+                                ,
+                                out dpiX,
+                                out dpiY
+                            );
+                        }
+                        catch
+                        {
+                            // Fall back to 96 DPI if GetDpiForMonitor is unavailable
+                        }
 
-                    monitors.Add(new DisplayMonitor(
-                        Handle: hMon,
-                        DeviceName: mi.szDevice ?? $"Display {monitors.Count + 1}",
-                        Left: mi.rcMonitor.Left,
-                        Top: mi.rcMonitor.Top,
-                        Width: width,
-                        Height: height,
-                        IsPrimary: isPrimary,
-                        DpiX: dpiX > 0 ? dpiX : 96,
-                        DpiY: dpiY > 0 ? dpiY : 96
-                    ));
-                }
-                return true;
-            }, 0);
+                        var width = mi.rcMonitor.Right - mi.rcMonitor.Left;
+                        var height = mi.rcMonitor.Bottom - mi.rcMonitor.Top;
+
+                        monitors.Add(
+                            new DisplayMonitor(
+                                Handle: hMon,
+                                DeviceName: mi.szDevice ?? $"Display {monitors.Count + 1}",
+                                Left: mi.rcMonitor.Left,
+                                Top: mi.rcMonitor.Top,
+                                Width: width,
+                                Height: height,
+                                IsPrimary: isPrimary,
+                                DpiX: dpiX > 0 ? dpiX : 96,
+                                DpiY: dpiY > 0 ? dpiY : 96
+                            )
+                        );
+                    }
+                    return true;
+                },
+                0
+            );
         }
         catch (Exception ex)
         {

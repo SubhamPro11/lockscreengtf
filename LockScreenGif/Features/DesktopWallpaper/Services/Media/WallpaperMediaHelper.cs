@@ -87,10 +87,7 @@ public static class WallpaperMediaHelper
         }
 
         // Try fast remux first (-c copy)
-        var fastRemuxSuccess = await RunFfmpegAsync(
-            ffmpeg,
-            $"-y -i \"{inputFilePath}\" -c copy -movflags +faststart \"{tempOutputFile}\""
-        );
+        var fastRemuxSuccess = await RunFfmpegAsync(ffmpeg, $"-y -i \"{inputFilePath}\" -c copy -movflags +faststart \"{tempOutputFile}\"");
 
         if (fastRemuxSuccess && File.Exists(tempOutputFile) && new FileInfo(tempOutputFile).Length > 1024)
         {
@@ -166,7 +163,7 @@ public static class WallpaperMediaHelper
                 Arguments = arguments,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                RedirectStandardError = true
+                RedirectStandardError = true,
             };
 
             using var process = Process.Start(psi);
@@ -201,4 +198,3 @@ public static class WallpaperMediaHelper
         }
     }
 }
-

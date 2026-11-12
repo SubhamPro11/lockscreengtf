@@ -15,4 +15,3 @@ public sealed class WallpaperPersistentSettings
     public bool AllowAdvancedExecutables { get; set; }
     public string? LastActiveWallpaperId { get; set; }
 }
-

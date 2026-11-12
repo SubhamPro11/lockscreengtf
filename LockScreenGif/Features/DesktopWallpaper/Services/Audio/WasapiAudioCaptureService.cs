@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 
 namespace LockscreenGif.Features.DesktopWallpaper.Services.Audio;
 
-public readonly record struct AudioSpectrumData(
-    float[] Bands,
-    float Peak
-);
+public readonly record struct AudioSpectrumData(float[] Bands, float Peak);
 
 /// <summary>
 /// Captures system audio output using standard Windows WASAPI loopback
@@ -35,11 +32,7 @@ public sealed class WasapiAudioCaptureService : IDisposable
 
         _isEnabled = true;
         _cts = new CancellationTokenSource();
-        _captureThread = new Thread(CaptureLoop)
-        {
-            IsBackground = true,
-            Name = "WasapiAudioCaptureLoop"
-        };
+        _captureThread = new Thread(CaptureLoop) { IsBackground = true, Name = "WasapiAudioCaptureLoop" };
         _captureThread.Start();
     }
 
@@ -66,10 +59,22 @@ public sealed class WasapiAudioCaptureService : IDisposable
         {
             // WASAPI Loopback capture initialization
             var enumerator = (IMMDeviceEnumerator)new MMDeviceEnumerator();
-            enumerator.GetDefaultAudioEndpoint(0 /* eRender */, 1 /* eMultimedia */, out var device);
+            enumerator.GetDefaultAudioEndpoint(
+                0 /* eRender */
+                ,
+                1 /* eMultimedia */
+                ,
+                out var device
+            );
 
             var iidAudioClient = typeof(IAudioClient).GUID;
-            device.Activate(ref iidAudioClient, 1 /* CLSCTX_ALL */, IntPtr.Zero, out var clientObj);
+            device.Activate(
+                ref iidAudioClient,
+                1 /* CLSCTX_ALL */
+                ,
+                IntPtr.Zero,
+                out var clientObj
+            );
             var audioClient = (IAudioClient)clientObj;
 
             audioClient.GetMixFormat(out var formatPtr);
@@ -79,7 +84,8 @@ public sealed class WasapiAudioCaptureService : IDisposable
             const uint AUDCLNT_STREAMFLAGS_LOOPBACK = 0x00020000;
 
             audioClient.Initialize(
-                0 /* AUDCLNT_SHAREMODE_SHARED */,
+                0 /* AUDCLNT_SHAREMODE_SHARED */
+                ,
                 AUDCLNT_STREAMFLAGS_LOOPBACK,
                 bufferDuration100ns,
                 0,
@@ -101,13 +107,7 @@ public sealed class WasapiAudioCaptureService : IDisposable
                 var hr = captureClient.GetNextPacketSize(out var packetLength);
                 if (hr == 0 && packetLength > 0)
                 {
-                    hr = captureClient.GetBuffer(
-                        out var dataPtr,
-                        out var framesAvailable,
-                        out var flags,
-                        out _,
-                        out _
-                    );
+                    hr = captureClient.GetBuffer(out var dataPtr, out var framesAvailable, out var flags, out _, out _);
 
                     if (hr == 0 && framesAvailable > 0)
                     {
@@ -115,7 +115,10 @@ public sealed class WasapiAudioCaptureService : IDisposable
                         Array.Clear(bands, 0, bands.Length);
 
                         // Read float samples if IEEE float, else 16-bit PCM
-                        if (waveFormat.wFormatTag == 3 /* WAVE_FORMAT_IEEE_FLOAT */ || waveFormat.wBitsPerSample == 32)
+                        if (
+                            waveFormat.wFormatTag == 3 /* WAVE_FORMAT_IEEE_FLOAT */
+                            || waveFormat.wBitsPerSample == 32
+                        )
                         {
                             var totalSamples = framesAvailable * waveFormat.nChannels;
                             var floatBuffer = new float[totalSamples];
@@ -242,7 +245,13 @@ public sealed class WasapiAudioCaptureService : IDisposable
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IAudioCaptureClient
     {
-        int GetBuffer(out IntPtr dataPointer, out uint numFramesToRead, out uint bufferFlags, out ulong devicePosition, out ulong qpcPosition);
+        int GetBuffer(
+            out IntPtr dataPointer,
+            out uint numFramesToRead,
+            out uint bufferFlags,
+            out ulong devicePosition,
+            out ulong qpcPosition
+        );
         int ReleaseBuffer(uint numFramesRead);
         int GetNextPacketSize(out uint numFramesInNextPacket);
     }
@@ -261,4 +270,3 @@ public sealed class WasapiAudioCaptureService : IDisposable
 
     #endregion
 }
-

@@ -25,27 +25,29 @@ public sealed class WallpaperLibraryEntry
     public Dictionary<string, string> CustomProperties { get; set; } = [];
 
     public string FavoriteGlyph => IsFavorite ? "\uE735" : "\uE734";
-    public string TypeGlyph => Type switch
-    {
-        WallpaperType.Video => "\uE714",
-        WallpaperType.Web => "\uE774",
-        WallpaperType.Image => "\uEB9F",
-        _ => "\uE756"
-    };
+    public string TypeGlyph =>
+        Type switch
+        {
+            WallpaperType.Video => "\uE714",
+            WallpaperType.Web => "\uE774",
+            WallpaperType.Image => "\uEB9F",
+            _ => "\uE756",
+        };
 
-    public WallpaperItem ToWallpaperItem() => new()
-    {
-        Id = Id,
-        Title = Title,
-        SourcePathOrUrl = SourcePathOrUrl,
-        Type = Type,
-        FitMode = FitMode,
-        Volume = Volume,
-        IsMuted = IsMuted,
-        PlaybackSpeed = PlaybackSpeed,
-        Loop = Loop,
-        ForwardInput = ForwardInput,
-        ThumbnailPath = ThumbnailPath,
-        IsAdvancedExecutable = Type == WallpaperType.Application
-    };
+    public WallpaperItem ToWallpaperItem() =>
+        new()
+        {
+            Id = Id,
+            Title = Title,
+            SourcePathOrUrl = SourcePathOrUrl,
+            Type = Type,
+            FitMode = FitMode,
+            Volume = Volume,
+            IsMuted = IsMuted,
+            PlaybackSpeed = PlaybackSpeed,
+            Loop = Loop,
+            ForwardInput = ForwardInput,
+            ThumbnailPath = ThumbnailPath,
+            IsAdvancedExecutable = Type == WallpaperType.Application,
+        };
 }
