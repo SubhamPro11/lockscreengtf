@@ -111,11 +111,7 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
             proc.Refresh();
             var memoryMb = proc.WorkingSet64 / (1024 * 1024);
 
-            LastResourceUsage = new WallpaperResourceUsage(
-                Math.Round(cpuPercent, 1),
-                memoryMb,
-                "DirectX 12 / Hardware Decoded"
-            );
+            LastResourceUsage = new WallpaperResourceUsage(Math.Round(cpuPercent, 1), memoryMb, "DirectX 12 / Hardware Decoded");
 
             ResourceUsageUpdated?.Invoke(this, LastResourceUsage);
         }
@@ -206,7 +202,12 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
     {
         try
         {
-            var hDesktop = DesktopNativeMethods.OpenDesktop("Default", 0, false, 0x0100 /* DESKTOP_SWITCHDESKTOP */);
+            var hDesktop = DesktopNativeMethods.OpenDesktop(
+                "Default",
+                0,
+                false,
+                0x0100 /* DESKTOP_SWITCHDESKTOP */
+            );
             if (hDesktop == 0)
             {
                 return true;
@@ -238,7 +239,10 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
             return false;
         }
 
-        var hMonitor = DesktopNativeMethods.MonitorFromWindow(fgWnd, 2 /* MONITOR_DEFAULTTONEAREST */);
+        var hMonitor = DesktopNativeMethods.MonitorFromWindow(
+            fgWnd,
+            2 /* MONITOR_DEFAULTTONEAREST */
+        );
         if (hMonitor == 0)
         {
             return false;
@@ -249,10 +253,10 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         {
             var monRect = mi.rcMonitor;
             // Fullscreen check: window covers monitor bounds completely
-            return windowRect.Left <= monRect.Left &&
-                   windowRect.Top <= monRect.Top &&
-                   windowRect.Right >= monRect.Right &&
-                   windowRect.Bottom >= monRect.Bottom;
+            return windowRect.Left <= monRect.Left
+                && windowRect.Top <= monRect.Top
+                && windowRect.Right >= monRect.Right
+                && windowRect.Bottom >= monRect.Bottom;
         }
 
         return false;

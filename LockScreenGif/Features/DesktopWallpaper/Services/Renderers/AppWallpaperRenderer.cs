@@ -45,7 +45,7 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
         {
             FileName = exePath,
             WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(exePath)) ?? string.Empty,
-            UseShellExecute = true
+            UseShellExecute = true,
         };
 
         _process = Process.Start(psi) ?? throw new InvalidOperationException($"Failed to launch process: {exePath}");
@@ -67,7 +67,8 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
 
         // Strip window caption and borders to make it a seamless child window
         var style = DesktopNativeMethods.GetWindowLongPtr(_appHwnd, DesktopNativeMethods.GWL_STYLE);
-        var newStyle = (style.ToInt64() & ~DesktopNativeMethods.WS_CAPTION & ~DesktopNativeMethods.WS_THICKFRAME) | DesktopNativeMethods.WS_CHILD;
+        var newStyle =
+            (style.ToInt64() & ~DesktopNativeMethods.WS_CAPTION & ~DesktopNativeMethods.WS_THICKFRAME) | DesktopNativeMethods.WS_CHILD;
         DesktopNativeMethods.SetWindowLongPtr(_appHwnd, DesktopNativeMethods.GWL_STYLE, new nint(newStyle));
 
         // Reparent to the wallpaper host window
@@ -109,7 +110,10 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
         if (_appHwnd != 0)
         {
             _isPlaying = false;
-            DesktopNativeMethods.ShowWindow(_appHwnd, 0 /* SW_HIDE */);
+            DesktopNativeMethods.ShowWindow(
+                _appHwnd,
+                0 /* SW_HIDE */
+            );
         }
         return Task.CompletedTask;
     }
@@ -119,15 +123,22 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
         if (_appHwnd != 0)
         {
             _isPlaying = true;
-            DesktopNativeMethods.ShowWindow(_appHwnd, 5 /* SW_SHOW */);
+            DesktopNativeMethods.ShowWindow(
+                _appHwnd,
+                5 /* SW_SHOW */
+            );
         }
         return Task.CompletedTask;
     }
 
     public Task SetVolumeAsync(double volume) => Task.CompletedTask;
+
     public Task SetMutedAsync(bool muted) => Task.CompletedTask;
+
     public Task SetPlaybackRateAsync(double rate) => Task.CompletedTask;
+
     public Task SetFitModeAsync(WallpaperFitMode fitMode) => Task.CompletedTask;
+
     public Task PostWebMessageAsJsonAsync(string json) => Task.CompletedTask;
 
     public Task CloseAsync()
@@ -169,4 +180,3 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
         await CloseAsync();
     }
 }
-

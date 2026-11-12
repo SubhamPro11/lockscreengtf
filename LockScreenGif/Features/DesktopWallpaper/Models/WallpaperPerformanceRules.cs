@@ -13,4 +13,3 @@ public sealed class WallpaperPerformanceRules
     public int TargetFps { get; set; } = 60;
     public bool LowerDecodeQuality { get; set; }
 }
-

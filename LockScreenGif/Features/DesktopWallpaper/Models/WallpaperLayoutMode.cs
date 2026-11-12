@@ -18,6 +18,5 @@ public enum WallpaperLayoutMode
     /// <summary>
     /// Duplicate the wallpaper on each connected display.
     /// </summary>
-    Duplicate
+    Duplicate,
 }
-

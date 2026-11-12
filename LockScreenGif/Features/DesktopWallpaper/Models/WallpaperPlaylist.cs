@@ -7,7 +7,7 @@ public enum PlaylistRotationMode
 {
     Timer,
     OnLogin,
-    TimeOfDay
+    TimeOfDay,
 }
 
 /// <summary>
@@ -24,4 +24,3 @@ public sealed class WallpaperPlaylist
     public int CurrentIndex { get; set; }
     public DateTimeOffset LastRotated { get; set; } = DateTimeOffset.MinValue;
 }
-

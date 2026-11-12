@@ -47,7 +47,7 @@ public sealed class WallpaperTrayService : IDisposable
             cbSize = (uint)Marshal.SizeOf(typeof(DesktopNativeMethods.WNDCLASSEX)),
             lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProcDelegate),
             hInstance = hInstance,
-            lpszClassName = className
+            lpszClassName = className,
         };
 
         DesktopNativeMethods.RegisterClassEx(ref wndClass);
@@ -91,7 +91,7 @@ public sealed class WallpaperTrayService : IDisposable
             uFlags = DesktopNativeMethods.NIF_MESSAGE | DesktopNativeMethods.NIF_ICON | DesktopNativeMethods.NIF_TIP,
             uCallbackMessage = WM_TRAYICON,
             hIcon = hIcon,
-            szTip = "LockscreenGif - Live Wallpaper"
+            szTip = "LockscreenGif - Live Wallpaper",
         };
 
         _isIconVisible = DesktopNativeMethods.Shell_NotifyIcon(DesktopNativeMethods.NIM_ADD, ref nid);
@@ -108,7 +108,7 @@ public sealed class WallpaperTrayService : IDisposable
         {
             cbSize = (uint)Marshal.SizeOf(typeof(DesktopNativeMethods.NOTIFYICONDATA)),
             hWnd = _messageHwnd,
-            uID = TrayIconId
+            uID = TrayIconId,
         };
 
         DesktopNativeMethods.Shell_NotifyIcon(DesktopNativeMethods.NIM_DELETE, ref nid);
@@ -133,7 +133,9 @@ public sealed class WallpaperTrayService : IDisposable
             return 0;
         }
 
-        if (msg == 0x007E /* WM_DISPLAYCHANGE */)
+        if (
+            msg == 0x007E /* WM_DISPLAYCHANGE */
+        )
         {
             _engineService.RefreshMonitors();
             if (_engineService.IsRunning && _engineService.CurrentWallpaper != null)
@@ -151,12 +153,17 @@ public sealed class WallpaperTrayService : IDisposable
         {
             var mouseMsg = (uint)(lParam.ToInt64() & 0xFFFF);
 
-            if (mouseMsg == 0x0205 /* WM_RBUTTONUP */)
+            if (
+                mouseMsg == 0x0205 /* WM_RBUTTONUP */
+            )
             {
                 ShowContextMenu();
                 return 0;
             }
-            else if (mouseMsg == 0x0203 /* WM_LBUTTONDBLCLK */ || mouseMsg == 0x0202 /* WM_LBUTTONUP */)
+            else if (
+                mouseMsg == 0x0203 /* WM_LBUTTONDBLCLK */
+                || mouseMsg == 0x0202 /* WM_LBUTTONUP */
+            )
             {
                 RestoreMainWindow();
                 return 0;
@@ -243,7 +250,10 @@ public sealed class WallpaperTrayService : IDisposable
                 var hwnd = WindowNative.GetWindowHandle(mainWin);
                 if (hwnd != 0)
                 {
-                    DesktopNativeMethods.ShowWindow(hwnd, 9 /* SW_RESTORE */);
+                    DesktopNativeMethods.ShowWindow(
+                        hwnd,
+                        9 /* SW_RESTORE */
+                    );
                     DesktopNativeMethods.SetForegroundWindow(hwnd);
                 }
             }
@@ -285,4 +295,3 @@ public sealed class WallpaperTrayService : IDisposable
         }
     }
 }
-

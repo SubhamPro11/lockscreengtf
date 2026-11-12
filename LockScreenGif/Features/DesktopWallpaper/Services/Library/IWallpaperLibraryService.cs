@@ -29,4 +29,3 @@ public interface IWallpaperLibraryService
     event EventHandler? LibraryChanged;
     event EventHandler<WallpaperLibraryEntry>? ActiveWallpaperChanged;
 }
-

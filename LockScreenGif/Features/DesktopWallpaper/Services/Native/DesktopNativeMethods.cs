@@ -100,6 +100,7 @@ internal static class DesktopNativeMethods
         public RECT rcMonitor;
         public RECT rcWork;
         public uint dwFlags;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string szDevice;
     }
@@ -156,15 +157,7 @@ internal static class DesktopNativeMethods
     public static extern nint SetParent(nint hWndChild, nint hWndNewParent);
 
     [DllImport("user32.dll", SetLastError = true)]
-    public static extern bool SetWindowPos(
-        nint hWnd,
-        nint hWndInsertAfter,
-        int X,
-        int Y,
-        int cx,
-        int cy,
-        uint uFlags
-    );
+    public static extern bool SetWindowPos(nint hWnd, nint hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool ShowWindow(nint hWnd, int nCmdShow);
@@ -173,20 +166,10 @@ internal static class DesktopNativeMethods
     public static extern bool DestroyWindow(nint hWnd);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern bool SystemParametersInfo(
-        uint uAction,
-        uint uParam,
-        StringBuilder lpvParam,
-        uint fuWinIni
-    );
+    public static extern bool SystemParametersInfo(uint uAction, uint uParam, StringBuilder lpvParam, uint fuWinIni);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern bool SystemParametersInfo(
-        uint uAction,
-        uint uParam,
-        string? lpvParam,
-        uint fuWinIni
-    );
+    public static extern bool SystemParametersInfo(uint uAction, uint uParam, string? lpvParam, uint fuWinIni);
 
     [DllImport("user32.dll")]
     public static extern bool EnumDisplayMonitors(nint hdc, nint lprcClip, MonitorEnumProc lpfnEnum, nint dwData);
@@ -332,13 +315,16 @@ internal static class DesktopNativeMethods
         public uint uFlags;
         public uint uCallbackMessage;
         public nint hIcon;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string szTip;
         public uint dwState;
         public uint dwStateMask;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string szInfo;
         public uint uTimeoutOrVersion;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string szInfoTitle;
         public uint dwInfoFlags;

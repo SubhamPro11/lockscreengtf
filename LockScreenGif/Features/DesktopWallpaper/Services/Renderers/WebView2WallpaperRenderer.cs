@@ -38,14 +38,11 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
         var options = new CoreWebView2EnvironmentOptions
         {
-            AdditionalBrowserArguments = "--autoplay-policy=no-user-gesture-required --disable-background-timer-throttling --disable-renderer-backgrounding"
+            AdditionalBrowserArguments =
+                "--autoplay-policy=no-user-gesture-required --disable-background-timer-throttling --disable-renderer-backgrounding",
         };
 
-        _environment = await CoreWebView2Environment.CreateWithOptionsAsync(
-            null,
-            UserDataFolder,
-            options
-        );
+        _environment = await CoreWebView2Environment.CreateWithOptionsAsync(null, UserDataFolder, options);
 
         var winRef = CoreWebView2ControllerWindowReference.CreateFromWindowHandle((ulong)hostHwnd);
         _controller = await _environment.CreateCoreWebView2ControllerAsync(winRef);
@@ -73,8 +70,10 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
         if (item.Type == WallpaperType.Web)
         {
-            if (source.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                source.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            if (
+                source.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || source.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            )
             {
                 _controller.CoreWebView2.Navigate(source);
             }
@@ -106,44 +105,40 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
             var folder = Path.GetDirectoryName(Path.GetFullPath(source)) ?? string.Empty;
             var fileName = Path.GetFileName(source);
 
-            _controller.CoreWebView2.SetVirtualHostNameToFolderMapping(
-                "image.local",
-                folder,
-                CoreWebView2HostResourceAccessKind.Allow
-            );
+            _controller.CoreWebView2.SetVirtualHostNameToFolderMapping("image.local", folder, CoreWebView2HostResourceAccessKind.Allow);
 
             var fitCss = GetFitCss(item.FitMode);
             var html = $$"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
-                html, body { width: 100%; height: 100%; background: #000; }
-                img {
-                  width: 100vw;
-                  height: 100vh;
-                  object-fit: {{fitCss}};
-                  display: block;
-                }
-              </style>
-            </head>
-            <body>
-              <img id="media" src="https://image.local/{{fileName}}" alt="Wallpaper" />
-              <script>
-                window.setFitMode = function(mode) {
-                  const media = document.getElementById('media');
-                  if (!media) return;
-                  if (mode === 'Fill') media.style.objectFit = 'cover';
-                  else if (mode === 'Fit') media.style.objectFit = 'contain';
-                  else if (mode === 'Stretch') media.style.objectFit = 'fill';
-                  else media.style.objectFit = 'none';
-                };
-              </script>
-            </body>
-            </html>
-            """;
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
+                    html, body { width: 100%; height: 100%; background: #000; }
+                    img {
+                      width: 100vw;
+                      height: 100vh;
+                      object-fit: {{fitCss}};
+                      display: block;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <img id="media" src="https://image.local/{{fileName}}" alt="Wallpaper" />
+                  <script>
+                    window.setFitMode = function(mode) {
+                      const media = document.getElementById('media');
+                      if (!media) return;
+                      if (mode === 'Fill') media.style.objectFit = 'cover';
+                      else if (mode === 'Fit') media.style.objectFit = 'contain';
+                      else if (mode === 'Stretch') media.style.objectFit = 'fill';
+                      else media.style.objectFit = 'none';
+                    };
+                  </script>
+                </body>
+                </html>
+                """;
 
             _controller.CoreWebView2.NavigateToString(html);
         }
@@ -158,11 +153,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
             var folder = Path.GetDirectoryName(Path.GetFullPath(playbackSource)) ?? string.Empty;
             var fileName = Path.GetFileName(playbackSource);
 
-            _controller.CoreWebView2.SetVirtualHostNameToFolderMapping(
-                "video.local",
-                folder,
-                CoreWebView2HostResourceAccessKind.Allow
-            );
+            _controller.CoreWebView2.SetVirtualHostNameToFolderMapping("video.local", folder, CoreWebView2HostResourceAccessKind.Allow);
 
             var fitCss = GetFitCss(item.FitMode);
             var isMutedAttr = item.IsMuted ? "muted" : string.Empty;
@@ -171,46 +162,46 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
             var speedVal = item.PlaybackSpeed.ToString("F2", CultureInfo.InvariantCulture);
 
             var html = $$"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
-                html, body { width: 100%; height: 100%; background: #000; }
-                video {
-                  width: 100vw;
-                  height: 100vh;
-                  object-fit: {{fitCss}};
-                  display: block;
-                }
-              </style>
-            </head>
-            <body>
-              <video id="media" src="https://video.local/{{fileName}}" autoplay {{isLoopAttr}} {{isMutedAttr}} playsinline></video>
-              <script>
-                const media = document.getElementById('media');
-                if (media) {
-                  media.volume = {{volumeVal}};
-                  media.playbackRate = {{speedVal}};
-                }
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
+                    html, body { width: 100%; height: 100%; background: #000; }
+                    video {
+                      width: 100vw;
+                      height: 100vh;
+                      object-fit: {{fitCss}};
+                      display: block;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <video id="media" src="https://video.local/{{fileName}}" autoplay {{isLoopAttr}} {{isMutedAttr}} playsinline></video>
+                  <script>
+                    const media = document.getElementById('media');
+                    if (media) {
+                      media.volume = {{volumeVal}};
+                      media.playbackRate = {{speedVal}};
+                    }
 
-                window.setVolume = function(v) { if (media) media.volume = v; };
-                window.setMuted = function(m) { if (media) media.muted = m; };
-                window.setPlaybackRate = function(r) { if (media) media.playbackRate = r; };
-                window.setFitMode = function(mode) {
-                  if (!media) return;
-                  if (mode === 'Fill') media.style.objectFit = 'cover';
-                  else if (mode === 'Fit') media.style.objectFit = 'contain';
-                  else if (mode === 'Stretch') media.style.objectFit = 'fill';
-                  else media.style.objectFit = 'none';
-                };
-                window.playMedia = function() { if (media && media.play) media.play(); };
-                window.pauseMedia = function() { if (media && media.pause) media.pause(); };
-              </script>
-            </body>
-            </html>
-            """;
+                    window.setVolume = function(v) { if (media) media.volume = v; };
+                    window.setMuted = function(m) { if (media) media.muted = m; };
+                    window.setPlaybackRate = function(r) { if (media) media.playbackRate = r; };
+                    window.setFitMode = function(mode) {
+                      if (!media) return;
+                      if (mode === 'Fill') media.style.objectFit = 'cover';
+                      else if (mode === 'Fit') media.style.objectFit = 'contain';
+                      else if (mode === 'Stretch') media.style.objectFit = 'fill';
+                      else media.style.objectFit = 'none';
+                    };
+                    window.playMedia = function() { if (media && media.play) media.play(); };
+                    window.pauseMedia = function() { if (media && media.pause) media.pause(); };
+                  </script>
+                </body>
+                </html>
+                """;
 
             _controller.CoreWebView2.NavigateToString(html);
         }
@@ -362,11 +353,12 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
         await CloseAsync();
     }
 
-    private static string GetFitCss(WallpaperFitMode mode) => mode switch
-    {
-        WallpaperFitMode.Fit => "contain",
-        WallpaperFitMode.Stretch => "fill",
-        WallpaperFitMode.Center => "none",
-        _ => "cover"
-    };
+    private static string GetFitCss(WallpaperFitMode mode) =>
+        mode switch
+        {
+            WallpaperFitMode.Fit => "contain",
+            WallpaperFitMode.Stretch => "fill",
+            WallpaperFitMode.Center => "none",
+            _ => "cover",
+        };
 }

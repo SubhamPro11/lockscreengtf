@@ -29,7 +29,7 @@ public sealed partial class DesktopWallpaperPage : Page
             var picker = new FileOpenPicker
             {
                 ViewMode = PickerViewMode.Thumbnail,
-                SuggestedStartLocation = PickerLocationId.VideosLibrary
+                SuggestedStartLocation = PickerLocationId.VideosLibrary,
             };
 
             var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
@@ -72,8 +72,10 @@ public sealed partial class DesktopWallpaperPage : Page
         var text = UrlInputBox.Text?.Trim();
         if (!string.IsNullOrWhiteSpace(text))
         {
-            if (!text.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
-                !text.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            if (
+                !text.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                && !text.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            )
             {
                 text = "https://" + text;
             }
@@ -140,10 +142,11 @@ public sealed partial class DesktopWallpaperPage : Page
             {
                 XamlRoot = this.XamlRoot,
                 Title = "Security Notice: Executable Wallpapers",
-                Content = "Running third-party executables (.exe) as live desktop wallpapers executes native code with your current user privileges. Only run programs from trusted, verified developers.\n\nDo you want to enable this feature?",
+                Content =
+                    "Running third-party executables (.exe) as live desktop wallpapers executes native code with your current user privileges. Only run programs from trusted, verified developers.\n\nDo you want to enable this feature?",
                 PrimaryButtonText = "Enable",
                 CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Close
+                DefaultButton = ContentDialogButton.Close,
             };
 
             var result = await dialog.ShowAsync();
@@ -182,7 +185,7 @@ public sealed partial class DesktopWallpaperPage : Page
                 Content = $"Are you sure you want to remove '{entry.Title}' from your wallpaper library?",
                 PrimaryButtonText = "Delete",
                 CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Close
+                DefaultButton = ContentDialogButton.Close,
             };
 
             var res = await dialog.ShowAsync();

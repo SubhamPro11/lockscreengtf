@@ -255,7 +255,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                     1 => WallpaperFitMode.Fit,
                     2 => WallpaperFitMode.Stretch,
                     3 => WallpaperFitMode.Center,
-                    _ => WallpaperFitMode.Fill
+                    _ => WallpaperFitMode.Fill,
                 };
                 _ = _engineService.SetFitModeAsync(mode);
             }
@@ -301,7 +301,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                     0 => 0.5,
                     2 => 1.5,
                     3 => 2.0,
-                    _ => 1.0
+                    _ => 1.0,
                 };
                 _ = _engineService.SetPlaybackRateAsync(speed);
             }
@@ -404,7 +404,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                     1 => 30,
                     2 => 15,
                     3 => 0,
-                    _ => 60
+                    _ => 60,
                 };
             }
         }
@@ -531,7 +531,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                     2 => 30,
                     3 => 60,
                     4 => 1440,
-                    _ => 30
+                    _ => 30,
                 };
                 _ = _libraryService.SaveSettingsAsync();
             }
@@ -586,7 +586,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     public DesktopWallpaperViewModel(
         IWallpaperEngineService engineService,
         IWallpaperLibraryService libraryService,
-        ILockscreenService lockscreenService)
+        ILockscreenService lockscreenService
+    )
     {
         _engineService = engineService;
         _libraryService = libraryService;
@@ -757,7 +758,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             WallpaperEngineStatus.Starting => "Starting…",
             WallpaperEngineStatus.Paused => "Paused",
             WallpaperEngineStatus.Error => "Attachment error",
-            _ => "Stopped"
+            _ => "Stopped",
         };
 
         ErrorMessage = _engineService.CurrentErrorMessage;
@@ -776,7 +777,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             WallpaperLayoutMode.SingleMonitor => 1,
             WallpaperLayoutMode.Duplicate => 2,
-            _ => 0
+            _ => 0,
         };
 
         StartCommand.NotifyCanExecuteChanged();
@@ -802,7 +803,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
         if (!WallpaperItem.IsSupportedFormat(pathOrUrl))
         {
-            ErrorMessage = "The selected file format is not supported. Please select an animated GIF, video (.mp4, .webm, .mkv, .avi, .mov), animated image (.webp), or web page (.html).";
+            ErrorMessage =
+                "The selected file format is not supported. Please select an animated GIF, video (.mp4, .webm, .mkv, .avi, .mov), animated image (.webp), or web page (.html).";
             HasError = true;
             IsMediaLoaded = false;
             return;
@@ -811,7 +813,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         var type = WallpaperItem.DetectType(pathOrUrl);
         if (type == WallpaperType.Application && !AllowAdvancedExecutables)
         {
-            ErrorMessage = "Executable (.exe) wallpapers are disabled by default for system security. You can enable them under 'Advanced Options & Safeguards'.";
+            ErrorMessage =
+                "Executable (.exe) wallpapers are disabled by default for system security. You can enable them under 'Advanced Options & Safeguards'.";
             HasError = true;
             IsMediaLoaded = false;
             return;
@@ -831,12 +834,10 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             WallpaperType.Web => "Web Page / WebGL / Interactive",
             WallpaperType.Image => "Static Image",
             WallpaperType.Application => "Executable Application (.exe)",
-            _ => "Media"
+            _ => "Media",
         };
 
-        WallpaperTitle = pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-            ? pathOrUrl
-            : Path.GetFileName(pathOrUrl);
+        WallpaperTitle = pathOrUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? pathOrUrl : Path.GetFileName(pathOrUrl);
 
         IsMediaLoaded = true;
         ApplyWallpaperCommand.NotifyCanExecuteChanged();
@@ -874,7 +875,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 1 => WallpaperFitMode.Fit,
                 2 => WallpaperFitMode.Stretch,
                 3 => WallpaperFitMode.Center,
-                _ => WallpaperFitMode.Fill
+                _ => WallpaperFitMode.Fill,
             };
 
             var speed = SpeedIndex switch
@@ -882,7 +883,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 0 => 0.5,
                 2 => 1.5,
                 3 => 2.0,
-                _ => 1.0
+                _ => 1.0,
             };
 
             var item = new WallpaperItem
@@ -896,7 +897,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 PlaybackSpeed = speed,
                 Loop = Loop,
                 ForwardInput = ForwardInput,
-                IsAdvancedExecutable = type == WallpaperType.Application
+                IsAdvancedExecutable = type == WallpaperType.Application,
             };
 
             var success = await _engineService.ApplyWallpaperAsync(item);
@@ -918,11 +919,13 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             if (ex.Message.Contains("WebView2", StringComparison.OrdinalIgnoreCase))
             {
-                ErrorMessage = "Microsoft Edge WebView2 runtime is required to display this wallpaper. It is installed by default on Windows 11; if missing, please install the WebView2 Evergreen Runtime from Microsoft.";
+                ErrorMessage =
+                    "Microsoft Edge WebView2 runtime is required to display this wallpaper. It is installed by default on Windows 11; if missing, please install the WebView2 Evergreen Runtime from Microsoft.";
             }
             else if (ex.Message.Contains("ffmpeg", StringComparison.OrdinalIgnoreCase))
             {
-                ErrorMessage = "FFmpeg is required to remux this media format. Please ensure FFmpeg is available or choose an MP4, WebM, or GIF file.";
+                ErrorMessage =
+                    "FFmpeg is required to remux this media format. Please ensure FFmpeg is available or choose an MP4, WebM, or GIF file.";
             }
             else
             {
@@ -1061,7 +1064,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             1 => WallpaperLayoutMode.SingleMonitor,
             2 => WallpaperLayoutMode.Duplicate,
-            _ => WallpaperLayoutMode.SpanAllMonitors
+            _ => WallpaperLayoutMode.SpanAllMonitors,
         };
     }
 }

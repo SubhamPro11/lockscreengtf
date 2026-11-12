@@ -106,8 +106,14 @@ public partial class App : Application
                     services.AddTransient<DiagnosticsPage>();
 
                     // Desktop Wallpaper Feature
-                    services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService, LockscreenGif.Features.DesktopWallpaper.Services.WallpaperEngineService>();
-                    services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService, LockscreenGif.Features.DesktopWallpaper.Services.Library.WallpaperLibraryService>();
+                    services.AddSingleton<
+                        LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService,
+                        LockscreenGif.Features.DesktopWallpaper.Services.WallpaperEngineService
+                    >();
+                    services.AddSingleton<
+                        LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService,
+                        LockscreenGif.Features.DesktopWallpaper.Services.Library.WallpaperLibraryService
+                    >();
                     services.AddSingleton<LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperTrayService>();
                     services.AddTransient<LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel>();
                     services.AddTransient<LockscreenGif.Features.DesktopWallpaper.Views.DesktopWallpaperPage>();
@@ -183,11 +189,15 @@ public partial class App : Application
                         var libService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService>();
                         var engineService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>();
                         await libService.InitializeAsync();
-                        var lastEntry = libService.Items.FirstOrDefault(e => e.Id == libService.Settings.LastActiveWallpaperId)
-                                     ?? libService.Items.FirstOrDefault();
+                        var lastEntry =
+                            libService.Items.FirstOrDefault(e => e.Id == libService.Settings.LastActiveWallpaperId)
+                            ?? libService.Items.FirstOrDefault();
                         if (lastEntry != null)
                         {
-                            var item = LockscreenGif.Features.DesktopWallpaper.Models.WallpaperItem.FromPathOrUrl(lastEntry.SourcePathOrUrl, lastEntry.Title);
+                            var item = LockscreenGif.Features.DesktopWallpaper.Models.WallpaperItem.FromPathOrUrl(
+                                lastEntry.SourcePathOrUrl,
+                                lastEntry.Title
+                            );
                             await engineService.ApplyWallpaperAsync(item);
                         }
                     }
