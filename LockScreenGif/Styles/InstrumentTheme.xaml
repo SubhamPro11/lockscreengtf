@@ -223,9 +223,12 @@
     <!-- Exactly Two Corner Radii Across System -->
     <CornerRadius x:Key="AppCornerRadiusCard">8</CornerRadius>
     <CornerRadius x:Key="AppCornerRadiusControl">4</CornerRadius>
+    <CornerRadius x:Key="AppCornerRadiusButton">999</CornerRadius>
     <CornerRadius x:Key="GlassCornerRadiusCard">8</CornerRadius>
     <CornerRadius x:Key="GlassCornerRadiusControl">4</CornerRadius>
-    <CornerRadius x:Key="GlassCornerRadiusPill">4</CornerRadius>
+    <CornerRadius x:Key="GlassCornerRadiusPill">999</CornerRadius>
+    <CornerRadius x:Key="ControlCornerRadius">999</CornerRadius>
+    <CornerRadius x:Key="ButtonCornerRadius">999</CornerRadius>
 
     <!-- Native Windows 11 Card Surfaces -->
     <Style x:Key="GlassCardStyle" TargetType="Border">
@@ -248,7 +251,7 @@
         <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
         <Setter Property="Padding" Value="8,2" />
     </Style>
 
@@ -262,14 +265,14 @@
         <Setter Property="Spacing" Value="{StaticResource AppCardSpacing}" />
     </Style>
 
-    <!-- Native Windows 11 Buttons -->
+    <!-- Native Windows 11 Buttons (Rounded Pill Shaped) -->
     <Style x:Key="GlassButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource GlassSurfaceSubtleBrush}" />
         <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="14,6" />
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
@@ -278,8 +281,8 @@
         <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="14,6" />
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
@@ -288,8 +291,8 @@
         <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassBorderRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="14,6" />
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
@@ -297,8 +300,8 @@
         <Setter Property="Background" Value="{ThemeResource GlassAccentBrassBrush}" />
         <Setter Property="Foreground" Value="#FFFFFF" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="16,7" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="18,7" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
@@ -306,8 +309,8 @@
         <Setter Property="Background" Value="{ThemeResource GlassDestructiveButtonBrush}" />
         <Setter Property="Foreground" Value="#FFFFFF" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="16,7" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="18,7" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
@@ -317,18 +320,23 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="12,6" />
     </Style>
 
     <Style x:Key="StepperButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource GlassTextSecondaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="{StaticResource AppCornerRadiusControl}" />
-        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadiusPill}" />
+        <Setter Property="Padding" Value="12,5" />
         <Setter Property="FontSize" Value="12" />
     </Style>
+
+    <!-- Default Implicit Button Styles for all buttons across the software -->
+    <Style TargetType="Button" BasedOn="{StaticResource GlassButtonStyle}" />
+    <Style TargetType="ToggleButton" BasedOn="{StaticResource GlassToggleButtonStyle}" />
+    <Style TargetType="RepeatButton" BasedOn="{StaticResource GlassRepeatButtonStyle}" />
 
     <Style x:Key="GlassHyperlinkButtonStyle" TargetType="HyperlinkButton">
         <Setter Property="Foreground" Value="{ThemeResource GlassAccentBrassBrush}" />

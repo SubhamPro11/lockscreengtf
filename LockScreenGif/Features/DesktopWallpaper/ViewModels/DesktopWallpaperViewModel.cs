@@ -557,7 +557,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
     public ObservableCollection<DisplayMonitor> Monitors { get; } = [];
 
-    public bool CanStart => !IsRunning && !IsBusy && (IsMediaLoaded || _libraryService.Items.Count > 0);
+    public bool CanStart => !IsRunning && !IsBusy && IsMediaLoaded;
     public bool CanStop => IsRunning && !IsBusy;
     public bool CanPauseResume => IsRunning && !IsBusy;
     public bool CanApply => IsMediaLoaded && !IsBusy;
@@ -698,6 +698,14 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     private async Task InitializeLibraryAsync()
     {
         await _libraryService.InitializeAsync();
+        if (_libraryService.Items.Count > 0)
+        {
+            var ids = _libraryService.Items.Select(x => x.Id).ToList();
+            foreach (var id in ids)
+            {
+                await _libraryService.RemoveAsync(id);
+            }
+        }
         _dispatcherQueue.TryEnqueue(RefreshLibraryView);
     }
 
@@ -906,9 +914,6 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         ApplyWallpaperCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanApplyBoth));
         ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
-
-        // Add to library automatically if not already present
-        _ = _libraryService.AddAsync(pathOrUrl, WallpaperTitle);
 
         if (IsRunning)
         {
