@@ -16,7 +16,7 @@
                     <ControlTemplate TargetType="local:FrameHandle">
                         <Grid Background="Transparent">
                             <Border Width="12" HorizontalAlignment="Right" CornerRadius="6,0,0,6"
-                                    Background="{ThemeResource GlassAccentBrassBrush}">
+                                    Background="{ThemeResource GlassEmberBrush}">
                                 <Border Width="2" Height="20" CornerRadius="1"
                                         Background="#0F172A" />
                             </Border>
@@ -31,7 +31,7 @@
                     <ControlTemplate TargetType="local:FrameHandle">
                         <Grid Background="Transparent">
                             <Border Width="12" HorizontalAlignment="Left" CornerRadius="0,6,6,0"
-                                    Background="{ThemeResource GlassAccentBrassBrush}">
+                                    Background="{ThemeResource GlassEmberBrush}">
                                 <Border Width="2" Height="20" CornerRadius="1"
                                         Background="#0F172A" />
                             </Border>
@@ -52,8 +52,8 @@
         <Canvas x:Name="Track" Background="Transparent" PointerPressed="Track_PointerPressed">
             <Border x:Name="LeftShade" Canvas.Top="32" Height="64" Background="#B0000000" IsHitTestVisible="False" />
             <Border x:Name="RightShade" Canvas.Top="32" Height="64" Background="#B0000000" IsHitTestVisible="False" />
-            <Border x:Name="Selection" Canvas.Top="32" Height="64" BorderThickness="2" CornerRadius="6"
-                    BorderBrush="{ThemeResource GlassAccentBrassBrush}" IsHitTestVisible="False" />
+            <Border x:Name="Selection" Canvas.Top="32" Height="64" BorderThickness="2" CornerRadius="{ThemeResource GlassRadiusControl}"
+                    BorderBrush="{ThemeResource GlassEmberBrush}" IsHitTestVisible="False" />
             <local:FrameHandle x:Name="StartHandle" Canvas.Top="32" Style="{StaticResource StartHandleStyle}"
                                AutomationProperties.Name="Clip start frame" ToolTipService.ToolTip="Start: drag or use arrow keys to move one frame" />
             <local:FrameHandle x:Name="EndHandle" FrameNumberOffset="0" Canvas.Top="32" Style="{StaticResource EndHandleStyle}"
