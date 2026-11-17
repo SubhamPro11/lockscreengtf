@@ -116,7 +116,10 @@ public static class WallpaperPlayerProcess
                 null
             );
 
-            mres.Wait();
+            if (!mres.Wait(5000))
+            {
+                return;
+            }
 
             if (caught != null)
             {
@@ -737,6 +740,14 @@ public static class WallpaperPlayerProcess
 
         DesktopNativeMethods.GetWindowThreadProcessId(fgWnd, out var pid);
         if (pid == (uint)Environment.ProcessId)
+        {
+            return false;
+        }
+
+        var sb = new StringBuilder(256);
+        DesktopNativeMethods.GetClassName(fgWnd, sb, sb.Capacity);
+        var cls = sb.ToString();
+        if (cls is "Progman" or "WorkerW" or "Shell_TrayWnd" or "Shell_SecondaryTrayWnd")
         {
             return false;
         }

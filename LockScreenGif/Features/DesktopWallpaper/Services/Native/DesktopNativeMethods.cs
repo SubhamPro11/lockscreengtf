@@ -253,6 +253,34 @@ internal static class DesktopNativeMethods
     [DllImport("user32.dll")]
     public static extern int ReleaseDC(nint hWnd, nint hDC);
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PAINTSTRUCT
+    {
+        public nint hdc;
+
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fErase;
+        public RECT rcPaint;
+
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fRestore;
+
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fIncUpdate;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public byte[]? rgbReserved;
+    }
+
+    [DllImport("user32.dll")]
+    public static extern nint BeginPaint(nint hWnd, out PAINTSTRUCT lpPaint);
+
+    [DllImport("user32.dll")]
+    public static extern bool EndPaint(nint hWnd, ref PAINTSTRUCT lpPaint);
+
+    [DllImport("user32.dll")]
+    public static extern bool ValidateRect(nint hWnd, nint lpRect);
+
     [DllImport("gdi32.dll")]
     public static extern nint CreateSolidBrush(uint crColor);
 

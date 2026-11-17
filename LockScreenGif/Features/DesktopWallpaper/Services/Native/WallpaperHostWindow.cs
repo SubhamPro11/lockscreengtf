@@ -206,7 +206,17 @@ internal sealed class WallpaperHostWindow : IDisposable
                 return new nint(1); // Suppress default background erase to prevent flicker
 
             case DesktopNativeMethods.WM_PAINT:
-                PaintBackground(hWnd);
+                var hdc = DesktopNativeMethods.BeginPaint(hWnd, out var ps);
+                if (hdc != 0 && DesktopNativeMethods.GetClientRect(hWnd, out var rect))
+                {
+                    var hBrush = DesktopNativeMethods.CreateSolidBrush(_backgroundColor);
+                    if (hBrush != 0)
+                    {
+                        DesktopNativeMethods.FillRect(hdc, ref rect, hBrush);
+                        DesktopNativeMethods.DeleteObject(hBrush);
+                    }
+                }
+                DesktopNativeMethods.EndPaint(hWnd, ref ps);
                 return 0;
 
             case DesktopNativeMethods.WM_DESTROY:
@@ -215,36 +225,6 @@ internal sealed class WallpaperHostWindow : IDisposable
 
             default:
                 return DesktopNativeMethods.DefWindowProc(hWnd, msg, wParam, lParam);
-        }
-    }
-
-    private void PaintBackground(nint hWnd)
-    {
-        var hdc = DesktopNativeMethods.GetDC(hWnd);
-        if (hdc != 0)
-        {
-            try
-            {
-                if (DesktopNativeMethods.GetClientRect(hWnd, out var rect))
-                {
-                    var hBrush = DesktopNativeMethods.CreateSolidBrush(_backgroundColor);
-                    if (hBrush != 0)
-                    {
-                        try
-                        {
-                            DesktopNativeMethods.FillRect(hdc, ref rect, hBrush);
-                        }
-                        finally
-                        {
-                            DesktopNativeMethods.DeleteObject(hBrush);
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                DesktopNativeMethods.ReleaseDC(hWnd, hdc);
-            }
         }
     }
 
