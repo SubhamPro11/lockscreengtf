@@ -185,6 +185,10 @@ internal static class DesktopNativeMethods
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool ShowWindow(nint hWnd, int nCmdShow);
 
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool IsWindowVisible(nint hWnd);
+
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool DestroyWindow(nint hWnd);
 

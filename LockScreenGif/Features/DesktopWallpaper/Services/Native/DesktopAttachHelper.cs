@@ -72,10 +72,18 @@ internal static class DesktopAttachHelper
             if (defViewInProgman != 0)
             {
                 defViewContainer = progman;
+
+                // On Windows 11 24H2+, WorkerW is created as a child of Progman behind SHELLDLL_DefView
+                var workerWInProgman = DesktopNativeMethods.FindWindowEx(progman, 0, "WorkerW", null);
+                if (workerWInProgman != 0)
+                {
+                    workerTarget = workerWInProgman;
+                    break;
+                }
             }
             else
             {
-                // Otherwise find the WorkerW hosting SHELLDLL_DefView
+                // Otherwise find the WorkerW hosting SHELLDLL_DefView (Windows 10 / earlier Windows 11)
                 DesktopNativeMethods.EnumWindows(
                     (hwnd, _) =>
                     {
@@ -96,9 +104,9 @@ internal static class DesktopAttachHelper
                 );
             }
 
-            if (defViewContainer != 0)
+            if (defViewContainer != 0 && defViewContainer != progman)
             {
-                // WorkerW placed immediately after defViewContainer in Z-order
+                // Top-level WorkerW placed immediately after defViewContainer in Z-order
                 workerTarget = DesktopNativeMethods.FindWindowEx(0, defViewContainer, "WorkerW", null);
                 if (workerTarget != 0)
                 {
@@ -116,16 +124,27 @@ internal static class DesktopAttachHelper
             return new DesktopAttachTarget(workerTarget, IsDirectProgmanParent: false, "WorkerW background layer (Behind desktop icons)");
         }
 
-        // Secondary fallback: Enumerate all WorkerW windows that do not host SHELLDLL_DefView
+        // Secondary fallback for Win11 24H2+: if WorkerW child wasn't spawned, Progman itself hosts behind SHELLDLL_DefView
+        var defViewCheck = DesktopNativeMethods.FindWindowEx(progman, 0, "SHELLDLL_DefView", null);
+        if (defViewCheck != 0)
+        {
+            return new DesktopAttachTarget(progman, IsDirectProgmanParent: true, "Progman direct parent (Behind desktop icons)");
+        }
+
+        // Tertiary fallback: Enumerate all visible, screen-sized top-level WorkerW windows
         DesktopNativeMethods.EnumWindows(
             (hwnd, _) =>
             {
+                if (!DesktopNativeMethods.IsWindowVisible(hwnd))
+                {
+                    return true;
+                }
                 var sb = new StringBuilder(256);
                 DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
                 if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
                 {
                     var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
-                    if (defView == 0 && hwnd != defViewContainer)
+                    if (defView == 0 && DesktopNativeMethods.GetWindowRect(hwnd, out var rc) && (rc.Right - rc.Left) > 500)
                     {
                         workerTarget = hwnd;
                         return false;

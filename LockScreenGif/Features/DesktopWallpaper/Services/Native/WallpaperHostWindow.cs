@@ -134,11 +134,15 @@ internal sealed class WallpaperHostWindow : IDisposable
             style |= DesktopNativeMethods.WS_CHILD;
             DesktopNativeMethods.SetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_STYLE, new nint(style));
 
+            // Convert screen coordinates to parent window client coordinates
+            var pt = new DesktopNativeMethods.POINT { X = left, Y = top };
+            DesktopNativeMethods.ScreenToClient(target.ParentHwnd, ref pt);
+
             DesktopNativeMethods.SetWindowPos(
                 _hwnd,
                 DesktopNativeMethods.HWND_BOTTOM,
-                left,
-                top,
+                pt.X,
+                pt.Y,
                 width,
                 height,
                 DesktopNativeMethods.SWP_NOACTIVATE | DesktopNativeMethods.SWP_SHOWWINDOW
