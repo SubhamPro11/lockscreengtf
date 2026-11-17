@@ -23,6 +23,8 @@
             <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="{StaticResource GlassRaisedColor}" />
             <SolidColorBrush x:Key="GlassBorderRimBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassBorderAccentBrush" Color="{StaticResource GlassEmberColor}" />
+            <SolidColorBrush x:Key="GlassBorderSubtleBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="#0DFFFFFF" />
 
             <!-- Typography & Foreground -->
@@ -118,6 +120,8 @@
             <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="{StaticResource GlassRaisedColor}" />
             <SolidColorBrush x:Key="GlassBorderRimBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassBorderAccentBrush" Color="{StaticResource GlassEmberColor}" />
+            <SolidColorBrush x:Key="GlassBorderSubtleBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="#0D000000" />
 
             <Color x:Key="GlassTextPrimaryColor">#1C1917</Color>
@@ -200,6 +204,8 @@
             <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="GlassBorderRimBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
             <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <SolidColorBrush x:Key="GlassBorderAccentBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBorderSubtleBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
             <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="Transparent" />
 
             <SolidColorBrush x:Key="GlassTextPrimaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
