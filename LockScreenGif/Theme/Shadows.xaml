@@ -1,0 +1,18 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Soft Double Layer Shadows for Floating Elements -->
+    <!-- Large Ambient Shadow: 40px blur, 25% black (#40000000) -->
+    <Color x:Key="GlassAmbientShadowColor">#40000000</Color>
+    <SolidColorBrush x:Key="GlassAmbientShadowBrush" Color="{StaticResource GlassAmbientShadowColor}" />
+
+    <!-- Tight Contact Shadow: 6px blur, 35% black (#59000000) -->
+    <Color x:Key="GlassContactShadowColor">#59000000</Color>
+    <SolidColorBrush x:Key="GlassContactShadowBrush" Color="{StaticResource GlassContactShadowColor}" />
+
+    <!-- Subtle Drop Shadow for Raised Controls -->
+    <Color x:Key="GlassSubtleShadowColor">#26000000</Color>
+    <SolidColorBrush x:Key="GlassSubtleShadowBrush" Color="{StaticResource GlassSubtleShadowColor}" />
+
+</ResourceDictionary>

@@ -7,33 +7,33 @@
     mc:Ignorable="d">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="32,24,32,48">
-        <StackPanel Spacing="24" MaxWidth="900" HorizontalAlignment="Stretch">
+        <StackPanel Spacing="32" MaxWidth="960" HorizontalAlignment="Stretch">
 
-            <!-- Gallery Header -->
+            <!-- 1. GALLERY HEADER (Fraunces Heading + Segoe UI Subtitle) -->
             <StackPanel Spacing="8">
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="Liquid Glass Gallery" FontSize="26" FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                    <TextBlock Text="Liquid Glass Gallery" Style="{StaticResource PageTitleStyle}" />
                     <Border Style="{StaticResource GlassPillStyle}" VerticalAlignment="Center">
-                        <TextBlock Text="DEBUG PREVIEW" FontSize="11" FontWeight="Bold"
-                                   Foreground="{ThemeResource GlassAccentBrassBrush}" />
+                        <TextBlock Text="S1 TOKENS PREVIEW" FontSize="11" FontWeight="Bold"
+                                   Foreground="{ThemeResource GlassEmberHoverBrush}" />
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Foundation test bed for translucent layered surfaces, specular rim highlights, and solid fallbacks."
-                           FontSize="14" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                <TextBlock Text="Component test bed for the Projection Booth design system: warm dark neutrals, Ember accents, restrained liquid glass, and solid fallbacks."
+                           Style="{StaticResource SettingDescriptionStyle}" FontSize="14" />
             </StackPanel>
 
-            <!-- Interactive Toolbar: Live Fallback & Theme Switcher -->
-            <Border Style="{StaticResource GlassCardElevatedStyle}">
+            <!-- 2. INTERACTIVE CONTROLS BAR: FALLBACK & THEME SWITCHER -->
+            <Border Style="{StaticResource FlatRaisedCardStyle}">
                 <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
                         <ToggleSwitch x:Name="FallbackToggle" Header="Simulate Solid Fallback"
                                       OffContent="Glass Active" OnContent="Fallback Forced"
-                                      Toggled="FallbackToggle_Toggled" />
-                        <Border Width="1" Background="{ThemeResource GlassBorderRimBrush}" Margin="8,4" />
+                                      Toggled="FallbackToggle_Toggled"
+                                      AutomationProperties.Name="Simulate solid fallback toggle" />
+                        <Border Width="1" Background="{ThemeResource GlassHairlineBrush}" Margin="8,4" />
                         <StackPanel Spacing="4" VerticalAlignment="Center">
                             <TextBlock Text="Active Fallback State" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <TextBlock x:Name="FallbackStatusText" Text="Translucent Glass (Active)" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock x:Name="FallbackStatusText" Text="Translucent Glass (Backdrop Acrylic Active)" FontSize="13" FontWeight="SemiBold"
                                        Foreground="{ThemeResource GlassStatusSuccessBrush}" />
                         </StackPanel>
                     </StackPanel>
@@ -46,131 +46,225 @@
                 </Grid>
             </Border>
 
-            <!-- Cards & Surfaces -->
+            <!-- 3. TYPOGRAPHY SCALE (Fraunces 28/40, Segoe UI 12/14/16/20, Cascadia Mono) -->
             <StackPanel Spacing="12">
-                <TextBlock Text="Surfaces &amp; Cards" FontSize="16" FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <Grid ColumnDefinitions="*,*">
-                    <!-- Base Glass Card -->
-                    <Border Grid.Column="0" Margin="0,0,8,0" Style="{StaticResource GlassCardStyle}">
-                        <StackPanel Spacing="12">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                <TextBlock Text="Base Surface" FontWeight="SemiBold" FontSize="14"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <Border Style="{StaticResource GlassPillStyle}" Margin="12,0,0,0">
-                                    <TextBlock Text="Level 1" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                </Border>
+                <TextBlock Text="Typography Scale" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource FlatRaisedCardStyle}">
+                    <StackPanel Spacing="14">
+                        <Grid ColumnDefinitions="160,*">
+                            <TextBlock Text="Hero Clock (40px)" Style="{StaticResource SettingDescriptionStyle}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="10:42 PM" Style="{StaticResource HeroClockTextStyle}" />
+                        </Grid>
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+                        <Grid ColumnDefinitions="160,*">
+                            <TextBlock Text="Page Title (28px)" Style="{StaticResource SettingDescriptionStyle}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="The projection booth" Style="{StaticResource PageTitleStyle}" />
+                        </Grid>
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+                        <Grid ColumnDefinitions="160,*">
+                            <TextBlock Text="Section Title (20px)" Style="{StaticResource SettingDescriptionStyle}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="What should your lock screen play?" Style="{StaticResource SectionTitleStyle}" />
+                        </Grid>
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+                        <Grid ColumnDefinitions="160,*">
+                            <TextBlock Text="Body UI (14px)" Style="{StaticResource SettingDescriptionStyle}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="A short clip or a GIF. We'll trim it and do the rest." Style="{StaticResource BodyTextStyle}" />
+                        </Grid>
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+                        <Grid ColumnDefinitions="160,*">
+                            <TextBlock Text="Caption / Meta (12px)" Style="{StaticResource SettingDescriptionStyle}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="Windows will ask for permission once to trace file activity." Style="{StaticResource SettingDescriptionStyle}" />
+                        </Grid>
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+                        <Grid ColumnDefinitions="160,*">
+                            <TextBlock Text="Monospace (12px)" Style="{StaticResource SettingDescriptionStyle}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="v3.0.49 · 24.00 FPS · 246 FRAMES · 18.42 MB" Style="{StaticResource GlassReadoutTextStyle}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 4. BUTTONS ON FLAT RAISED SURFACE (Rest, Hover, Pressed, Disabled) -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="Buttons on Flat Raised Surface (#1A1917)" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource FlatRaisedCardStyle}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Primary Ember (#E8452C with 1px top highlight, 6% shift, clean flat Raised disabled)"
+                                   Style="{StaticResource SettingDescriptionStyle}" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Primary Ember" Style="{StaticResource GlassPrimaryButtonStyle}" />
+                            <Button Content="Disabled Primary" IsEnabled="False" Style="{StaticResource GlassPrimaryButtonStyle}" />
+                        </StackPanel>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
+                        <TextBlock Text="Glass Button (Capsule pill with rim light, top sheen, sinks 1px on press)"
+                                   Style="{StaticResource SettingDescriptionStyle}" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Glass Action" Style="{StaticResource GlassButtonStyle}" />
+                            <Button Content="Disabled Glass" IsEnabled="False" Style="{StaticResource GlassButtonStyle}" />
+                        </StackPanel>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
+                        <TextBlock Text="Quiet Button (Text-only with subtle hover fill, no harsh border)"
+                                   Style="{StaticResource SettingDescriptionStyle}" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Quiet Action" Style="{StaticResource GlassSubtleButtonStyle}" />
+                            <Button Content="Disabled Quiet" IsEnabled="False" Style="{StaticResource GlassSubtleButtonStyle}" />
+                        </StackPanel>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
+                        <TextBlock Text="Destructive Button (Ember danger #E5484D)"
+                                   Style="{StaticResource SettingDescriptionStyle}" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Remove animated lockscreen" Style="{StaticResource GlassDestructiveButtonStyle}" />
+                            <Button Content="Disabled Destructive" IsEnabled="False" Style="{StaticResource GlassDestructiveButtonStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 5. FLOATING GLASS TRAY OVER STAGE (Radius 18 with Liquid Glass Material) -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="Liquid Glass Floating Tray (Radius 18, Rim Light, In-App Acrylic Backdrop)"
+                           Style="{StaticResource SectionTitleStyle}" />
+
+                <!-- Stage Simulation Container (Radius 22) -->
+                <Border Background="#0D0C0B" BorderBrush="{ThemeResource GlassHairlineBrush}" BorderThickness="1"
+                        CornerRadius="{ThemeResource GlassRadiusStage}" Height="220" Padding="20">
+                    <Grid>
+                        <!-- Simulated Stage Background with Warm Tone -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Stage Simulation (Preview Area)" HorizontalAlignment="Center"
+                                           Foreground="{ThemeResource GlassTextTertiaryBrush}" FontSize="13" />
+                                <TextBlock Text="Floating Liquid Glass Tray rests above stage content" HorizontalAlignment="Center"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" />
                             </StackPanel>
-                            <TextBlock Text="Primary translucent card with 1px diagonal specular rim gradient (#38FFFFFF -> #0AFFFFFF). Soft refractive layered depth."
-                                       TextWrapping="Wrap" FontSize="13" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <Button Content="Action Inside Glass" Style="{StaticResource GlassButtonStyle}" HorizontalAlignment="Left" />
+                        </Grid>
+
+                        <!-- Floating Glass Tray (Radius 18) -->
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                Style="{StaticResource GlassFloatingTrayStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Set lock screen" Style="{StaticResource GlassPrimaryButtonStyle}" />
+                                <Button Content="Edit clip range" Style="{StaticResource GlassButtonStyle}" />
+                                <Button Content="Cancel" Style="{StaticResource GlassSubtleButtonStyle}" />
+                                <Button Content="Disabled" IsEnabled="False" Style="{StaticResource GlassButtonStyle}" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <!-- 6. INTERACTIVE CONTROLS MATRIX -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="Interactive Controls Matrix" Style="{StaticResource SectionTitleStyle}" />
+                <Border Style="{StaticResource FlatRaisedCardStyle}">
+                    <StackPanel Spacing="16">
+                        <!-- Toggles & CheckBoxes Row -->
+                        <Grid ColumnDefinitions="*,*,*">
+                            <StackPanel Grid.Column="0" Spacing="8">
+                                <TextBlock Text="ToggleSwitch (Ember)" Style="{StaticResource SettingTitleStyle}" />
+                                <ToggleSwitch IsOn="True" OnContent="Active" OffContent="Inactive" Style="{StaticResource GlassToggleSwitchStyle}" />
+                                <ToggleSwitch IsOn="False" OnContent="Active" OffContent="Inactive" Style="{StaticResource GlassToggleSwitchStyle}" />
+                                <ToggleSwitch IsOn="True" IsEnabled="False" OnContent="Disabled" Style="{StaticResource GlassToggleSwitchStyle}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Spacing="8">
+                                <TextBlock Text="CheckBox (Radius 6)" Style="{StaticResource SettingTitleStyle}" />
+                                <CheckBox Content="Checked option" IsChecked="True" />
+                                <CheckBox Content="Unchecked option" IsChecked="False" />
+                                <CheckBox Content="Disabled checkbox" IsEnabled="False" IsChecked="True" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" Spacing="8">
+                                <TextBlock Text="RadioButton" Style="{StaticResource SettingTitleStyle}" />
+                                <RadioButton Content="Selected radio" IsChecked="True" GroupName="G1" />
+                                <RadioButton Content="Unselected radio" IsChecked="False" GroupName="G1" />
+                                <RadioButton Content="Disabled radio" IsEnabled="False" IsChecked="False" GroupName="G1" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
+                        <!-- Inputs & Dropdowns -->
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0" Spacing="6">
+                                <TextBlock Text="Text Input (Radius 10)" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBox PlaceholderText="Enter path or URL..." Text="cinematic-loop.mp4" Style="{StaticResource GlassTextBoxStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="6">
+                                <TextBlock Text="ComboBox Dropdown" Style="{StaticResource SettingTitleStyle}" />
+                                <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch" Style="{StaticResource GlassComboBoxStyle}">
+                                    <ComboBoxItem Content="High Quality (30 FPS, 1080p)" />
+                                    <ComboBoxItem Content="Standard (24 FPS, 720p)" />
+                                    <ComboBoxItem Content="Compact (15 FPS, 480p)" />
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
+                        <!-- Slider & Progress Indication -->
+                        <StackPanel Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Slider (Ember fill)" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Grid.Column="1" Text="85%" Style="{StaticResource GlassReadoutTextStyle}" />
+                            </Grid>
+                            <Slider Value="85" Minimum="0" Maximum="100" Style="{StaticResource GlassSliderStyle}" />
+
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                                <TextBlock Text="Progress Indication" Style="{StaticResource SettingTitleStyle}" />
+                                <TextBlock Grid.Column="1" Text="65%" Style="{StaticResource GlassReadoutTextStyle}" />
+                            </Grid>
+                            <ProgressBar Value="65" Maximum="100" Style="{StaticResource GlassProgressBarStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- 7. RADII & SURFACE HIERARCHY DEMONSTRATION -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="Surface &amp; Radii Hierarchy" Style="{StaticResource SectionTitleStyle}" />
+                <Grid ColumnDefinitions="*,*,*,*">
+                    <Border Grid.Column="0" Margin="0,0,6,0" Background="{ThemeResource GlassRaisedBrush}"
+                            BorderBrush="{ThemeResource GlassHairlineBrush}" BorderThickness="1"
+                            CornerRadius="{ThemeResource GlassRadiusStage}" Padding="14,10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Stage Frame" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="Radius 22" Style="{StaticResource GlassReadoutTextStyle}" />
                         </StackPanel>
                     </Border>
-
-                    <!-- Elevated Glass Card -->
-                    <Border Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource GlassCardElevatedStyle}">
-                        <StackPanel Spacing="12">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Elevated Surface" FontWeight="SemiBold" FontSize="14"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <Border Style="{StaticResource GlassPillStyle}" Margin="12,0,0,0">
-                                    <TextBlock Text="Level 2" FontSize="11" Foreground="{ThemeResource GlassAccentBrassBrush}" />
-                                </Border>
-                            </StackPanel>
-                            <TextBlock Text="High-emphasis surface for modals, priority panels, and floating playback controls with deeper opacity."
-                                       TextWrapping="Wrap" FontSize="13" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <Button Content="Primary Accent" Style="{StaticResource GlassPrimaryButtonStyle}" HorizontalAlignment="Left" />
+                    <Border Grid.Column="1" Margin="3,0,3,0" Background="{ThemeResource GlassRaisedBrush}"
+                            BorderBrush="{ThemeResource GlassHairlineBrush}" BorderThickness="1"
+                            CornerRadius="{ThemeResource GlassRadiusFloatingTray}" Padding="14,10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Floating Tray" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="Radius 18" Style="{StaticResource GlassReadoutTextStyle}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Margin="3,0,3,0" Background="{ThemeResource GlassRaisedBrush}"
+                            BorderBrush="{ThemeResource GlassHairlineBrush}" BorderThickness="1"
+                            CornerRadius="{ThemeResource GlassRadiusControl}" Padding="14,10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Controls / Cards" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="Radius 10" Style="{StaticResource GlassReadoutTextStyle}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="3" Margin="6,0,0,0" Background="{ThemeResource GlassRaisedBrush}"
+                            BorderBrush="{ThemeResource GlassHairlineBrush}" BorderThickness="1"
+                            CornerRadius="{ThemeResource GlassRadiusCapsule}" Padding="14,10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Nav Capsule / Pills" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            <TextBlock Text="Radius 999" Style="{StaticResource GlassReadoutTextStyle}" />
                         </StackPanel>
                     </Border>
                 </Grid>
             </StackPanel>
 
-            <!-- Buttons & Controls -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="Buttons &amp; Interactive Controls" FontSize="16" FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                    <!-- Buttons Row -->
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <Button Content="Primary Action" Style="{StaticResource GlassPrimaryButtonStyle}" />
-                        <Button Content="Glass Button" Style="{StaticResource GlassButtonStyle}" />
-                        <Button Content="Subtle Button" Style="{StaticResource GlassSubtleButtonStyle}" />
-                        <Button Content="Disabled Button" IsEnabled="False" Style="{StaticResource GlassButtonStyle}" />
-                    </StackPanel>
-
-                    <!-- Inputs & Dropdowns Row -->
-                    <Grid ColumnDefinitions="*,*,*">
-                        <StackPanel Grid.Column="0" Margin="0,0,8,0" Spacing="6">
-                            <TextBlock Text="Text Input" FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <TextBox PlaceholderText="Enter value..." Text="Lockscreen.gif" Style="{StaticResource GlassTextBoxStyle}" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="4,0,4,0" Spacing="6">
-                            <TextBlock Text="Combo Dropdown" FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <ComboBox SelectedIndex="1" HorizontalAlignment="Stretch" Style="{StaticResource GlassComboBoxStyle}">
-                                <ComboBoxItem Content="30 FPS (Smooth)" />
-                                <ComboBoxItem Content="24 FPS (Cinematic)" />
-                                <ComboBoxItem Content="15 FPS (Compact)" />
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Margin="8,0,0,0" Spacing="6">
-                            <TextBlock Text="Toggle Control" FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <ToggleSwitch IsOn="True" OnContent="Enabled" OffContent="Disabled" Style="{StaticResource GlassToggleSwitchStyle}" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Slider & Progress -->
-                    <StackPanel Spacing="10">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Text="Quality &amp; Encoding Slider" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Grid.Column="1" Text="85% (High)" Style="{StaticResource GlassReadoutTextStyle}" />
-                        </Grid>
-                        <Slider Value="85" Minimum="10" Maximum="100" Style="{StaticResource GlassSliderStyle}" />
-
-                        <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
-                            <TextBlock Text="Progress Indication" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Grid.Column="1" Text="65%" Style="{StaticResource GlassReadoutTextStyle}" />
-                        </Grid>
-                        <ProgressBar Value="65" Maximum="100" Style="{StaticResource GlassProgressBarStyle}" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- Telemetry & Monospace Readouts -->
-            <Border Style="{StaticResource GlassCardStyle}">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="Monospace Telemetry Readouts (No Hallucinated Data)" FontSize="16" FontWeight="SemiBold"
-                               Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                    <Grid ColumnDefinitions="*,*,*,*">
-                        <Border Grid.Column="0" Style="{StaticResource GlassPillStyle}" Margin="0,0,6,0">
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="DURATION" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="00:10.25" Style="{StaticResource GlassReadoutTextStyle}" FontSize="15" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource GlassPillStyle}" Margin="3,0,3,0">
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="FRAME COUNT" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="246 FRAMES" Style="{StaticResource GlassReadoutTextStyle}" FontSize="15" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="2" Style="{StaticResource GlassPillStyle}" Margin="3,0,3,0">
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="FPS RATE" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="24.00 FPS" Style="{StaticResource GlassReadoutTextStyle}" FontSize="15" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="3" Style="{StaticResource GlassPillStyle}" Margin="6,0,0,0">
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="ESTIMATED SIZE" FontSize="10" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="18.42 MB" Style="{StaticResource GlassReadoutTextStyle}" FontSize="15" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
         </StackPanel>
     </ScrollViewer>
 </Page>
-
