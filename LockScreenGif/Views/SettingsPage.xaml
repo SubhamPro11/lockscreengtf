@@ -227,7 +227,7 @@
                                                    Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                                     </Border>
                                 </StackPanel>
-                                <TextBlock Text="Maintained and enhanced by Subham Kumar (SubhamPro11) · Based on LockscreenGif by Leapward-Koex"
+                                <TextBlock Text="Developed and maintained by Subham Kumar (SubhamPro11)"
                                            FontSize="12"
                                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                             </StackPanel>
@@ -263,10 +263,6 @@
                                     Style="{StaticResource GlassButtonStyle}"
                                     Content="Open-source licenses"
                                     AutomationProperties.Name="View open-source software licenses" />
-                            <TextBlock Text="Based on LockscreenGif by Leapward-Koex (MIT)"
-                                       FontSize="12"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                       VerticalAlignment="Center" />
                         </StackPanel>
                     </StackPanel>
                 </Border>

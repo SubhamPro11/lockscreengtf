@@ -131,14 +131,6 @@ internal static class LicensesDialog
         }
 
         AddLicenseCard(
-            "LockscreenGif (Upstream Project)",
-            "Copyright (c) 2026 Leapward-Koex",
-            "MIT License",
-            "Based on LockscreenGif by Leapward-Koex (MIT). Original core architecture, privileged elevation concept, and lock-screen cache layout.",
-            "https://github.com/Leapward-Koex/LockscreenGif"
-        );
-
-        AddLicenseCard(
             "FFmpeg",
             "Copyright (c) 2000-2025 the FFmpeg developers (gyan.dev build 7.1.1)",
             "GPLv3 / LGPLv3",

@@ -4,39 +4,7 @@ This project incorporates and redistributes third-party open-source software und
 
 ---
 
-## 1. Upstream Project: LockscreenGif
-
-- **Repository**: [https://github.com/Leapward-Koex/LockscreenGif](https://github.com/Leapward-Koex/LockscreenGif)
-- **License**: MIT License
-- **Copyright**: `Copyright (c) 2026 Leapward-Koex`
-
-```
-MIT License
-
-Copyright (c) 2026 Leapward-Koex
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## 2. FFmpeg
+## 1. FFmpeg
 
 - **Project**: [https://ffmpeg.org](https://ffmpeg.org)
 - **Binary Distribution**: Built by [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) (Version 7.1.1 essentials build)
@@ -51,7 +19,7 @@ The source code for FFmpeg can be obtained from [https://ffmpeg.org](https://ffm
 
 ---
 
-## 3. Gifski
+## 2. Gifski
 
 - **Project**: [https://github.com/ImageOptim/gifski](https://github.com/ImageOptim/gifski)
 - **Author**: Kornel Lesiński / ImageOptim
@@ -64,7 +32,7 @@ The source code for Gifski is available at [https://github.com/ImageOptim/gifski
 
 ---
 
-## 4. Microsoft Windows App SDK & WinUI 3
+## 3. Microsoft Windows App SDK & WinUI 3
 
 - **Project**: [https://github.com/microsoft/WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
 - **License**: MIT License
@@ -74,7 +42,7 @@ The Windows App SDK empowers desktop Windows applications with modern Windows UI
 
 ---
 
-## 5. CommunityToolkit.Mvvm
+## 4. CommunityToolkit.Mvvm
 
 - **Project**: [https://github.com/CommunityToolkit/dotnet](https://github.com/CommunityToolkit/dotnet)
 - **License**: MIT License
@@ -84,7 +52,7 @@ The MVVM Toolkit is a modern, fast, and modular MVVM library for .NET applicatio
 
 ---
 
-## 6. WinUIEx
+## 5. WinUIEx
 
 - **Project**: [https://github.com/dotMorten/WinUIEx](https://github.com/dotMorten/WinUIEx)
 - **Author**: Morten Nielsen
@@ -95,7 +63,7 @@ A collection of window manager helpers and system backdrop extensions for WinUI 
 
 ---
 
-## 7. Additional Bundled Packages
+## 6. Additional Bundled Packages
 
 - **FFMpegCore**: MIT License — [https://github.com/rosenbjerg/FFMpegCore](https://github.com/rosenbjerg/FFMpegCore)
 - **Gifski.Net**: MIT License — [https://github.com/tdmr9/Gifski.Net](https://github.com/tdmr9/Gifski.Net)

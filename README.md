@@ -149,11 +149,9 @@ dotnet publish -c Release -p:PublishProfile=FolderProfile.pubxml -p:Platform=x64
 
 ---
 
-## 📜 Lineage & Attribution
+## 👨‍💻 Author & Maintainer
 
-LockscreenGif is actively developed and maintained by **Subham Kumar ([SubhamPro11](https://github.com/SubhamPro11))**.
-
-The project is based on the original [LockscreenGif by Leapward-Koex](https://github.com/Leapward-Koex/LockscreenGif) (MIT License). The core architecture for elevated lock-screen cache manipulation is preserved and credited.
+LockscreenGif is created and actively maintained by **Subham Kumar ([SubhamPro11](https://github.com/SubhamPro11))**.
 
 Complete third-party notices, license texts, and dependency disclosures are documented in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and inside the app via **Settings > About > Open-source licenses**.
 
