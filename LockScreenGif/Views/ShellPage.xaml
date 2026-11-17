@@ -2,18 +2,32 @@
     x:Class="LockscreenGif.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LockscreenGif.Views"
     KeyDown="ShellPage_KeyDown">
 
-    <Grid>
-        <!-- Windows 11 Unified Compact Top Navigation & Title Bar (Height ~48px) -->
+    <Grid Background="Transparent">
+        <!-- 1. Ambient Background Layer (drifting dominant color fields behind the page) -->
+        <local:AmbientBackgroundView x:Name="AmbientBackground" />
+
+        <!-- 2. Windows 11 Unified Top Navigation & Custom Title Bar (Height ~46px, single row) -->
         <NavigationView x:Name="Navigation"
                         PaneDisplayMode="Top"
                         IsBackButtonVisible="Collapsed"
                         IsSettingsVisible="False"
                         IsPaneToggleButtonVisible="False"
+                        IsTitleBarAutoPaddingEnabled="False"
+                        AlwaysShowHeader="False"
                         SelectionChanged="Navigation_SelectionChanged">
+
+            <NavigationView.Resources>
+                <x:Double x:Key="NavigationViewTopPaneHeight">46</x:Double>
+                <Thickness x:Key="NavigationViewTopPaneMargin">0,0,0,0</Thickness>
+                <Thickness x:Key="NavigationViewHeaderMargin">0,0,0,0</Thickness>
+                <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
+            </NavigationView.Resources>
+
             <NavigationView.PaneHeader>
-                <StackPanel Orientation="Horizontal" Spacing="8" Margin="12,0,12,0" VerticalAlignment="Center" Height="48">
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="16,0,14,0" VerticalAlignment="Center" Height="46">
                     <Image Source="ms-appx:///Assets/WindowIcon.png" Width="18" Height="18" VerticalAlignment="Center" />
                     <TextBlock Text="LockscreenGif"
                                FontWeight="SemiBold"
@@ -25,12 +39,12 @@
 
             <NavigationView.PaneCustomContent>
                 <!-- Draggable Client Space between Tabs and Caption Buttons -->
-                <Grid x:Name="AppTitleBar" Background="Transparent" MinWidth="48" HorizontalAlignment="Stretch" Height="48" />
+                <Grid x:Name="AppTitleBar" Background="Transparent" MinWidth="48" HorizontalAlignment="Stretch" Height="46" />
             </NavigationView.PaneCustomContent>
 
             <NavigationView.PaneFooter>
                 <!-- Reserved space for Windows system caption buttons (minimize, maximize, close) -->
-                <Grid x:Name="CaptionButtonSpacer" Width="140" Height="48" Background="Transparent" />
+                <Grid x:Name="CaptionButtonSpacer" Width="140" Height="46" Background="Transparent" />
             </NavigationView.PaneFooter>
 
             <NavigationView.MenuItems>
@@ -53,7 +67,7 @@
             </NavigationView.MenuItems>
 
             <!-- Content Area: InfoBars and Content Frame -->
-            <Grid Margin="0,4,0,0">
+            <Grid Margin="0,0,0,0">
                 <Grid.RowDefinitions>
                     <!-- Analytics Notification -->
                     <RowDefinition Height="Auto" />
@@ -66,7 +80,7 @@
                 <!-- Analytics Notification InfoBar -->
                 <InfoBar Grid.Row="0"
                          x:Name="AnalyticsNotice"
-                         Margin="16,4,16,8"
+                         Margin="16,8,16,8"
                          IsOpen="False"
                          Severity="Informational"
                          Title="Usage analytics are enabled"

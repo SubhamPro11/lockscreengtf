@@ -10,6 +10,7 @@
         <ResourceDictionary Source="/Theme/Shadows.xaml" />
         <ResourceDictionary Source="/Theme/GlassMaterial.xaml" />
         <ResourceDictionary Source="/Theme/Controls.xaml" />
+        <ResourceDictionary Source="/Theme/ShellTheme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

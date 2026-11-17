@@ -333,6 +333,7 @@ public sealed partial class MainPage
             stage = AnalyticsMediaLoadStage.Completing;
             ReleaseVideoDraft();
             _sourceFile = _preparedGif = file;
+            AmbientColorExtractor.UpdateFromSelection(file.Path);
             _editSignature = null;
             ClearGeneratedGif();
             _lockscreenService.SetCurrentImage(file, LockscreenSourceKind.UserGif);
@@ -525,6 +526,7 @@ public sealed partial class MainPage
             ClearGeneratedGif();
             _videoFile = file;
             _sourceFile = file;
+            AmbientColorExtractor.UpdateFromSelection(file.Path);
             _preparedGif = null;
             currentImage.Source = null;
             _editSignature = null;

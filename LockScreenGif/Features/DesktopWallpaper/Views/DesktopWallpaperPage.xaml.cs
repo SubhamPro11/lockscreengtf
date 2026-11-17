@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.ViewModels;
+using LockscreenGif.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -40,6 +41,10 @@ public sealed partial class DesktopWallpaperPage : Page
         if (e.PropertyName == nameof(DesktopWallpaperViewModel.IsMediaLoaded))
         {
             UpdatePrimaryButtonState();
+            if (ViewModel.IsMediaLoaded && !string.IsNullOrWhiteSpace(ViewModel.SourceInput))
+            {
+                AmbientColorExtractor.UpdateFromSelection(ViewModel.SourceInput);
+            }
         }
     }
 

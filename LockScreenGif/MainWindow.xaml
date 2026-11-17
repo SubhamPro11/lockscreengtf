@@ -6,10 +6,10 @@
     xmlns:local="using:LockscreenGif"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:windowex="using:WinUIEx"
-    Width="700"
-    Height="950"
-    MinWidth="550"
-    MinHeight="500"
+    Width="960"
+    Height="720"
+    MinWidth="720"
+    MinHeight="600"
     PersistenceId="MainWindow"
     mc:Ignorable="d">
     <Window.SystemBackdrop>
