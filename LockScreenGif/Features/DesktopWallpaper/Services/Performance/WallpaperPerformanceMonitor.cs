@@ -130,8 +130,14 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
 
         string? triggerReason = null;
 
+        // Rule 0: Remote Desktop (RDP) session
+        if (DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_REMOTESESSION) != 0)
+        {
+            triggerReason = "Remote desktop session active";
+        }
+
         // Rule 1: PC Locked or Display Off
-        if (Rules.PauseWhenLockedOrDisplayOff && IsWorkstationLocked())
+        if (triggerReason == null && Rules.PauseWhenLockedOrDisplayOff && IsWorkstationLocked())
         {
             triggerReason = "Screen is locked";
         }

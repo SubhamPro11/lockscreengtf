@@ -37,42 +37,26 @@ internal static class DesktopAttachHelper
             return null;
         }
 
-        // 2. Send 0x052C to Progman to prompt the shell to initialize/spawn the background layer.
-        // In Windows, both 0x0000000D and 0 are used to trigger WorkerW creation.
+        // 2. Prompt Progman to spawn the WorkerW background layer (0x052C)
         DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, new nint(0x0000000D), 0, 0, 1000, out _);
-        DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, 0, 0, 0, 1000, out _);
 
-        // 3. Scan for a WorkerW window that hosts SHELLDLL_DefView.
-        // If found, the sibling WorkerW behind it is our target (Classic Win10/11 path).
-        nint workerWithDefView = 0;
         nint workerTarget = 0;
+        nint defViewContainer = 0;
 
-        DesktopNativeMethods.EnumWindows(
-            (hwnd, _) =>
-            {
-                var sb = new StringBuilder(256);
-                DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
-                if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
-                {
-                    var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
-                    if (defView != 0)
-                    {
-                        workerWithDefView = hwnd;
-                        return false;
-                    }
-                }
-                return true;
-            },
-            0
-        );
-
-        if (workerWithDefView != 0)
+        // Try up to 5 attempts (Explorer can take 50-150ms to spawn and reorder the WorkerW window)
+        for (var attempt = 0; attempt < 5; attempt++)
         {
-            // Find the WorkerW directly behind the one hosting the icons
-            workerTarget = DesktopNativeMethods.FindWindowEx(0, workerWithDefView, "WorkerW", null);
+            defViewContainer = 0;
 
-            if (workerTarget == 0)
+            // First check if SHELLDLL_DefView is inside Progman directly
+            var defViewInProgman = DesktopNativeMethods.FindWindowEx(progman, 0, "SHELLDLL_DefView", null);
+            if (defViewInProgman != 0)
             {
+                defViewContainer = progman;
+            }
+            else
+            {
+                // Otherwise find the WorkerW hosting SHELLDLL_DefView
                 DesktopNativeMethods.EnumWindows(
                     (hwnd, _) =>
                     {
@@ -81,10 +65,10 @@ internal static class DesktopAttachHelper
                         if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
                         {
                             var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
-                            if (defView == 0 && hwnd != workerWithDefView)
+                            if (defView != 0)
                             {
-                                workerTarget = hwnd;
-                                return false; // Found our target!
+                                defViewContainer = hwnd;
+                                return false;
                             }
                         }
                         return true;
@@ -93,37 +77,53 @@ internal static class DesktopAttachHelper
                 );
             }
 
-            if (workerTarget != 0)
+            if (defViewContainer != 0)
             {
-                return new DesktopAttachTarget(
-                    workerTarget,
-                    IsDirectProgmanParent: false,
-                    "WorkerW background layer (Behind desktop icons)"
-                );
+                // WorkerW placed immediately after defViewContainer in Z-order
+                workerTarget = DesktopNativeMethods.FindWindowEx(0, defViewContainer, "WorkerW", null);
+                if (workerTarget != 0)
+                {
+                    break;
+                }
             }
+
+            // Retry trigger if still not spawned
+            DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, 0, 0, 0, 500, out _);
+            global::System.Threading.Thread.Sleep(60);
         }
 
-        // 4. Windows 11 path:
-        // In Windows 11, SHELLDLL_DefView may be directly inside Progman.
-        var defViewInProgman = DesktopNativeMethods.FindWindowEx(progman, 0, "SHELLDLL_DefView", null);
-        if (defViewInProgman != 0)
+        if (workerTarget != 0)
         {
-            // Check if a WorkerW was spawned directly behind Progman
-            var workerBehindProgman = DesktopNativeMethods.FindWindowEx(0, progman, "WorkerW", null);
-            if (workerBehindProgman != 0)
-            {
-                return new DesktopAttachTarget(
-                    workerBehindProgman,
-                    IsDirectProgmanParent: false,
-                    "WorkerW background layer behind Progman"
-                );
-            }
-
-            return new DesktopAttachTarget(progman, IsDirectProgmanParent: true, "Progman container (Windows 11 direct desktop parent)");
+            return new DesktopAttachTarget(workerTarget, IsDirectProgmanParent: false, "WorkerW background layer (Behind desktop icons)");
         }
 
-        // 5. Fallback: If Progman exists, use it directly
-        return new DesktopAttachTarget(progman, IsDirectProgmanParent: true, "Progman fallback parent");
+        // Secondary fallback: Enumerate all WorkerW windows that do not host SHELLDLL_DefView
+        DesktopNativeMethods.EnumWindows(
+            (hwnd, _) =>
+            {
+                var sb = new StringBuilder(256);
+                DesktopNativeMethods.GetClassName(hwnd, sb, sb.Capacity);
+                if (string.Equals(sb.ToString(), "WorkerW", StringComparison.Ordinal))
+                {
+                    var defView = DesktopNativeMethods.FindWindowEx(hwnd, 0, "SHELLDLL_DefView", null);
+                    if (defView == 0 && hwnd != defViewContainer)
+                    {
+                        workerTarget = hwnd;
+                        return false;
+                    }
+                }
+                return true;
+            },
+            0
+        );
+
+        if (workerTarget != 0)
+        {
+            return new DesktopAttachTarget(workerTarget, IsDirectProgmanParent: false, "WorkerW background layer (Secondary enumeration)");
+        }
+
+        Logger.Warn("Could not find suitable WorkerW behind desktop icons.");
+        return null;
     }
 
     /// <summary>

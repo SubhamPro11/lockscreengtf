@@ -18,6 +18,7 @@ internal static class DesktopNativeMethods
     public const uint SM_YVIRTUALSCREEN = 77;
     public const uint SM_CXVIRTUALSCREEN = 78;
     public const uint SM_CYVIRTUALSCREEN = 79;
+    public const uint SM_REMOTESESSION = 0x1000;
 
     public const uint WS_CHILD = 0x40000000;
     public const uint WS_VISIBLE = 0x10000000;
@@ -78,6 +79,18 @@ internal static class DesktopNativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct MSG
+    {
+        public nint hwnd;
+        public uint message;
+        public nint wParam;
+        public nint lParam;
+        public uint time;
+        public POINT pt;
+        public uint lPrivate;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct POINT
     {
         public int X;
@@ -127,6 +140,15 @@ internal static class DesktopNativeMethods
     public delegate bool MonitorEnumProc(nint hMonitor, nint hdcMonitor, ref RECT lprcMonitor, nint dwData);
     public delegate nint WndProc(nint hWnd, uint msg, nint wParam, nint lParam);
     public delegate nint HookProc(int nCode, nint wParam, nint lParam);
+
+    [DllImport("user32.dll")]
+    public static extern sbyte GetMessage(out MSG lpMsg, nint hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+    [DllImport("user32.dll")]
+    public static extern bool TranslateMessage(ref MSG lpMsg);
+
+    [DllImport("user32.dll")]
+    public static extern nint DispatchMessage(ref MSG lpMsg);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern nint FindWindow(string? lpClassName, string? lpWindowName);

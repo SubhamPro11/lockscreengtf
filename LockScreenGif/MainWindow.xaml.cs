@@ -29,19 +29,6 @@ public sealed partial class MainWindow : WindowEx
         Closed += (_, _) =>
         {
             GlassFallbackManager.Shutdown();
-            try
-            {
-                App.GetService<LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperTrayService>().Dispose();
-            }
-            catch { }
-            try
-            {
-                App.GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>()
-                    .StopAsync()
-                    .GetAwaiter()
-                    .GetResult();
-            }
-            catch { }
         };
         GlassFallbackManager.Initialize(this);
     }
