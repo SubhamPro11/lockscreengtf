@@ -300,20 +300,44 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             _playerStdin = proc.StandardInput;
             _playerStdout = proc.StandardOutput;
 
-            // Wait up to 6 seconds for READY notification
-            var readTask = _playerStdout.ReadLineAsync();
-            var completedTask = await Task.WhenAny(readTask, Task.Delay(6000));
-
-            if (completedTask == readTask)
+            // Wait up to 15 seconds for READY notification
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            string? readyLine = null;
+            while (!cts.IsCancellationRequested)
             {
-                var line = await readTask;
-                if (line != null && line.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
+                var readTask = _playerStdout.ReadLineAsync(cts.Token).AsTask();
+                var completedTask = await Task.WhenAny(readTask, Task.Delay(1000, cts.Token));
+                if (completedTask == readTask)
                 {
-                    _currentErrorMessage = line[6..].Trim();
-                    Logger.Error($"Player reported error: {_currentErrorMessage}");
-                    Status = WallpaperEngineStatus.Error;
-                    return false;
+                    var line = await readTask;
+                    if (line == null)
+                    {
+                        break;
+                    }
+                    line = line.Trim();
+                    if (line.Equals("READY", StringComparison.OrdinalIgnoreCase))
+                    {
+                        readyLine = line;
+                        break;
+                    }
+                    if (line.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _currentErrorMessage = line.Length > 5 ? line[5..].Trim() : line;
+                        Logger.Error($"Player reported error: {_currentErrorMessage}");
+                        Status = WallpaperEngineStatus.Error;
+                        return false;
+                    }
                 }
+            }
+
+            if (readyLine == null)
+            {
+                _currentErrorMessage = proc.HasExited
+                    ? $"Wallpaper player process exited prematurely with code {proc.ExitCode}."
+                    : "Timed out waiting for wallpaper player process to initialize.";
+                Logger.Error(_currentErrorMessage);
+                Status = WallpaperEngineStatus.Error;
+                return false;
             }
 
             Status = WallpaperEngineStatus.Running;
@@ -344,11 +368,22 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 var content = File.ReadAllText(_pidFilePath).Trim();
                 if (int.TryParse(content, out var pid))
                 {
-                    var proc = Process.GetProcessById(pid);
-                    if (!proc.HasExited)
+                    try
                     {
-                        _playerProcess = proc;
-                        return true;
+                        var proc = Process.GetProcessById(pid);
+                        if (!proc.HasExited && proc.ProcessName.Contains("LockscreenGif", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _playerProcess = proc;
+                            return true;
+                        }
+                    }
+                    catch (ArgumentException)
+                    {
+                        try
+                        {
+                            File.Delete(_pidFilePath);
+                        }
+                        catch { }
                     }
                 }
             }

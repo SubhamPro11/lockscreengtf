@@ -34,11 +34,30 @@ internal static class DesktopAttachHelper
 
         if (progman == 0)
         {
+            try
+            {
+                var hDesk = DesktopNativeMethods.OpenDesktop("Default", 0, false, 0x01FF);
+                if (hDesk != 0)
+                {
+                    DesktopNativeMethods.SetThreadDesktop(hDesk);
+                    progman = DesktopNativeMethods.FindWindow("Progman", null);
+                    if (progman == 0)
+                    {
+                        progman = DesktopNativeMethods.GetShellWindow();
+                    }
+                }
+            }
+            catch { }
+        }
+
+        if (progman == 0)
+        {
             return null;
         }
 
         // 2. Prompt Progman to spawn the WorkerW background layer (0x052C)
         DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, new nint(0x0000000D), 0, 0, 1000, out _);
+        DesktopNativeMethods.SendMessageTimeout(progman, WM_SPAWN_WORKER, 0, 0, 0, 1000, out _);
 
         nint workerTarget = 0;
         nint defViewContainer = 0;

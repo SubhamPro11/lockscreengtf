@@ -1,12 +1,30 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.Models;
 using LockscreenGif.Features.DesktopWallpaper.Services.Media;
+using LockscreenGif.Features.DesktopWallpaper.Services.Native;
 using Microsoft.Web.WebView2.Core;
 
 namespace LockscreenGif.Features.DesktopWallpaper.Services.Renderers;
+
+[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+internal delegate int CreateDesktopWindowTargetDelegate(
+    nint thisPtr,
+    nint hwndTarget,
+    [MarshalAs(UnmanagedType.Bool)] bool isTopmost,
+    out nint result
+);
+
+[StructLayout(LayoutKind.Sequential)]
+internal struct WindowsDispatcherQueueOptions
+{
+    public int dwSize;
+    public int threadType;
+    public int apartmentType;
+}
 
 /// <summary>
 /// Renderer using Microsoft Edge WebView2 (Chromium) for high-performance rendering of
@@ -21,7 +39,11 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
     );
 
     private CoreWebView2Environment? _environment;
+    private CoreWebView2CompositionController? _compController;
     private CoreWebView2Controller? _controller;
+    private Windows.UI.Composition.Compositor? _compositor;
+    private Windows.UI.Composition.Desktop.DesktopWindowTarget? _desktopWindowTarget;
+    private Windows.UI.Composition.ContainerVisual? _rootVisual;
     private nint _hostHwnd;
     private bool _isPlaying;
     private WallpaperItem? _currentItem;
@@ -29,6 +51,33 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
     public bool IsPlaying => _isPlaying;
     public nint ContentHwnd => _hostHwnd;
+
+    [DllImport("CoreMessaging.dll", SetLastError = true)]
+    private static extern int CreateDispatcherQueueController(WindowsDispatcherQueueOptions options, out nint dispatcherQueueController);
+
+    private static void EnsureWindowsDispatcherQueue()
+    {
+        try
+        {
+            if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+            {
+                return;
+            }
+
+            var options = new WindowsDispatcherQueueOptions
+            {
+                dwSize = Marshal.SizeOf(typeof(WindowsDispatcherQueueOptions)),
+                threadType = 2, // DQTYPE_THREAD_CURRENT
+                apartmentType = 2, // DQTAT_COM_STA
+            };
+
+            CreateDispatcherQueueController(options, out _);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DEBUG-BRIDGE] Failed to create DispatcherQueueController: {ex.Message}");
+        }
+    }
 
     public async Task InitializeAsync(nint hostHwnd, int left, int top, int width, int height)
     {
@@ -45,7 +94,49 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
         _environment = await CoreWebView2Environment.CreateWithOptionsAsync(null, UserDataFolder, options);
 
         var winRef = CoreWebView2ControllerWindowReference.CreateFromWindowHandle((ulong)hostHwnd);
-        _controller = await _environment.CreateCoreWebView2ControllerAsync(winRef);
+        var compCtrl = await _environment.CreateCoreWebView2CompositionControllerAsync(winRef);
+        _compController = compCtrl;
+        _controller = compCtrl;
+
+        // Bridge composition visual to Win32 host HWND
+        try
+        {
+            EnsureWindowsDispatcherQueue();
+            _compositor = new Windows.UI.Composition.Compositor();
+            nint pUnk = ((WinRT.IWinRTObject)_compositor).NativeObject.ThisPtr;
+            Guid iid = new Guid("29E691FA-4567-4DCA-B319-D0F207EB6807");
+            int hr = Marshal.QueryInterface(pUnk, in iid, out nint pInterop);
+            if (hr == 0 && pInterop != 0)
+            {
+                try
+                {
+                    nint vtable = Marshal.ReadIntPtr(pInterop);
+                    nint methodPtr = Marshal.ReadIntPtr(vtable, 3 * nint.Size);
+                    var createTarget = Marshal.GetDelegateForFunctionPointer<CreateDesktopWindowTargetDelegate>(methodPtr);
+                    hr = createTarget(pInterop, hostHwnd, true, out nint rawTarget);
+                    if (hr == 0 && rawTarget != 0)
+                    {
+                        _desktopWindowTarget = Windows.UI.Composition.Desktop.DesktopWindowTarget.FromAbi(rawTarget);
+                        Marshal.Release(rawTarget);
+
+                        _rootVisual = _compositor.CreateContainerVisual();
+                        _rootVisual.RelativeSizeAdjustment = new global::System.Numerics.Vector2(1.0f, 1.0f);
+                        _desktopWindowTarget.Root = _rootVisual;
+
+                        compCtrl.RootVisualTarget = _rootVisual;
+                    }
+                }
+                finally
+                {
+                    Marshal.Release(pInterop);
+                }
+            }
+        }
+        catch (Exception exBridge)
+        {
+            global::System.Diagnostics.Debug.WriteLine($"Failed to bridge composition target: {exBridge.Message}");
+        }
+
         _controller.DefaultBackgroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
         _controller.Bounds = new Windows.Foundation.Rect(left, top, width, height);
         _controller.IsVisible = true;
@@ -339,11 +430,26 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
     public Task CloseAsync()
     {
         _isPlaying = false;
+        if (_compController != null)
+        {
+            try
+            {
+                _compController.RootVisualTarget = null;
+            }
+            catch { }
+            _compController = null;
+        }
         if (_controller != null)
         {
             _controller.Close();
             _controller = null;
         }
+        _rootVisual?.Dispose();
+        _rootVisual = null;
+        _desktopWindowTarget?.Dispose();
+        _desktopWindowTarget = null;
+        _compositor?.Dispose();
+        _compositor = null;
         return Task.CompletedTask;
     }
 

@@ -67,9 +67,9 @@ internal sealed class WallpaperHostWindow : IDisposable
     }
 
     /// <summary>
-    /// Creates the window and attaches it behind the desktop icons.
+    /// Creates the host window as a top-level popup suitable for WebView2 initialization.
     /// </summary>
-    public bool CreateAndAttach(DesktopAttachTarget target, int left, int top, int width, int height)
+    public bool Create(int left, int top, int width, int height)
     {
         if (_hwnd != 0)
         {
@@ -83,7 +83,7 @@ internal sealed class WallpaperHostWindow : IDisposable
                 DesktopNativeMethods.WS_EX_TOOLWINDOW | DesktopNativeMethods.WS_EX_NOACTIVATE,
                 WindowClassName,
                 "LockscreenGif Wallpaper Host",
-                DesktopNativeMethods.WS_CHILD
+                DesktopNativeMethods.WS_POPUP
                     | DesktopNativeMethods.WS_CLIPCHILDREN
                     | DesktopNativeMethods.WS_CLIPSIBLINGS
                     | DesktopNativeMethods.WS_VISIBLE,
@@ -91,7 +91,7 @@ internal sealed class WallpaperHostWindow : IDisposable
                 top,
                 width,
                 height,
-                target.ParentHwnd,
+                0,
                 0,
                 hInstance,
                 0
@@ -104,13 +104,36 @@ internal sealed class WallpaperHostWindow : IDisposable
                 return false;
             }
 
-            // Reparent to the desktop host
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to create wallpaper host window", ex);
+            Destroy();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Attaches the initialized host window behind desktop icons.
+    /// </summary>
+    public bool AttachToDesktop(DesktopAttachTarget target, int left, int top, int width, int height)
+    {
+        if (_hwnd == 0 || target == null || target.ParentHwnd == 0)
+        {
+            return false;
+        }
+
+        try
+        {
             var previousParent = DesktopNativeMethods.SetParent(_hwnd, target.ParentHwnd);
             Logger.Info($"SetParent to 0x{target.ParentHwnd:X8} (previous parent: 0x{previousParent:X8}) - {target.Description}");
 
-            // Ensure correct Z-order and size
-            // For Windows 11 24H2 where Progman hosts SHELLDLL_DefView directly,
-            // placing the window at HWND_BOTTOM keeps it behind the desktop icons.
+            var style = (long)DesktopNativeMethods.GetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_STYLE);
+            style &= ~DesktopNativeMethods.WS_POPUP;
+            style |= DesktopNativeMethods.WS_CHILD;
+            DesktopNativeMethods.SetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_STYLE, new nint(style));
+
             DesktopNativeMethods.SetWindowPos(
                 _hwnd,
                 DesktopNativeMethods.HWND_BOTTOM,
@@ -122,15 +145,25 @@ internal sealed class WallpaperHostWindow : IDisposable
             );
 
             DesktopNativeMethods.ShowWindow(_hwnd, DesktopNativeMethods.SW_SHOWNOACTIVATE);
-
             return true;
         }
         catch (Exception ex)
         {
-            Logger.Error("Failed to create and attach wallpaper host window", ex);
-            Destroy();
+            Logger.Error("Failed to dock wallpaper host window to desktop", ex);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Creates the window and attaches it behind the desktop icons.
+    /// </summary>
+    public bool CreateAndAttach(DesktopAttachTarget target, int left, int top, int width, int height)
+    {
+        if (!Create(left, top, width, height))
+        {
+            return false;
+        }
+        return AttachToDesktop(target, left, top, width, height);
     }
 
     /// <summary>

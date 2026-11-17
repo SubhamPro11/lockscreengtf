@@ -12,13 +12,32 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        global::WinRT.ComWrappersSupport.InitializeComWrappers();
+
         if (args.Length > 0 && string.Equals(args[0], "--wallpaper-player", StringComparison.OrdinalIgnoreCase))
         {
-            WallpaperPlayerProcess.Run(args.Skip(1).ToArray());
+            var playerArgs = args.Skip(1).ToArray();
+            var playerThread = new global::System.Threading.Thread(() =>
+            {
+                try
+                {
+                    var hDesk = Features.DesktopWallpaper.Services.Native.DesktopNativeMethods.OpenDesktop("Default", 0, false, 0x01FF);
+                    if (hDesk != 0)
+                    {
+                        Features.DesktopWallpaper.Services.Native.DesktopNativeMethods.SetThreadDesktop(hDesk);
+                    }
+                }
+                catch { }
+
+                var dispatcherController = global::Microsoft.UI.Dispatching.DispatcherQueueController.CreateOnCurrentThread();
+                WallpaperPlayerProcess.Run(playerArgs);
+            });
+            playerThread.SetApartmentState(global::System.Threading.ApartmentState.STA);
+            playerThread.Start();
+            playerThread.Join();
             return;
         }
 
-        global::WinRT.ComWrappersSupport.InitializeComWrappers();
         global::Microsoft.UI.Xaml.Application.Start(
             (p) =>
             {

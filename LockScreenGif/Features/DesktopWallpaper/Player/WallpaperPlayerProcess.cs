@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -20,6 +22,8 @@ namespace LockscreenGif.Features.DesktopWallpaper.Player;
 /// Standalone, isolated wallpaper player process.
 /// Owns the video window, hardware-accelerated decoding/rendering, desktop WorkerW attachment,
 /// and responds to IPC commands over redirected stdin/stdout or named pipes.
+/// Runs on a dedicated Single-Threaded Apartment (STA) thread with a native Win32 message loop
+/// to ensure WebView2 (Chromium) COM compatibility.
 /// </summary>
 public static class WallpaperPlayerProcess
 {
@@ -44,6 +48,10 @@ public static class WallpaperPlayerProcess
     private static uint _msgThreadId;
     private static nint _msgHwnd;
     private static Timer? _perfRuleTimer;
+    private static StaSynchronizationContext? _syncContext;
+
+    // Retain static delegate reference to prevent garbage collection crash in Win32 wndproc
+    private static readonly DesktopNativeMethods.WndProc _wndProcDelegate = MessageWindowProc;
 
     public const string NamedPipeName = "LockscreenGif_WallpaperPlayer_Pipe";
     private static readonly string PidFilePath = Path.Combine(
@@ -53,13 +61,133 @@ public static class WallpaperPlayerProcess
     );
 
     /// <summary>
+    /// Custom SynchronizationContext that marshals all async continuations back onto the STA message loop thread.
+    /// This is strictly required by Microsoft Edge WebView2 COM interfaces.
+    /// </summary>
+    internal sealed class StaSynchronizationContext : SynchronizationContext
+    {
+        public const uint WM_DISPATCH = 0x8000 + 42; // WM_APP + 42
+        private readonly nint _hwnd;
+        private readonly int _staThreadId;
+        private readonly ConcurrentQueue<(SendOrPostCallback Callback, object? State)> _queue = new();
+
+        public StaSynchronizationContext(nint hwnd)
+        {
+            _hwnd = hwnd;
+            _staThreadId = Environment.CurrentManagedThreadId;
+        }
+
+        public override void Post(SendOrPostCallback d, object? state)
+        {
+            _queue.Enqueue((d, state));
+            if (_hwnd != 0)
+            {
+                DesktopNativeMethods.PostMessage(_hwnd, WM_DISPATCH, 0, 0);
+            }
+        }
+
+        public override void Send(SendOrPostCallback d, object? state)
+        {
+            if (Environment.CurrentManagedThreadId == _staThreadId)
+            {
+                d(state);
+                return;
+            }
+
+            using var mres = new ManualResetEventSlim(false);
+            Exception? caught = null;
+
+            Post(
+                _ =>
+                {
+                    try
+                    {
+                        d(state);
+                    }
+                    catch (Exception ex)
+                    {
+                        caught = ex;
+                    }
+                    finally
+                    {
+                        mres.Set();
+                    }
+                },
+                null
+            );
+
+            mres.Wait();
+
+            if (caught != null)
+            {
+                throw new TargetInvocationException(caught);
+            }
+        }
+
+        public Task InvokeAsync(Func<Task> asyncFunc)
+        {
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Post(
+                async _ =>
+                {
+                    try
+                    {
+                        await asyncFunc();
+                        tcs.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                },
+                null
+            );
+            return tcs.Task;
+        }
+
+        public void Drain()
+        {
+            while (_queue.TryDequeue(out var item))
+            {
+                try
+                {
+                    item.Callback(item.State);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ERROR in STA dispatch: {ex.Message}");
+                    Console.Out.Flush();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Ensures the calling thread is attached to the interactive WinSta0\Default desktop.
+    /// </summary>
+    private static void EnsureDefaultDesktop()
+    {
+        try
+        {
+            var hDesk = DesktopNativeMethods.OpenDesktop("Default", 0, false, 0x01FF);
+            if (hDesk != 0)
+            {
+                DesktopNativeMethods.SetThreadDesktop(hDesk);
+            }
+        }
+        catch { }
+    }
+
+    /// <summary>
     /// Entry point for the isolated player process (--wallpaper-player).
     /// </summary>
     public static void Run(string[] args)
     {
         try
         {
-            _msgThreadId = DesktopNativeMethods.GetWindowThreadProcessId(0, out _);
+            EnsureDefaultDesktop();
+
+            _msgThreadId = DesktopNativeMethods.GetCurrentThreadId();
             _originalWallpaperPath = DesktopAttachHelper.GetCurrentWallpaperPath();
             WritePidFile();
 
@@ -68,22 +196,29 @@ public static class WallpaperPlayerProcess
             // Register message window for Explorer and Display topology events
             CreateMessageWindow();
 
+            // Install STA synchronization context so all async continuations remain on the STA thread
+            _syncContext = new StaSynchronizationContext(_msgHwnd);
+            SynchronizationContext.SetSynchronizationContext(_syncContext);
+
             // Setup input listener on stdin
             _ = Task.Run(ListenStdinAsync);
 
             // Setup named pipe server listener
             _ = Task.Run(ListenNamedPipeAsync);
 
-            // Setup auto-pause rule monitor (every 1 second)
-            _perfRuleTimer = new Timer(EvaluatePerformanceRules, null, 1500, 1000);
+            // Setup auto-pause rule monitor (every 1.5 seconds)
+            _perfRuleTimer = new Timer(EvaluatePerformanceRules, null, 1500, 1500);
 
-            // If an initial media path was supplied in args, load it immediately
+            // If an initial media path was supplied in args, post load immediately to the STA thread
             if (!string.IsNullOrWhiteSpace(_mediaPath))
             {
-                _ = Task.Run(async () =>
-                {
-                    await LoadMediaAsync(_mediaPath);
-                });
+                _syncContext.Post(
+                    async _ =>
+                    {
+                        await LoadMediaAsync(_mediaPath);
+                    },
+                    null
+                );
             }
 
             // Enter Win32 message pump
@@ -238,9 +373,9 @@ public static class WallpaperPlayerProcess
             {
                 var (left, top, width, height) = DesktopAttachHelper.GetVirtualScreenBounds();
                 var hostWin = new WallpaperHostWindow();
-                if (!hostWin.CreateAndAttach(hostTarget, left, top, width, height))
+                if (!hostWin.Create(left, top, width, height))
                 {
-                    Console.WriteLine("ERROR Failed to attach host window to desktop.");
+                    Console.WriteLine("ERROR Failed to create host window.");
                     Console.Out.Flush();
                     return;
                 }
@@ -251,7 +386,7 @@ public static class WallpaperPlayerProcess
                 foreach (var monitor in monitors)
                 {
                     var hostWin = new WallpaperHostWindow();
-                    if (hostWin.CreateAndAttach(hostTarget, monitor.Left, monitor.Top, monitor.Width, monitor.Height))
+                    if (hostWin.Create(monitor.Left, monitor.Top, monitor.Width, monitor.Height))
                     {
                         _hostWindows.Add(hostWin);
                     }
@@ -290,6 +425,18 @@ public static class WallpaperPlayerProcess
                 await renderer.SetPlaybackRateAsync(_playbackSpeed);
 
                 _renderers.Add(renderer);
+
+                // Dock into desktop layer behind icons
+                if (_layoutMode == WallpaperLayoutMode.SpanAllMonitors || monitors.Count == 0)
+                {
+                    var (left, top, spanW, spanH) = DesktopAttachHelper.GetVirtualScreenBounds();
+                    hostWin.AttachToDesktop(hostTarget, left, top, spanW, spanH);
+                }
+                else
+                {
+                    var monitor = monitors[Math.Min(i, monitors.Count - 1)];
+                    hostWin.AttachToDesktop(hostTarget, monitor.Left, monitor.Top, monitor.Width, monitor.Height);
+                }
             }
 
             _isPlaying = true;
@@ -297,12 +444,11 @@ public static class WallpaperPlayerProcess
             _isAutoPaused = false;
 
             Console.WriteLine("READY");
-            Console.WriteLine("STATUS PLAYING");
             Console.Out.Flush();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"ERROR Failed to load media: {ex.Message}");
+            Console.WriteLine($"ERROR Failed to load media: {ex}");
             Console.Out.Flush();
         }
     }
@@ -399,24 +545,34 @@ public static class WallpaperPlayerProcess
                 }
                 break;
 
+            case "WEB_MSG":
+                foreach (var r in _renderers)
+                {
+                    if (r is WebView2WallpaperRenderer webRenderer)
+                    {
+                        await webRenderer.PostWebMessageAsJsonAsync(arg);
+                    }
+                }
+                await responseWriter.WriteLineAsync("OK WEB_MSG");
+                break;
+
+            case "STATUS":
+                var status = _isPlaying ? (_isPaused || _isAutoPaused ? "PAUSED" : "PLAYING") : "STOPPED";
+                await responseWriter.WriteLineAsync($"STATUS {status} {_mediaPath ?? ""}");
+                break;
+
             case "PING":
                 await responseWriter.WriteLineAsync("PONG");
                 break;
 
-            case "STATUS":
-                var st = !_isPlaying ? "STOPPED" : (_isPaused || _isAutoPaused ? "PAUSED" : "PLAYING");
-                await responseWriter.WriteLineAsync($"STATUS {st}");
-                break;
-
             case "CLOSE":
-            case "STOP":
                 await responseWriter.WriteLineAsync("OK CLOSE");
                 await responseWriter.FlushAsync();
                 RequestExit();
                 break;
 
             default:
-                await responseWriter.WriteLineAsync($"ERROR Unknown command '{verb}'");
+                await responseWriter.WriteLineAsync($"ERROR Unknown command: {verb}");
                 break;
         }
 
@@ -451,11 +607,16 @@ public static class WallpaperPlayerProcess
                 var line = await reader.ReadLineAsync();
                 if (line == null)
                 {
-                    // Stdin closed (e.g. parent process closed pipe).
-                    // As per requirement: Wallpaper keeps playing when parent closes!
+                    // Stdin closed. Wallpaper keeps playing.
                     break;
                 }
-                await ProcessCommandAsync(line, Console.Out);
+                if (_syncContext != null)
+                {
+                    await _syncContext.InvokeAsync(async () =>
+                    {
+                        await ProcessCommandAsync(line, Console.Out);
+                    });
+                }
             }
         }
         catch
@@ -473,7 +634,7 @@ public static class WallpaperPlayerProcess
                 using var pipe = new NamedPipeServerStream(
                     NamedPipeName,
                     PipeDirection.InOut,
-                    1,
+                    NamedPipeServerStream.MaxAllowedServerInstances,
                     PipeTransmissionMode.Byte,
                     PipeOptions.Asynchronous
                 );
@@ -490,12 +651,17 @@ public static class WallpaperPlayerProcess
                     {
                         break;
                     }
-                    await ProcessCommandAsync(line, writer);
+                    if (_syncContext != null)
+                    {
+                        await _syncContext.InvokeAsync(async () =>
+                        {
+                            await ProcessCommandAsync(line, writer);
+                        });
+                    }
                 }
             }
             catch
             {
-                // Wait briefly before re-hosting named pipe server
                 await Task.Delay(500);
             }
         }
@@ -534,24 +700,30 @@ public static class WallpaperPlayerProcess
         if (shouldPause && !_isAutoPaused)
         {
             _isAutoPaused = true;
-            _ = Task.Run(async () =>
-            {
-                foreach (var r in _renderers)
+            _syncContext?.Post(
+                async _ =>
                 {
-                    await r.PauseAsync();
-                }
-            });
+                    foreach (var r in _renderers)
+                    {
+                        await r.PauseAsync();
+                    }
+                },
+                null
+            );
         }
         else if (!shouldPause && _isAutoPaused)
         {
             _isAutoPaused = false;
-            _ = Task.Run(async () =>
-            {
-                foreach (var r in _renderers)
+            _syncContext?.Post(
+                async _ =>
                 {
-                    await r.ResumeAsync();
-                }
-            });
+                    foreach (var r in _renderers)
+                    {
+                        await r.ResumeAsync();
+                    }
+                },
+                null
+            );
         }
     }
 
@@ -564,7 +736,7 @@ public static class WallpaperPlayerProcess
         }
 
         DesktopNativeMethods.GetWindowThreadProcessId(fgWnd, out var pid);
-        if (pid == Environment.ProcessId)
+        if (pid == (uint)Environment.ProcessId)
         {
             return false;
         }
@@ -611,11 +783,10 @@ public static class WallpaperPlayerProcess
         var className = "LockscreenGif_PlayerMsgWnd_" + Guid.NewGuid().ToString("N")[..8];
         var hInstance = DesktopNativeMethods.GetModuleHandle(null);
 
-        DesktopNativeMethods.WndProc wndProc = MessageWindowProc;
         var wndClass = new DesktopNativeMethods.WNDCLASSEX
         {
             cbSize = (uint)Marshal.SizeOf(typeof(DesktopNativeMethods.WNDCLASSEX)),
-            lpfnWndProc = Marshal.GetFunctionPointerForDelegate(wndProc),
+            lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProcDelegate),
             hInstance = hInstance,
             lpszClassName = className,
         };
@@ -642,17 +813,26 @@ public static class WallpaperPlayerProcess
 
     private static nint MessageWindowProc(nint hWnd, uint msg, nint wParam, nint lParam)
     {
+        if (msg == StaSynchronizationContext.WM_DISPATCH)
+        {
+            _syncContext?.Drain();
+            return 0;
+        }
+
         if (msg == _wmTaskbarCreated && _wmTaskbarCreated != 0)
         {
-            // Explorer restarted: Re-attach to new WorkerW
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(1000);
-                if (!string.IsNullOrWhiteSpace(_mediaPath))
+            // Explorer restarted: Re-attach to new WorkerW on the STA thread
+            _syncContext?.Post(
+                async _ =>
                 {
-                    await LoadMediaAsync(_mediaPath);
-                }
-            });
+                    await Task.Delay(1000);
+                    if (!string.IsNullOrWhiteSpace(_mediaPath))
+                    {
+                        await LoadMediaAsync(_mediaPath);
+                    }
+                },
+                null
+            );
             return 0;
         }
 
@@ -661,15 +841,18 @@ public static class WallpaperPlayerProcess
             || msg == 0x02E0 /* WM_DPICHANGED */
         )
         {
-            // Display configuration changed: Refresh layout
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(500);
-                if (!string.IsNullOrWhiteSpace(_mediaPath))
+            // Display configuration changed: Refresh layout on the STA thread
+            _syncContext?.Post(
+                async _ =>
                 {
-                    await LoadMediaAsync(_mediaPath);
-                }
-            });
+                    await Task.Delay(500);
+                    if (!string.IsNullOrWhiteSpace(_mediaPath))
+                    {
+                        await LoadMediaAsync(_mediaPath);
+                    }
+                },
+                null
+            );
             return 0;
         }
 
@@ -692,10 +875,10 @@ public static class WallpaperPlayerProcess
             _isExiting = true;
         }
 
-        if (_msgHwnd != 0)
+        if (_msgThreadId != 0)
         {
-            DesktopNativeMethods.PostMessage(
-                _msgHwnd,
+            DesktopNativeMethods.PostThreadMessage(
+                _msgThreadId,
                 0x0012 /* WM_QUIT */
                 ,
                 0,
