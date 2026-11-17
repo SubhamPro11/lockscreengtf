@@ -76,7 +76,7 @@
                         <VisualState.Setters>
                             <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassRaisedBrush}" />
                             <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
-                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassTextTertiaryBrush}" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassTextSecondaryBrush}" />
                             <Setter Target="InnerTopHighlight.Opacity" Value="0.0" />
                         </VisualState.Setters>
                     </VisualState>
@@ -147,7 +147,7 @@
                         <VisualState.Setters>
                             <Setter Target="GlassFrame.Background" Value="{ThemeResource GlassRaisedBrush}" />
                             <Setter Target="GlassFrame.BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
-                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassTextTertiaryBrush}" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassTextSecondaryBrush}" />
                             <Setter Target="InnerRim.Opacity" Value="0.0" />
                             <Setter Target="TopSheen.Opacity" Value="0.0" />
                         </VisualState.Setters>
@@ -243,7 +243,7 @@
                         <VisualState.Setters>
                             <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassRaisedBrush}" />
                             <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
-                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassTextTertiaryBrush}" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassTextSecondaryBrush}" />
                             <Setter Target="InnerTopHighlight.Opacity" Value="0.0" />
                         </VisualState.Setters>
                     </VisualState>

@@ -44,9 +44,10 @@ internal sealed class DiagnosticLockDialog
         }
         if (
             (
-                Application.Current.Resources.TryGetValue("GlassAccentBrassBrush", out var brass)
-                || Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out brass)
-            ) && brass is Brush bb
+                Application.Current.Resources.TryGetValue("GlassEmberBrush", out var ember)
+                || Application.Current.Resources.TryGetValue("GlassAccentBrassBrush", out ember)
+                || Application.Current.Resources.TryGetValue("InstrumentAccentBrassBrush", out ember)
+            ) && ember is Brush bb
         )
         {
             _countdownBlock.Foreground = bb;
