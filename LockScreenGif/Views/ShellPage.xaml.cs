@@ -1,8 +1,14 @@
+using System;
+using System.Linq;
 using LockscreenGif.Contracts.Services;
+using LockscreenGif.Helpers;
 using LockscreenGif.Services.Analytics;
 using LockscreenGif.ViewModels;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Windows.UI;
 
 namespace LockscreenGif.Views;
 
@@ -11,6 +17,8 @@ public sealed partial class ShellPage : Page
     private readonly INavigationService _navigationService;
     private bool _synchronizingSelection;
     private bool _analyticsReady;
+    private Storyboard? _driftStoryboard;
+    private bool _isAmbientLoaded;
 
     public Frame NavigationFrame => ContentFrame;
 
@@ -22,17 +30,8 @@ public sealed partial class ShellPage : Page
         _navigationService.Frame = ContentFrame;
 
         Loaded += ShellPage_Loaded;
+        Unloaded += ShellPage_Unloaded;
         ActualThemeChanged += ShellPage_ActualThemeChanged;
-
-#if DEBUG
-        var galleryItem = new NavigationViewItem
-        {
-            Content = "Glass Gallery",
-            Tag = "GlassGallery",
-            Icon = new FontIcon { Glyph = "\uE790" },
-        };
-        Navigation.MenuItems.Add(galleryItem);
-#endif
     }
 
     private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -41,14 +40,6 @@ public sealed partial class ShellPage : Page
         {
             return;
         }
-
-#if DEBUG
-        if (args.SelectedItem is NavigationViewItem item && (string?)item.Tag == "GlassGallery")
-        {
-            ContentFrame.Navigate(typeof(GlassGalleryPage));
-            return;
-        }
-#endif
 
         var viewModel =
             ReferenceEquals(args.SelectedItem, SettingsItem) ? typeof(SettingsViewModel)
@@ -66,16 +57,6 @@ public sealed partial class ShellPage : Page
             AnalyticsNotice.IsOpen = false;
         }
         _synchronizingSelection = true;
-#if DEBUG
-        if (args.SourcePageType == typeof(GlassGalleryPage))
-        {
-            Navigation.SelectedItem = Navigation
-                .MenuItems.OfType<NavigationViewItem>()
-                .FirstOrDefault(i => (string?)i.Tag == "GlassGallery");
-            _synchronizingSelection = false;
-            return;
-        }
-#endif
         Navigation.SelectedItem =
             args.SourcePageType == typeof(SettingsPage) ? SettingsItem
             : args.SourcePageType == typeof(DiagnosticsPage) ? DiagnosticsItem
@@ -106,7 +87,7 @@ public sealed partial class ShellPage : Page
             }
         );
 
-    private void ShellPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void ShellPage_Loaded(object sender, RoutedEventArgs e)
     {
         App.AppTitlebar = AppTitleBar;
         App.MainWindow.SetTitleBar(AppTitleBar);
@@ -121,7 +102,166 @@ public sealed partial class ShellPage : Page
                 }
             };
         }
-        Helpers.TitleBarHelper.ApplySystemThemeToCaptionButtons();
+        TitleBarHelper.ApplySystemThemeToCaptionButtons();
+
+        if (!_isAmbientLoaded)
+        {
+            _isAmbientLoaded = true;
+            SetupDriftAnimations();
+            ApplyFallbackState(GlassFallbackManager.IsFallbackActive);
+            UpdateAmbientColors(AmbientColorExtractor.CurrentPrimary, AmbientColorExtractor.CurrentSecondary);
+
+            GlassFallbackManager.FallbackStateChanged += GlassFallbackManager_FallbackStateChanged;
+            AmbientColorExtractor.ColorsChanged += AmbientColorExtractor_ColorsChanged;
+
+            if (App.MainWindow != null)
+            {
+                App.MainWindow.Activated += MainWindow_Activated;
+            }
+        }
+    }
+
+    private void ShellPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        _isAmbientLoaded = false;
+        GlassFallbackManager.FallbackStateChanged -= GlassFallbackManager_FallbackStateChanged;
+        AmbientColorExtractor.ColorsChanged -= AmbientColorExtractor_ColorsChanged;
+
+        if (App.MainWindow != null)
+        {
+            App.MainWindow.Activated -= MainWindow_Activated;
+        }
+
+        _driftStoryboard?.Stop();
+        _driftStoryboard = null;
+    }
+
+    private void SetupDriftAnimations()
+    {
+        _driftStoryboard = new Storyboard { RepeatBehavior = RepeatBehavior.Forever };
+
+        // Blob 1: ~40s drift cycle
+        var anim1X = new DoubleAnimation
+        {
+            From = 0,
+            To = 40,
+            Duration = new Duration(TimeSpan.FromSeconds(20)),
+            AutoReverse = true,
+            RepeatBehavior = RepeatBehavior.Forever,
+            EnableDependentAnimation = true,
+        };
+        Storyboard.SetTarget(anim1X, Blob1Transform);
+        Storyboard.SetTargetProperty(anim1X, "X");
+        _driftStoryboard.Children.Add(anim1X);
+
+        var anim1Y = new DoubleAnimation
+        {
+            From = 0,
+            To = -30,
+            Duration = new Duration(TimeSpan.FromSeconds(18)),
+            AutoReverse = true,
+            RepeatBehavior = RepeatBehavior.Forever,
+            EnableDependentAnimation = true,
+        };
+        Storyboard.SetTarget(anim1Y, Blob1Transform);
+        Storyboard.SetTargetProperty(anim1Y, "Y");
+        _driftStoryboard.Children.Add(anim1Y);
+
+        // Blob 2: ~48s drift cycle
+        var anim2X = new DoubleAnimation
+        {
+            From = 0,
+            To = -45,
+            Duration = new Duration(TimeSpan.FromSeconds(24)),
+            AutoReverse = true,
+            RepeatBehavior = RepeatBehavior.Forever,
+            EnableDependentAnimation = true,
+        };
+        Storyboard.SetTarget(anim2X, Blob2Transform);
+        Storyboard.SetTargetProperty(anim2X, "X");
+        _driftStoryboard.Children.Add(anim2X);
+
+        var anim2Y = new DoubleAnimation
+        {
+            From = 0,
+            To = 25,
+            Duration = new Duration(TimeSpan.FromSeconds(21)),
+            AutoReverse = true,
+            RepeatBehavior = RepeatBehavior.Forever,
+            EnableDependentAnimation = true,
+        };
+        Storyboard.SetTarget(anim2Y, Blob2Transform);
+        Storyboard.SetTargetProperty(anim2Y, "Y");
+        _driftStoryboard.Children.Add(anim2Y);
+
+        if (!GlassFallbackManager.IsFallbackActive && GlassFallbackManager.IsWindowActive)
+        {
+            _driftStoryboard.Begin();
+        }
+    }
+
+    private void GlassFallbackManager_FallbackStateChanged(object? sender, bool isFallback)
+    {
+        DispatcherQueue.TryEnqueue(() => ApplyFallbackState(isFallback));
+    }
+
+    private void ApplyFallbackState(bool isFallback)
+    {
+        if (AmbientCanvas == null)
+        {
+            return;
+        }
+
+        if (isFallback)
+        {
+            AmbientCanvas.Visibility = Visibility.Collapsed;
+            _driftStoryboard?.Pause();
+        }
+        else
+        {
+            AmbientCanvas.Visibility = Visibility.Visible;
+            if (GlassFallbackManager.IsWindowActive)
+            {
+                _driftStoryboard?.Resume();
+            }
+        }
+    }
+
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        bool isActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        if (GlassFallbackManager.IsFallbackActive)
+        {
+            return;
+        }
+
+        if (isActive)
+        {
+            _driftStoryboard?.Resume();
+        }
+        else
+        {
+            _driftStoryboard?.Pause();
+        }
+    }
+
+    private void AmbientColorExtractor_ColorsChanged(object? sender, (Color Primary, Color Secondary) colors)
+    {
+        DispatcherQueue.TryEnqueue(() => UpdateAmbientColors(colors.Primary, colors.Secondary));
+    }
+
+    private void UpdateAmbientColors(Color primary, Color secondary)
+    {
+        if (Blob1Stop0 == null || Blob2Stop0 == null)
+        {
+            return;
+        }
+
+        Blob1Stop0.Color = Color.FromArgb(0x18, primary.R, primary.G, primary.B);
+        Blob1Stop1.Color = Color.FromArgb(0x0C, primary.R, primary.G, primary.B);
+
+        Blob2Stop0.Color = Color.FromArgb(0x12, secondary.R, secondary.G, secondary.B);
+        Blob2Stop1.Color = Color.FromArgb(0x06, secondary.R, secondary.G, secondary.B);
     }
 
     private void UpdateCaptionButtonSpacer()
@@ -179,8 +319,8 @@ public sealed partial class ShellPage : Page
         }
     }
 
-    private void ShellPage_ActualThemeChanged(Microsoft.UI.Xaml.FrameworkElement sender, object args)
+    private void ShellPage_ActualThemeChanged(FrameworkElement sender, object args)
     {
-        Helpers.TitleBarHelper.ApplySystemThemeToCaptionButtons();
+        TitleBarHelper.ApplySystemThemeToCaptionButtons();
     }
 }

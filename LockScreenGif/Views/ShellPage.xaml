@@ -8,7 +8,48 @@
 
     <Grid Background="Transparent">
         <!-- 1. Ambient Background Layer (drifting dominant color fields behind the page) -->
-        <local:AmbientBackgroundView x:Name="AmbientBackground" />
+        <Grid x:Name="AmbientRootGrid" Background="{ThemeResource GlassBaseBrush}" IsHitTestVisible="False">
+            <!-- Dynamic Drifting Ambient Color Fields -->
+            <Canvas x:Name="AmbientCanvas" Opacity="1.0" IsHitTestVisible="False">
+                <!-- Blob 1 (Primary Dominant / Warm Ember) -->
+                <Ellipse x:Name="Blob1" Width="720" Height="580" Margin="-100,-80,0,0">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop x:Name="Blob1Stop0" Color="#18E8452C" Offset="0.0" />
+                            <GradientStop x:Name="Blob1Stop1" Color="#0CE8452C" Offset="0.5" />
+                            <GradientStop Color="#00E8452C" Offset="1.0" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="Blob1Transform" X="0" Y="0" />
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+
+                <!-- Blob 2 (Secondary Dominant / Warm Dark Bronze) -->
+                <Ellipse x:Name="Blob2" Width="820" Height="680" Margin="200,120,0,0">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop x:Name="Blob2Stop0" Color="#12543D2E" Offset="0.0" />
+                            <GradientStop x:Name="Blob2Stop1" Color="#06543D2E" Offset="0.55" />
+                            <GradientStop Color="#00543D2E" Offset="1.0" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="Blob2Transform" X="0" Y="0" />
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+            </Canvas>
+
+            <!-- Subtle Top Vignette Layer to keep Title Bar text razor sharp -->
+            <Border Height="80" VerticalAlignment="Top" IsHitTestVisible="False">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#50121110" Offset="0.0" />
+                        <GradientStop Color="#00121110" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+        </Grid>
 
         <!-- 2. Windows 11 Unified Top Navigation & Custom Title Bar (Height ~46px, single row) -->
         <NavigationView x:Name="Navigation"
