@@ -107,7 +107,7 @@
             <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="ToolTipBackground" Color="#E51A1917" />
             <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource GlassHairlineColor}" />
-            <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource GlassTextPrimaryBrush}" />
+            <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource GlassTextPrimaryColor}" />
 
             <!-- WinUI 3 AcrylicBrush (In-app acrylic with Base tint and 65% opacity) -->
             <AcrylicBrush x:Key="GlassBackdropBrush"
