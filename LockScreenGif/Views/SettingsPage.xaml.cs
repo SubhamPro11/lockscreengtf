@@ -8,6 +8,19 @@ namespace LockscreenGif.Views;
 public sealed partial class SettingsPage : Page
 {
     public SettingsViewModel ViewModel { get; } = App.GetService<SettingsViewModel>();
+    public string AppVersion
+    {
+        get
+        {
+            var raw = LockscreenGif.Helpers.BuildInfo.ShortVersion;
+            var dashIdx = raw.IndexOf('-');
+            if (dashIdx > 0)
+            {
+                raw = raw[..dashIdx];
+            }
+            return $"Version {raw}";
+        }
+    }
     private AnalyticsService? _analytics;
     private bool _updatingToggle;
 

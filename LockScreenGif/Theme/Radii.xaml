@@ -23,6 +23,13 @@
     <CornerRadius x:Key="GlassRadiusCapsule">999</CornerRadius>
     <x:Double x:Key="GlassRadiusCapsuleDouble">999</x:Double>
 
+    <!-- 6. Overlays, Dialogs, Flyouts & InfoBars -->
+    <CornerRadius x:Key="ContentDialogCornerRadius">18</CornerRadius>
+    <CornerRadius x:Key="FlyoutCornerRadius">14</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">14</CornerRadius>
+    <CornerRadius x:Key="InfoBarCornerRadius">10</CornerRadius>
+    <CornerRadius x:Key="ToolTipCornerRadius">6</CornerRadius>
+
     <!-- Backward Compatibility Radii Keys -->
     <CornerRadius x:Key="AppCornerRadiusCard">10</CornerRadius>
     <CornerRadius x:Key="AppCornerRadiusControl">10</CornerRadius>

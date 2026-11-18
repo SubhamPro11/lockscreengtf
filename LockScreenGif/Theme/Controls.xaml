@@ -348,4 +348,56 @@
     <Style TargetType="ToggleSwitch" BasedOn="{StaticResource GlassToggleSwitchStyle}" />
     <Style TargetType="ProgressBar" BasedOn="{StaticResource GlassProgressBarStyle}" />
 
+    <!-- 10. ContentDialog Style (18px radius, Raised liquid glass material, capsule buttons) -->
+    <Style TargetType="ContentDialog">
+        <Setter Property="CornerRadius" Value="{StaticResource ContentDialogCornerRadius}" />
+        <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="PrimaryButtonStyle" Value="{StaticResource GlassPrimaryButtonStyle}" />
+        <Setter Property="SecondaryButtonStyle" Value="{StaticResource GlassButtonStyle}" />
+        <Setter Property="CloseButtonStyle" Value="{StaticResource GlassButtonStyle}" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
+    <!-- 11. Flyout & MenuFlyout Styles -->
+    <Style TargetType="FlyoutPresenter">
+        <Setter Property="CornerRadius" Value="{StaticResource FlyoutCornerRadius}" />
+        <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
+    <Style TargetType="MenuFlyoutPresenter">
+        <Setter Property="CornerRadius" Value="{StaticResource FlyoutCornerRadius}" />
+        <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="6,4" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
+    <!-- 12. ToolTip Style -->
+    <Style TargetType="ToolTip">
+        <Setter Property="CornerRadius" Value="{StaticResource ToolTipCornerRadius}" />
+        <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
+    <!-- 13. InfoBar Style -->
+    <Style TargetType="InfoBar">
+        <Setter Property="CornerRadius" Value="{StaticResource InfoBarCornerRadius}" />
+        <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
 </ResourceDictionary>

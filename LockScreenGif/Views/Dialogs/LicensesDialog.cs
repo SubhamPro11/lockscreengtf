@@ -80,7 +80,12 @@ internal static class LicensesDialog
                 FontSize = 11,
                 FontWeight = FontWeights.SemiBold,
             };
-            if (Application.Current.Resources.TryGetValue("GlassAccentBrassBrush", out var ab) && ab is Brush abb)
+            if (
+                (
+                    Application.Current.Resources.TryGetValue("GlassEmberBrush", out var ember)
+                    || Application.Current.Resources.TryGetValue("GlassAccentBrassBrush", out ember)
+                ) && ember is Brush abb
+            )
             {
                 badgeText.Foreground = abb;
             }
