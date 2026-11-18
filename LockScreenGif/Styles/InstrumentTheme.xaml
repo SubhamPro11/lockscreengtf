@@ -463,6 +463,8 @@
 
     <CornerRadius x:Key="GlassRadiusFloatingTray">18</CornerRadius>
     <x:Double x:Key="GlassRadiusFloatingTrayDouble">18</x:Double>
+    <CornerRadius x:Key="GlassRadiusTray">18</CornerRadius>
+    <x:Double x:Key="GlassRadiusTrayDouble">18</x:Double>
 
     <CornerRadius x:Key="GlassRadiusControl">10</CornerRadius>
     <x:Double x:Key="GlassRadiusControlDouble">10</x:Double>
@@ -835,6 +837,21 @@
         <Setter Property="Padding" Value="12,5" />
         <Setter Property="FontSize" Value="12" />
     </Style>
+
+    <Style x:Key="GlassRepeatButtonStyle" TargetType="RepeatButton">
+        <Setter Property="Background" Value="{ThemeResource GlassSubtleBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{ThemeResource GlassRadiusControl}" />
+        <Setter Property="Padding" Value="14,6" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
+    <Style TargetType="RepeatButton" BasedOn="{StaticResource GlassRepeatButtonStyle}" />
 
     <Style x:Key="GlassHyperlinkButtonStyle" TargetType="HyperlinkButton">
         <Setter Property="Foreground" Value="{ThemeResource GlassEmberHoverBrush}" />
