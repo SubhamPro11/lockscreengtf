@@ -13,4 +13,8 @@
         <ResourceDictionary Source="/Theme/ShellTheme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <!-- Focus Visual Dimensions (2px Ember outer ring with 1px inner ring) -->
+    <Thickness x:Key="FocusVisualPrimaryThickness">2</Thickness>
+    <Thickness x:Key="FocusVisualSecondaryThickness">1</Thickness>
+
 </ResourceDictionary>

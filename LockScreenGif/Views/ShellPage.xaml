@@ -3,7 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LockscreenGif.Views"
-    KeyDown="ShellPage_KeyDown">
+    KeyDown="ShellPage_KeyDown"
+    UseLayoutRounding="True">
 
     <Grid Background="Transparent">
         <!-- 1. Ambient Background Layer (drifting dominant color fields behind the page) -->
