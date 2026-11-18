@@ -57,10 +57,7 @@ public sealed partial class AmbientBackgroundView : UserControl
 
     private void SetupDriftAnimations()
     {
-        _driftStoryboard = new Storyboard
-        {
-            RepeatBehavior = RepeatBehavior.Forever
-        };
+        _driftStoryboard = new Storyboard { RepeatBehavior = RepeatBehavior.Forever };
 
         // Blob 1: ~40s drift cycle
         var anim1X = new DoubleAnimation
@@ -70,7 +67,7 @@ public sealed partial class AmbientBackgroundView : UserControl
             Duration = new Duration(TimeSpan.FromSeconds(20)),
             AutoReverse = true,
             RepeatBehavior = RepeatBehavior.Forever,
-            EnableDependentAnimation = true
+            EnableDependentAnimation = true,
         };
         Storyboard.SetTarget(anim1X, Blob1Transform);
         Storyboard.SetTargetProperty(anim1X, "X");
@@ -83,7 +80,7 @@ public sealed partial class AmbientBackgroundView : UserControl
             Duration = new Duration(TimeSpan.FromSeconds(18)),
             AutoReverse = true,
             RepeatBehavior = RepeatBehavior.Forever,
-            EnableDependentAnimation = true
+            EnableDependentAnimation = true,
         };
         Storyboard.SetTarget(anim1Y, Blob1Transform);
         Storyboard.SetTargetProperty(anim1Y, "Y");
@@ -97,7 +94,7 @@ public sealed partial class AmbientBackgroundView : UserControl
             Duration = new Duration(TimeSpan.FromSeconds(24)),
             AutoReverse = true,
             RepeatBehavior = RepeatBehavior.Forever,
-            EnableDependentAnimation = true
+            EnableDependentAnimation = true,
         };
         Storyboard.SetTarget(anim2X, Blob2Transform);
         Storyboard.SetTargetProperty(anim2X, "X");
@@ -110,7 +107,7 @@ public sealed partial class AmbientBackgroundView : UserControl
             Duration = new Duration(TimeSpan.FromSeconds(21)),
             AutoReverse = true,
             RepeatBehavior = RepeatBehavior.Forever,
-            EnableDependentAnimation = true
+            EnableDependentAnimation = true,
         };
         Storyboard.SetTarget(anim2Y, Blob2Transform);
         Storyboard.SetTargetProperty(anim2Y, "Y");

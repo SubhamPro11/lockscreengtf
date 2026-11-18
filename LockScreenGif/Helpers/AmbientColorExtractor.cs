@@ -10,7 +10,7 @@ namespace LockscreenGif.Helpers;
 
 public static class AmbientColorExtractor
 {
-    public static readonly Color DefaultPrimary = Color.FromArgb(0xFF, 0xE8, 0x45, 0x2C);   // Warm Ember
+    public static readonly Color DefaultPrimary = Color.FromArgb(0xFF, 0xE8, 0x45, 0x2C); // Warm Ember
     public static readonly Color DefaultSecondary = Color.FromArgb(0xFF, 0x54, 0x3D, 0x2E); // Warm Dark Bronze
 
     private static Color _currentPrimary = DefaultPrimary;
@@ -41,10 +41,7 @@ public static class AmbientColorExtractor
             try
             {
                 var file = await StorageFile.GetFileFromPathAsync(filePath);
-                using var thumbnail = await file.GetThumbnailAsync(
-                    ThumbnailMode.PicturesView,
-                    64,
-                    ThumbnailOptions.UseCurrentScale);
+                using var thumbnail = await file.GetThumbnailAsync(ThumbnailMode.PicturesView, 64, ThumbnailOptions.UseCurrentScale);
 
                 if (thumbnail != null)
                 {
@@ -54,7 +51,8 @@ public static class AmbientColorExtractor
                         BitmapAlphaMode.Premultiplied,
                         new BitmapTransform { ScaledWidth = 16, ScaledHeight = 16 },
                         ExifOrientationMode.IgnoreExifOrientation,
-                        ColorManagementMode.DoNotColorManage);
+                        ColorManagementMode.DoNotColorManage
+                    );
 
                     var bytes = pixelData.DetachPixelData();
                     var (p, s) = ComputeDominantColors(bytes);
@@ -75,8 +73,14 @@ public static class AmbientColorExtractor
 
     private static (Color Primary, Color Secondary) ComputeDominantColors(byte[] rgba)
     {
-        long rSum1 = 0, gSum1 = 0, bSum1 = 0, count1 = 0;
-        long rSum2 = 0, gSum2 = 0, bSum2 = 0, count2 = 0;
+        long rSum1 = 0,
+            gSum1 = 0,
+            bSum1 = 0,
+            count1 = 0;
+        long rSum2 = 0,
+            gSum2 = 0,
+            bSum2 = 0,
+            count2 = 0;
 
         for (int i = 0; i < rgba.Length; i += 4)
         {
@@ -107,13 +111,9 @@ public static class AmbientColorExtractor
             }
         }
 
-        Color c1 = count1 > 0
-            ? ClampLuminance((byte)(rSum1 / count1), (byte)(gSum1 / count1), (byte)(bSum1 / count1))
-            : DefaultPrimary;
+        Color c1 = count1 > 0 ? ClampLuminance((byte)(rSum1 / count1), (byte)(gSum1 / count1), (byte)(bSum1 / count1)) : DefaultPrimary;
 
-        Color c2 = count2 > 0
-            ? ClampLuminance((byte)(rSum2 / count2), (byte)(gSum2 / count2), (byte)(bSum2 / count2))
-            : DefaultSecondary;
+        Color c2 = count2 > 0 ? ClampLuminance((byte)(rSum2 / count2), (byte)(gSum2 / count2), (byte)(bSum2 / count2)) : DefaultSecondary;
 
         return (c1, c2);
     }
