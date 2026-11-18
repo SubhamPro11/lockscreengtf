@@ -77,13 +77,21 @@
 
             <!-- Navigation Bar Colors -->
             <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#18FFFFFF" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{StaticResource GlassTextPrimaryColor}" />
-            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource GlassEmberColor}" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#0CFFFFFF" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#1FFFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#14FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#1EFFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource GlassEmberColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{StaticResource GlassEmberHoverColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="{StaticResource GlassEmberPressedColor}" />
+
             <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{StaticResource GlassTextSecondaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#FFFFFF" />
+
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="Transparent" />
 
             <!-- Accessible Focus Visuals: 2px Ember with 1px inner dark separation -->
             <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{StaticResource GlassEmberColor}" />
@@ -177,13 +185,21 @@
             <SolidColorBrush x:Key="ProgressBarForeground" Color="{StaticResource GlassEmberColor}" />
 
             <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="#10000000" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{StaticResource GlassTextPrimaryColor}" />
-            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource GlassEmberColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackground" Color="Transparent" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#08000000" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#16000000" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource GlassEmberColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{StaticResource GlassEmberHoverColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="{StaticResource GlassEmberPressedColor}" />
+
             <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{StaticResource GlassTextSecondaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#FFFFFF" />
+
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="Transparent" />
 
             <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{StaticResource GlassEmberColor}" />
             <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="#FFFFFF" />
@@ -251,13 +267,21 @@
             <SolidColorBrush x:Key="ProgressBarForeground" Color="{ThemeResource SystemColorHighlightColor}" />
 
             <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource SystemColorWindowColor}" />
-            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{ThemeResource SystemColorHighlightTextColor}" />
-            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackground" Color="Transparent" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{ThemeResource SystemColorHighlightTextColor}" />
             <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="{ThemeResource SystemColorHighlightColor}" />
+
             <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="{ThemeResource SystemColorHighlightTextColor}" />
+
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{ThemeResource SystemColorHighlightColor}" />
 
             <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
@@ -458,6 +482,8 @@
     <Style x:Key="InstrumentReadoutTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GlassReadoutTextStyle}" />
 
     <!-- Deliberately Different Radii Scale -->
+    <CornerRadius x:Key="TopNavigationViewItemCornerRadius">15</CornerRadius>
+    <CornerRadius x:Key="NavigationViewItemCornerRadius">15</CornerRadius>
     <CornerRadius x:Key="GlassRadiusStage">22</CornerRadius>
     <x:Double x:Key="GlassRadiusStageDouble">22</x:Double>
 
@@ -960,105 +986,11 @@
         <Setter Property="UseLayoutRounding" Value="True" />
     </Style>
 
-    <!-- Restyled NavigationViewItem for the Capsule Navigation Bar -->
-    <ControlTemplate x:Key="GlassCapsuleNavItemTemplate" TargetType="NavigationViewItem">
-        <Grid x:Name="RootGrid" Height="30" Margin="1,0,1,0" UseLayoutRounding="True">
-            <Border x:Name="PillSurface"
-                    CornerRadius="15"
-                    Background="Transparent"
-                    BorderThickness="0">
-                <Grid>
-                    <Border x:Name="InnerTopHighlight"
-                            VerticalAlignment="Top"
-                            Height="1"
-                            Margin="4,0,4,0"
-                            Background="#60FFFFFF"
-                            Opacity="0"
-                            IsHitTestVisible="False" />
-
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="6"
-                                Padding="12,0,12,0"
-                                VerticalAlignment="Center">
-                        <ContentPresenter x:Name="IconPresenter"
-                                          Content="{TemplateBinding Icon}"
-                                          Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                          VerticalAlignment="Center"
-                                          IsHitTestVisible="False" />
-                        <TextBlock x:Name="ContentText"
-                                   Text="{TemplateBinding Content}"
-                                   FontSize="12"
-                                   FontWeight="Normal"
-                                   Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                   VerticalAlignment="Center"
-                                   UseLayoutRounding="True" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup x:Name="CommonStates">
-                    <VisualState x:Name="Normal" />
-                    <VisualState x:Name="PointerOver">
-                        <VisualState.Setters>
-                            <Setter Target="PillSurface.Background" Value="#14FFFFFF" />
-                            <Setter Target="IconPresenter.Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-                            <Setter Target="ContentText.Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="Pressed">
-                        <VisualState.Setters>
-                            <Setter Target="PillSurface.Background" Value="#1EFFFFFF" />
-                            <Setter Target="PillSurface.Margin" Value="0,1,0,-1" />
-                            <Setter Target="IconPresenter.Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-                            <Setter Target="ContentText.Foreground" Value="{ThemeResource GlassTextPrimaryBrush}" />
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="Disabled">
-                        <VisualState.Setters>
-                            <Setter Target="IconPresenter.Opacity" Value="0.4" />
-                            <Setter Target="ContentText.Opacity" Value="0.4" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-
-                <VisualStateGroup x:Name="SelectionStates">
-                    <VisualState x:Name="Unselected" />
-                    <VisualState x:Name="Selected">
-                        <VisualState.Setters>
-                            <Setter Target="PillSurface.Background" Value="{StaticResource GlassEmberButtonNormalBrush}" />
-                            <Setter Target="InnerTopHighlight.Opacity" Value="1.0" />
-                            <Setter Target="IconPresenter.Foreground" Value="#FFFFFF" />
-                            <Setter Target="ContentText.Foreground" Value="#FFFFFF" />
-                            <Setter Target="ContentText.FontWeight" Value="SemiBold" />
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="SelectedPointerOver">
-                        <VisualState.Setters>
-                            <Setter Target="PillSurface.Background" Value="{StaticResource GlassEmberButtonHoverBrush}" />
-                            <Setter Target="InnerTopHighlight.Opacity" Value="1.0" />
-                            <Setter Target="IconPresenter.Foreground" Value="#FFFFFF" />
-                            <Setter Target="ContentText.Foreground" Value="#FFFFFF" />
-                            <Setter Target="ContentText.FontWeight" Value="SemiBold" />
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="SelectedPressed">
-                        <VisualState.Setters>
-                            <Setter Target="PillSurface.Background" Value="{ThemeResource GlassEmberPressedBrush}" />
-                            <Setter Target="PillSurface.Margin" Value="0,1,0,-1" />
-                            <Setter Target="InnerTopHighlight.Opacity" Value="0.25" />
-                            <Setter Target="IconPresenter.Foreground" Value="#FFFFFF" />
-                            <Setter Target="ContentText.Foreground" Value="#FFFFFF" />
-                            <Setter Target="ContentText.FontWeight" Value="SemiBold" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-        </Grid>
-    </ControlTemplate>
-
+    <!-- Shell Theme: Capsule Navigation Bar Style -->
     <Style x:Key="GlassCapsuleNavItemStyle" TargetType="NavigationViewItem">
-        <Setter Property="Template" Value="{StaticResource GlassCapsuleNavItemTemplate}" />
+        <Setter Property="CornerRadius" Value="15" />
+        <Setter Property="Margin" Value="2,0" />
+        <Setter Property="Height" Value="32" />
         <Setter Property="UseLayoutRounding" Value="True" />
     </Style>
 
