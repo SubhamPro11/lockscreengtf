@@ -1,8 +1,9 @@
 # LockscreenGif v3.0.58 — Performance Audit & System Architecture Report
 
-**Document Version:** 1.0.0  
+**Document Version:** 1.1.0  
 **Date:** November 19, 2026  
-**Target Platform:** Windows 11 (build 26100+ 24H2 / 25H2) & Windows 10 (22H2) x64 / ARM64  
+**Target Hardware:** ASUS TUF Gaming A15 (`FA506NFR`), AMD Ryzen 7 7435HS (8C/16T, 3.1 GHz), NVIDIA GeForce RTX 2050 (4 GB GDDR6, Driver 32.0.16.2124), 16 GB DDR5 RAM, 1080p @ 144Hz (125% DPI scale)  
+**Target Platform:** Windows 11 Home Single Language 26H2 (OS Build `26300.9974`, FEP `1000.26100.385.0`)  
 **Auditor:** Senior Windows Desktop Engineer & UX Architect  
 
 ---
@@ -48,7 +49,7 @@ The application operates on a multi-tier isolated process model:
 
 ## 2. Before-Optimization Baseline Metrics
 
-All measurements were taken on a Windows 11 24H2 (OS Build 26300) x64 test system (16-core CPU, NVMe SSD, 1080p60 and 4K display outputs). Metrics aggregate the entire process tree (`LockscreenGif.exe` UI + Player process + child `msedgewebview2.exe` instances).
+All measurements were taken on the target test system: ASUS TUF Gaming A15 running Windows 11 Home Single Language 26H2 (OS Build 26300.9974, FEP 1000.26100.385.0), AMD Ryzen 7 7435HS (8C/16T @ 3.1 GHz), NVIDIA GeForce RTX 2050 (4 GB GDDR6), 16 GB DDR5, and 1080p @ 144Hz display panel. Metrics aggregate the entire process tree (`LockscreenGif.exe` UI + Player process + child `msedgewebview2.exe` instances).
 
 | Metric | State 1: Idle in Tray (No Wallpaper) | State 2: 1080p60 Video Wallpaper (Active) | State 3: 4K Web Wallpaper (Active) | State 4: Auto-Paused (Covered / Battery) |
 |---|---|---|---|---|
