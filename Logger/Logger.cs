@@ -88,13 +88,56 @@ public static class Logger
         Log("FATAL", logMessage.ToString());
     }
 
+    private const long MaxLogFileSize = 2 * 1024 * 1024; // 2 MB
+    private const int MaxRotatedFiles = 5;
+
+    private static void RotateLogsIfNeeded(string currentFilePath)
+    {
+        try
+        {
+            var fileInfo = new FileInfo(currentFilePath);
+            if (!fileInfo.Exists || fileInfo.Length < MaxLogFileSize)
+            {
+                return;
+            }
+
+            // Remove oldest archive if it exists
+            var oldest = $"{currentFilePath}.{MaxRotatedFiles}";
+            if (File.Exists(oldest))
+            {
+                File.Delete(oldest);
+            }
+
+            // Shift archives down: e.g. .4 -> .5, .3 -> .4
+            for (var i = MaxRotatedFiles - 1; i >= 1; i--)
+            {
+                var src = $"{currentFilePath}.{i}";
+                var dst = $"{currentFilePath}.{i + 1}";
+                if (File.Exists(src))
+                {
+                    File.Move(src, dst, true);
+                }
+            }
+
+            // Rotate current file to .1
+            var firstArchive = $"{currentFilePath}.1";
+            File.Move(currentFilePath, firstArchive, true);
+        }
+        catch
+        {
+            // Logging rotation failure should never crash the caller
+        }
+    }
+
     private static void Log(string level, string message)
     {
         try
         {
             lock (lockObj)
             {
-                using var sw = new StreamWriter(GetLogFilePath(), true, Encoding.UTF8);
+                var filePath = GetLogFilePath();
+                RotateLogsIfNeeded(filePath);
+                using var sw = new StreamWriter(filePath, true, Encoding.UTF8);
                 sw.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{level}] {message}");
             }
         }

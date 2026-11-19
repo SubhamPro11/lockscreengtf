@@ -14,6 +14,8 @@ internal static class DesktopNativeMethods
     public const uint SPIF_UPDATEINIFILE = 0x01;
     public const uint SPIF_SENDCHANGE = 0x02;
 
+    public const uint SM_CXSCREEN = 0;
+    public const uint SM_CYSCREEN = 1;
     public const uint SM_XVIRTUALSCREEN = 76;
     public const uint SM_YVIRTUALSCREEN = 77;
     public const uint SM_CXVIRTUALSCREEN = 78;
@@ -413,4 +415,15 @@ internal static class DesktopNativeMethods
 
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern uint RegisterWindowMessage(string lpString);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct LASTINPUTINFO
+    {
+        public uint cbSize;
+        public uint dwTime;
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 }

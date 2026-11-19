@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -438,6 +439,91 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             _engineService.PerformanceMonitor.Rules.LowerDecodeQuality = value;
             OnPropertyChanged();
+        }
+    }
+
+    public static readonly string[] PerformancePresets = ["Max Quality", "Balanced", "Battery Saver", "Ultra Light"];
+    public string[] AvailablePresets => PerformancePresets;
+
+    private int _selectedPresetIndex = 1; // Default: Balanced
+    public int SelectedPresetIndex
+    {
+        get => _selectedPresetIndex;
+        set
+        {
+            if (SetProperty(ref _selectedPresetIndex, value))
+            {
+                ApplyPerformancePreset(value);
+            }
+        }
+    }
+
+    public void ApplyPerformancePreset(int presetIndex)
+    {
+        switch (presetIndex)
+        {
+            case 0: // Max Quality: 60 FPS, high quality, pause fullscreen only
+                FpsLimitIndex = 0;
+                LowerDecodeQuality = false;
+                PauseWhenFullscreenAppActive = true;
+                PauseWhenDesktopCovered = false;
+                PauseOnBattery = false;
+                PauseInBatterySaver = true;
+                break;
+            case 1: // Balanced: 30 FPS, smart scaling, standard auto-pause
+                FpsLimitIndex = 1;
+                LowerDecodeQuality = false;
+                PauseWhenFullscreenAppActive = true;
+                PauseWhenDesktopCovered = true;
+                PauseOnBattery = false;
+                PauseInBatterySaver = true;
+                break;
+            case 2: // Battery Saver: 24/15 FPS, auto pause on battery
+                FpsLimitIndex = 2;
+                LowerDecodeQuality = true;
+                PauseWhenFullscreenAppActive = true;
+                PauseWhenDesktopCovered = true;
+                PauseOnBattery = true;
+                PauseInBatterySaver = true;
+                break;
+            case 3: // Ultra Light: 15 FPS, low decode quality, aggressive pause
+                FpsLimitIndex = 2;
+                LowerDecodeQuality = true;
+                PauseWhenFullscreenAppActive = true;
+                PauseWhenDesktopCovered = true;
+                PauseOnBattery = true;
+                PauseInBatterySaver = true;
+                break;
+        }
+        OnPropertyChanged(nameof(FpsLimitIndex));
+        OnPropertyChanged(nameof(LowerDecodeQuality));
+        OnPropertyChanged(nameof(PauseWhenFullscreenAppActive));
+        OnPropertyChanged(nameof(PauseWhenDesktopCovered));
+        OnPropertyChanged(nameof(PauseOnBattery));
+        OnPropertyChanged(nameof(PauseInBatterySaver));
+    }
+
+    public string BatteryImpactEstimate
+    {
+        get
+        {
+            if (!IsRunning || IsPaused)
+            {
+                return "Negligible (< 0.2%/hr)";
+            }
+            if (double.TryParse(_cpuUsageText.TrimEnd('%'), NumberStyles.Float, CultureInfo.InvariantCulture, out var cpu))
+            {
+                if (cpu < 1.0)
+                {
+                    return "About 0.5% drain/hr";
+                }
+                if (cpu < 4.0)
+                {
+                    return "About 1.5% drain/hr";
+                }
+                return "About 3-4% drain/hr";
+            }
+            return "About 1% drain/hr";
         }
     }
 

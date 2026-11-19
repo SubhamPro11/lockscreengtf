@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using LockscreenGif.Features.DesktopWallpaper.Services.Native;
 
 namespace LockscreenGif.Features.DesktopWallpaper.Services.Media;
 
@@ -47,7 +48,7 @@ public static class WallpaperMediaHelper
         }
 
         var ext = Path.GetExtension(filePath).ToLowerInvariant();
-        return ext is ".mkv" or ".avi" or ".mov" or ".wmv" or ".flv";
+        return ext is ".mkv" or ".avi" or ".mov" or ".wmv" or ".flv" or ".gif";
     }
 
     /// <summary>
@@ -96,11 +97,27 @@ public static class WallpaperMediaHelper
             return cachedMp4;
         }
 
-        // Fallback: Transcode video to H.264 and audio to AAC
-        Logger.Info("Fast remux failed or codec incompatible; transcoding to H.264/AAC...");
+        // Fallback: Transcode video to H.264 (downscaling to display native resolution if higher) and audio to AAC
+        Logger.Info("Fast remux failed or codec incompatible; transcoding to H.264/AAC with smart display scaling...");
+
+        // Smart native display scaling: cap at monitor resolution so 4K videos on 1080p monitors don't waste 75% GPU/CPU
+        var screenW = DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_CXSCREEN);
+        var screenH = DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_CYSCREEN);
+        if (screenW <= 0)
+        {
+            screenW = 1920;
+        }
+        if (screenH <= 0)
+        {
+            screenH = 1080;
+        }
+
+        var scaleFilter =
+            $"-vf \"scale='min({screenW},iw)':'min({screenH},ih)':force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2\"";
+
         var transcodeSuccess = await RunFfmpegAsync(
             ffmpeg,
-            $"-y -i \"{inputFilePath}\" -c:v libx264 -preset ultrafast -crf 22 -c:a aac -b:a 192k -movflags +faststart \"{tempOutputFile}\""
+            $"-y -i \"{inputFilePath}\" -c:v libx264 -preset ultrafast -crf 22 {scaleFilter} -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart \"{tempOutputFile}\""
         );
 
         if (transcodeSuccess && File.Exists(tempOutputFile))

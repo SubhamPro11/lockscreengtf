@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -96,6 +97,28 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
             var now = DateTime.UtcNow;
             var elapsedWallTime = (now - _lastCpuSampleTime).TotalMilliseconds;
             var currentCpuTime = proc.TotalProcessorTime;
+            long totalWorkingSet = proc.WorkingSet64;
+
+            // Aggregate player process if running out-of-process
+            try
+            {
+                var pidPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "LockscreenGif",
+                    "wallpaper_player.pid"
+                );
+                if (File.Exists(pidPath) && int.TryParse(File.ReadAllText(pidPath).Trim(), out var playerPid))
+                {
+                    if (playerPid != Environment.ProcessId)
+                    {
+                        using var playerProc = Process.GetProcessById(playerPid);
+                        currentCpuTime += playerProc.TotalProcessorTime;
+                        totalWorkingSet += playerProc.WorkingSet64;
+                    }
+                }
+            }
+            catch { }
+
             var cpuUsedMs = (currentCpuTime - _lastCpuTime).TotalMilliseconds;
 
             _lastCpuTime = currentCpuTime;
@@ -108,16 +131,50 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
                 cpuPercent = Math.Clamp((cpuUsedMs / (elapsedWallTime * cores)) * 100.0, 0.0, 100.0);
             }
 
-            proc.Refresh();
-            var memoryMb = proc.WorkingSet64 / (1024 * 1024);
+            var memoryMb = totalWorkingSet / (1024 * 1024);
+            var decoderDesc = Rules.LowerDecodeQuality ? "D3D11VA / Quality Reduced" : "Direct3D 11 / D3D11VA (Hardware Decoded)";
 
-            LastResourceUsage = new WallpaperResourceUsage(Math.Round(cpuPercent, 1), memoryMb, "DirectX 12 / Hardware Decoded");
+            LastResourceUsage = new WallpaperResourceUsage(Math.Round(cpuPercent, 1), memoryMb, decoderDesc);
 
             ResourceUsageUpdated?.Invoke(this, LastResourceUsage);
         }
         catch
         {
             // Ignore transient measurement errors
+        }
+    }
+
+    private static uint GetIdleTimeMs()
+    {
+        var lii = new DesktopNativeMethods.LASTINPUTINFO { cbSize = (uint)Marshal.SizeOf<DesktopNativeMethods.LASTINPUTINFO>() };
+        if (DesktopNativeMethods.GetLastInputInfo(ref lii))
+        {
+            var tick = (uint)Environment.TickCount;
+            return tick >= lii.dwTime ? tick - lii.dwTime : 0;
+        }
+        return 0;
+    }
+
+    private static string? GetForegroundProcessName()
+    {
+        var fgWnd = DesktopNativeMethods.GetForegroundWindow();
+        if (fgWnd == 0)
+        {
+            return null;
+        }
+        DesktopNativeMethods.GetWindowThreadProcessId(fgWnd, out var pid);
+        if (pid == Environment.ProcessId)
+        {
+            return null;
+        }
+        try
+        {
+            using var p = Process.GetProcessById((int)pid);
+            return p.ProcessName.ToLowerInvariant();
+        }
+        catch
+        {
+            return null;
         }
     }
 
@@ -135,6 +192,25 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         {
             triggerReason = "Remote desktop session active";
         }
+
+        // Rule 0b: Idle timeout
+        if (triggerReason == null && Rules.PauseWhenIdle && Rules.IdleMinutes > 0)
+        {
+            var idleMs = GetIdleTimeMs();
+            if (idleMs >= (uint)(Rules.IdleMinutes * 60 * 1000))
+            {
+                triggerReason = $"System idle for over {Rules.IdleMinutes} min";
+            }
+        }
+
+        // Rule 0c: Per-app pause/never-pause list check
+        var fgProc = GetForegroundProcessName();
+        if (triggerReason == null && fgProc != null && Rules.PauseProcessNames.Contains(fgProc))
+        {
+            triggerReason = $"Target app '{fgProc}' is active";
+        }
+
+        var isExcludedFromOcclusion = fgProc != null && Rules.NeverPauseProcessNames.Contains(fgProc);
 
         // Rule 1: PC Locked or Display Off
         if (triggerReason == null && Rules.PauseWhenLockedOrDisplayOff && IsWorkstationLocked())
@@ -159,7 +235,7 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         }
 
         // Rule 4: Fullscreen App or Game
-        if (triggerReason == null && Rules.PauseWhenFullscreenAppActive)
+        if (triggerReason == null && Rules.PauseWhenFullscreenAppActive && !isExcludedFromOcclusion)
         {
             if (IsForegroundAppFullscreen())
             {
@@ -168,7 +244,7 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         }
 
         // Rule 5: Desktop Covered by Maximized Window
-        if (triggerReason == null && Rules.PauseWhenDesktopCovered)
+        if (triggerReason == null && Rules.PauseWhenDesktopCovered && !isExcludedFromOcclusion)
         {
             if (IsForegroundAppMaximized())
             {

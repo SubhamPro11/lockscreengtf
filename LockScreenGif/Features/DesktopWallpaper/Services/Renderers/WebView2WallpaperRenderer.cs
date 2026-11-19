@@ -88,7 +88,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
         var options = new CoreWebView2EnvironmentOptions
         {
             AdditionalBrowserArguments =
-                "--autoplay-policy=no-user-gesture-required --disable-background-timer-throttling --disable-renderer-backgrounding",
+                "--autoplay-policy=no-user-gesture-required --enable-features=VaapiVideoDecoder,D3D11VideoDecoder --disable-features=UseChromeOSDirectVideoDecoder --ignore-gpu-blocklist --disable-background-timer-throttling",
         };
 
         _environment = await CoreWebView2Environment.CreateWithOptionsAsync(null, UserDataFolder, options);
@@ -326,6 +326,16 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
             {
                 // Best effort
             }
+
+            try
+            {
+                _controller.IsVisible = false;
+                await _controller.CoreWebView2.TrySuspendAsync();
+            }
+            catch
+            {
+                // Best effort
+            }
         }
     }
 
@@ -334,6 +344,16 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
         if (_controller != null)
         {
             _isPlaying = true;
+            try
+            {
+                _controller.CoreWebView2.Resume();
+                _controller.IsVisible = true;
+            }
+            catch
+            {
+                // Best effort
+            }
+
             try
             {
                 await _controller.CoreWebView2.ExecuteScriptAsync("if (window.playMedia) { window.playMedia(); }");

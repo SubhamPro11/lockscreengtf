@@ -12,4 +12,11 @@ public sealed class WallpaperPerformanceRules
     public bool PauseWhenLockedOrDisplayOff { get; set; } = true;
     public int TargetFps { get; set; } = 60;
     public bool LowerDecodeQuality { get; set; }
+
+    // Extended rules for smart power & process management
+    public bool PauseWhenIdle { get; set; }
+    public int IdleMinutes { get; set; } = 5;
+    public System.Collections.Generic.List<string> PauseProcessNames { get; } =
+    ["obs64", "obs32", "premiere", "photoshop", "afterfx", "blender"];
+    public System.Collections.Generic.List<string> NeverPauseProcessNames { get; } = [];
 }

@@ -409,6 +409,33 @@
                         CornerRadius="{StaticResource GlassRadiusControl}"
                         Padding="20,12">
                     <StackPanel Spacing="12">
+                        <!-- Performance Presets -->
+                        <Grid ColumnSpacing="16" MinHeight="44">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="220" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Performance profile"
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                <TextBlock Text="Quick presets to balance smoothness, decode quality, and battery impact."
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"
+                                      HorizontalAlignment="Stretch"
+                                      ItemsSource="{x:Bind ViewModel.AvailablePresets, Mode=OneTime}"
+                                      SelectedIndex="{x:Bind ViewModel.SelectedPresetIndex, Mode=TwoWay}"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      AutomationProperties.Name="Performance profile" />
+                        </Grid>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
                         <!-- Fullscreen pause -->
                         <Grid ColumnSpacing="16" MinHeight="44">
                             <Grid.ColumnDefinitions>
@@ -588,6 +615,59 @@
                                           AutomationProperties.Name="Lower decode quality" />
                         </Grid>
                     </StackPanel>
+                </Border>
+
+                <!-- Live Resource Meter -->
+                <Border Background="{ThemeResource GlassRaisedBrush}"
+                        BorderBrush="{ThemeResource GlassHairlineBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource GlassRadiusControl}"
+                        Padding="20,14"
+                        Visibility="{x:Bind ViewModel.ResourceUsageVisibility, Mode=OneWay}">
+                    <Grid ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Background="{ThemeResource GlassSubtleBrush}"
+                                    CornerRadius="999"
+                                    Padding="12,6">
+                                <TextBlock Text="{x:Bind ViewModel.CpuTextWithLabel, Mode=OneWay}"
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="{ThemeResource GlassPrimaryBrush}" />
+                            </Border>
+
+                            <Border Background="{ThemeResource GlassSubtleBrush}"
+                                    CornerRadius="999"
+                                    Padding="12,6">
+                                <TextBlock Text="{x:Bind ViewModel.MemoryTextWithLabel, Mode=OneWay}"
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
+                            <TextBlock Text="{x:Bind ViewModel.GpuDescriptionText, Mode=OneWay}"
+                                       FontFamily="{StaticResource GlassFontUi}"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Bind ViewModel.BatteryImpactEstimate, Mode=OneWay}"
+                                       FontFamily="{StaticResource GlassFontUi}"
+                                       FontSize="12"
+                                       FontWeight="Medium"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </StackPanel>
 

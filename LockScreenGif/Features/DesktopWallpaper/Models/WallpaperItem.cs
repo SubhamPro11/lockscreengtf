@@ -80,7 +80,8 @@ public sealed class WallpaperItem
         return ext switch
         {
             ".html" or ".htm" => WallpaperType.Web,
-            ".png" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".webp" => WallpaperType.Image,
+            ".png" or ".jpg" or ".jpeg" or ".bmp" or ".webp" => WallpaperType.Image,
+            ".gif" => WallpaperType.Video,
             ".exe" => WallpaperType.Application,
             _ => WallpaperType.Video, // .mp4, .webm, .mkv, .avi, .mov
         };

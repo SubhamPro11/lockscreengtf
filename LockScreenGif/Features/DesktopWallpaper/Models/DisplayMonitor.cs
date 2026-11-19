@@ -20,7 +20,24 @@ public sealed record DisplayMonitor(
     public double ScaleFactor => DpiX > 0 ? (double)DpiX / 96.0 : 1.0;
     public int ScalePercentage => (int)Math.Round(ScaleFactor * 100);
 
-    public string DisplayName => $"{DeviceName} ({Width}×{Height}){(IsPrimary ? " · Primary" : "")} · {ScalePercentage}% scaling";
+    public string FriendlyName
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(DeviceName))
+            {
+                return "Display";
+            }
+            if (DeviceName.StartsWith(@"\\.\DISPLAY", StringComparison.OrdinalIgnoreCase))
+            {
+                var num = DeviceName.Substring(11);
+                return $"Display {num}";
+            }
+            return DeviceName;
+        }
+    }
+
+    public string DisplayName => $"{FriendlyName} ({Width}×{Height}){(IsPrimary ? " · Primary" : "")} · {ScalePercentage}%";
 
     public override string ToString() => DisplayName;
 }
