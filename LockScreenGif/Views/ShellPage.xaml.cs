@@ -89,6 +89,7 @@ public sealed partial class ShellPage : Page
 
     private void ShellPage_Loaded(object sender, RoutedEventArgs e)
     {
+        UpdateAmbientColors();
         App.AppTitlebar = AppTitleBar;
         App.MainWindow.SetTitleBar(AppTitleBar);
         UpdateCaptionButtonSpacer();
@@ -322,5 +323,28 @@ public sealed partial class ShellPage : Page
     private void ShellPage_ActualThemeChanged(FrameworkElement sender, object args)
     {
         TitleBarHelper.ApplySystemThemeToCaptionButtons();
+        UpdateAmbientColors();
+    }
+
+    private void UpdateAmbientColors()
+    {
+        var isLight = ActualTheme == ElementTheme.Light;
+        if (Blob1Stop0 != null && Blob1Stop1 != null && Blob2Stop0 != null && Blob2Stop1 != null)
+        {
+            if (isLight)
+            {
+                Blob1Stop0.Color = Color.FromArgb(0x18, 0x90, 0x4A, 0x42);
+                Blob1Stop1.Color = Color.FromArgb(0x0A, 0x90, 0x4A, 0x42);
+                Blob2Stop0.Color = Color.FromArgb(0x14, 0xFF, 0xDA, 0xD5);
+                Blob2Stop1.Color = Color.FromArgb(0x06, 0xFF, 0xDA, 0xD5);
+            }
+            else
+            {
+                Blob1Stop0.Color = Color.FromArgb(0x12, 0xFF, 0xA7, 0x9B);
+                Blob1Stop1.Color = Color.FromArgb(0x08, 0xFF, 0xA7, 0x9B);
+                Blob2Stop0.Color = Color.FromArgb(0x18, 0x5D, 0x3F, 0x3B);
+                Blob2Stop1.Color = Color.FromArgb(0x08, 0x5D, 0x3F, 0x3B);
+            }
+        }
     }
 }

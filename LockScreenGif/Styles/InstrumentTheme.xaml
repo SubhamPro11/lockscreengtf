@@ -140,6 +140,161 @@
             <SolidColorBrush x:Key="GlassSolidSurfaceBrush" Color="#221816" />
             <SolidColorBrush x:Key="GlassSolidBorderBrush" Color="#534341" />
 
+            <!-- Button Visual State Brushes -->
+            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#6B4A45" />
+            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#503532" />
+            <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="#3B2C2A" />
+            <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="#7A6663" />
+
+            <LinearGradientBrush x:Key="GlassTopVignetteBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#501A1110" Offset="0.0" />
+                <GradientStop Color="#001A1110" Offset="1.0" />
+            </LinearGradientBrush>
+        </ResourceDictionary>
+
+        <!-- Explicit Dark Theme Dictionary (Matches Default for Material 3 Red Dark) -->
+        <ResourceDictionary x:Key="Dark">
+            <!-- Surface Colors -->
+            <Color x:Key="GlassBaseColor">#1A1110</Color>
+            <Color x:Key="GlassRaisedColor">#221816</Color>
+            <Color x:Key="GlassSubtleColor">#2C211F</Color>
+            <Color x:Key="GlassHairlineColor">#534341</Color>
+
+            <SolidColorBrush x:Key="GlassBaseBrush" Color="{StaticResource GlassBaseColor}" />
+            <SolidColorBrush x:Key="GlassRaisedBrush" Color="{StaticResource GlassRaisedColor}" />
+            <SolidColorBrush x:Key="GlassSubtleBrush" Color="{StaticResource GlassSubtleColor}" />
+            <SolidColorBrush x:Key="GlassHairlineBrush" Color="{StaticResource GlassHairlineColor}" />
+
+            <!-- Material 3 Red Dark Core Tokens -->
+            <Color x:Key="GlassPrimaryColor">#FFA79B</Color>
+            <Color x:Key="GlassOnPrimaryColor">#561E18</Color>
+            <Color x:Key="GlassSecondaryContainerColor">#5D3F3B</Color>
+            <Color x:Key="GlassOnSecondaryContainerColor">#FFDAD5</Color>
+            <Color x:Key="GlassOutlineVariantColor">#534341</Color>
+
+            <SolidColorBrush x:Key="GlassPrimaryBrush" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="GlassOnPrimaryBrush" Color="{StaticResource GlassOnPrimaryColor}" />
+            <SolidColorBrush x:Key="GlassSecondaryContainerBrush" Color="{StaticResource GlassSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="GlassOnSecondaryContainerBrush" Color="{StaticResource GlassOnSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="GlassOutlineVariantBrush" Color="{StaticResource GlassOutlineVariantColor}" />
+
+            <!-- Backward compatibility aliases for existing pages -->
+            <SolidColorBrush x:Key="GlassSurfaceBaseBrush" Color="{StaticResource GlassBaseColor}" />
+            <SolidColorBrush x:Key="GlassSurfaceElevatedBrush" Color="{StaticResource GlassRaisedColor}" />
+            <SolidColorBrush x:Key="GlassSurfaceSubtleBrush" Color="{StaticResource GlassSubtleColor}" />
+            <SolidColorBrush x:Key="GlassSurfaceSolidFallbackBrush" Color="{StaticResource GlassRaisedColor}" />
+            <SolidColorBrush x:Key="GlassBorderRimBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassBorderSolidFallbackBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassBorderAccentBrush" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="GlassBorderSubtleBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassInnerHighlightBrush" Color="#0DFFFFFF" />
+
+            <!-- Typography & Foreground (On Surface & On Surface Variant) -->
+            <Color x:Key="GlassTextPrimaryColor">#F1DEDC</Color>
+            <Color x:Key="GlassTextSecondaryColor">#D8C2BE</Color>
+            <Color x:Key="GlassTextTertiaryColor">#A4928F</Color>
+
+            <SolidColorBrush x:Key="GlassTextPrimaryBrush" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="GlassTextSecondaryBrush" Color="{StaticResource GlassTextSecondaryColor}" />
+            <SolidColorBrush x:Key="GlassTextTertiaryBrush" Color="{StaticResource GlassTextTertiaryColor}" />
+            <SolidColorBrush x:Key="GlassTextMonospaceBrush" Color="{StaticResource GlassTextSecondaryColor}" />
+
+            <!-- Accent & Functional Colors: Coral Primary (#FFA79B) -->
+            <Color x:Key="GlassEmberColor">#FFA79B</Color>
+            <Color x:Key="GlassEmberPressedColor">#FF8C7C</Color>
+            <Color x:Key="GlassEmberHoverColor">#FFB5AB</Color>
+
+            <SolidColorBrush x:Key="GlassEmberBrush" Color="{StaticResource GlassEmberColor}" />
+            <SolidColorBrush x:Key="GlassEmberPressedBrush" Color="{StaticResource GlassEmberPressedColor}" />
+            <SolidColorBrush x:Key="GlassEmberHoverBrush" Color="{StaticResource GlassEmberHoverColor}" />
+
+            <!-- Functional Status -->
+            <SolidColorBrush x:Key="GlassStatusSuccessBrush" Color="#7FD99F" />
+            <SolidColorBrush x:Key="GlassStatusWarningBrush" Color="#FFB951" />
+            <SolidColorBrush x:Key="GlassStatusAlertBrush" Color="#FF897D" />
+            <SolidColorBrush x:Key="GlassDestructiveButtonBrush" Color="#FF897D" />
+
+            <!-- Compatibility aliases for older views -->
+            <SolidColorBrush x:Key="GlassAccentBrassBrush" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="GlassAccentBrassHoverBrush" Color="{StaticResource GlassEmberHoverColor}" />
+            <SolidColorBrush x:Key="GlassAccentBrassPressedBrush" Color="{StaticResource GlassEmberPressedColor}" />
+
+            <SolidColorBrush x:Key="InstrumentBackgroundBrush" Color="{StaticResource GlassBaseColor}" />
+            <SolidColorBrush x:Key="InstrumentSurfaceBrush" Color="{StaticResource GlassRaisedColor}" />
+            <SolidColorBrush x:Key="InstrumentBorderBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="InstrumentTextPrimaryBrush" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="InstrumentTextMutedBrush" Color="{StaticResource GlassTextSecondaryColor}" />
+            <SolidColorBrush x:Key="InstrumentAccentBrassBrush" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="InstrumentGaugeGreenBrush" Color="#7FD99F" />
+            <SolidColorBrush x:Key="InstrumentAlertRedBrush" Color="#FF897D" />
+
+            <!-- WinUI Control Colors Overrides -->
+            <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{StaticResource GlassEmberHoverColor}" />
+            <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{StaticResource GlassEmberPressedColor}" />
+            <SolidColorBrush x:Key="SliderTrackValueFill" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource GlassEmberHoverColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackground" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="ProgressBarForeground" Color="{StaticResource GlassPrimaryColor}" />
+
+            <!-- Navigation Bar Colors: Secondary Container Pill for Selected Tab -->
+            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="NavigationViewItemBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="#1AFFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="#2AFFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource GlassSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="#6B4A45" />
+            <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="#503532" />
+
+            <SolidColorBrush x:Key="NavigationViewItemForeground" Color="{StaticResource GlassTextSecondaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{StaticResource GlassOnSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="{StaticResource GlassOnSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="{StaticResource GlassOnSecondaryContainerColor}" />
+
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="Transparent" />
+
+            <!-- Accessible Focus Visuals: 2px Primary with 1px inner dark separation -->
+            <SolidColorBrush x:Key="FocusVisualPrimaryBrush" Color="{StaticResource GlassPrimaryColor}" />
+            <SolidColorBrush x:Key="FocusVisualSecondaryBrush" Color="{StaticResource GlassBaseColor}" />
+
+            <!-- Overlays, Flyouts & Dialogs -->
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="#F2221816" />
+            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#A6000000" />
+            <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#F2221816" />
+            <SolidColorBrush x:Key="FlyoutPresenterBorderBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#F2221816" />
+            <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="ToolTipBackground" Color="#F2221816" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource GlassTextPrimaryColor}" />
+
+            <!-- ComboBox & Dropdown Styling -->
+            <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#F2221816" />
+            <SolidColorBrush x:Key="ComboBoxItemBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="#1EFFFFFF" />
+            <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{StaticResource GlassSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForeground" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{StaticResource GlassOnSecondaryContainerColor}" />
+
+            <!-- WinUI 3 AcrylicBrush (In-app acrylic with Base tint and 65% opacity) -->
+            <AcrylicBrush x:Key="GlassBackdropBrush"
+                          TintColor="#1A1110"
+                          TintOpacity="0.75"
+                          FallbackColor="#221816" />
+
+            <SolidColorBrush x:Key="GlassSolidSurfaceBrush" Color="#221816" />
+            <SolidColorBrush x:Key="GlassSolidBorderBrush" Color="#534341" />
+
+            <!-- Button Visual State Brushes -->
+            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#6B4A45" />
+            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#503532" />
+            <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="#3B2C2A" />
+            <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="#7A6663" />
+
             <LinearGradientBrush x:Key="GlassTopVignetteBrush" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#501A1110" Offset="0.0" />
                 <GradientStop Color="#001A1110" Offset="1.0" />
@@ -271,6 +426,12 @@
             <SolidColorBrush x:Key="GlassSolidSurfaceBrush" Color="#FFFFFF" />
             <SolidColorBrush x:Key="GlassSolidBorderBrush" Color="#D8C2BE" />
 
+            <!-- Button Visual State Brushes -->
+            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#FFDAD5" />
+            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#E8C3BE" />
+            <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="#E5DDD9" />
+            <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="#A4928F" />
+
             <LinearGradientBrush x:Key="GlassTopVignetteBrush" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#14000000" Offset="0.0" />
                 <GradientStop Color="#00000000" Offset="1.0" />
@@ -359,6 +520,12 @@
             <SolidColorBrush x:Key="GlassBackdropBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="GlassSolidSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="GlassSolidBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+
+            <!-- Button Visual State Brushes -->
+            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
+            <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
 
             <SolidColorBrush x:Key="GlassTopVignetteBrush" Color="Transparent" />
         </ResourceDictionary>
@@ -659,19 +826,19 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#FFB5AB" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassEmberHoverBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#F59588" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassEmberPressedBrush}" />
                             <Setter Target="OuterBorder.Margin" Value="0,1,0,-1" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#3B2C2A" />
-                            <Setter Target="ContentPresenter.Foreground" Value="#7A6663" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassButtonDisabledBackgroundBrush}" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassButtonDisabledForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -703,19 +870,19 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#6B4A45" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassTonalHoverBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#503532" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassTonalPressedBrush}" />
                             <Setter Target="OuterBorder.Margin" Value="0,1,0,-1" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#3B2C2A" />
-                            <Setter Target="ContentPresenter.Foreground" Value="#7A6663" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassButtonDisabledBackgroundBrush}" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassButtonDisabledForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -748,20 +915,20 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#14FFA79B" />
-                            <Setter Target="OuterBorder.BorderBrush" Value="#705B58" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassSecondaryContainerBrush}" />
+                            <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource GlassPrimaryBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#24FFA79B" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassTonalPressedBrush}" />
                             <Setter Target="OuterBorder.Margin" Value="0,1,0,-1" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.BorderBrush" Value="#3B2C2A" />
-                            <Setter Target="ContentPresenter.Foreground" Value="#7A6663" />
+                            <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource GlassButtonDisabledBackgroundBrush}" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassButtonDisabledForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -793,18 +960,19 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#14FFA79B" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassSecondaryContainerBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="#24FFA79B" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassTonalPressedBrush}" />
                             <Setter Target="OuterBorder.Margin" Value="0,1,0,-1" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Target="ContentPresenter.Foreground" Value="#7A6663" />
+                            <Setter Target="OuterBorder.Background" Value="Transparent" />
+                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassButtonDisabledForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
