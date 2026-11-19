@@ -30,13 +30,13 @@
 
         <!-- Projection Booth Stepper Indicator Styles -->
         <Style x:Key="CurrentStepStyle" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource GlassEmberBrush}" />
-            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Background" Value="{ThemeResource GlassSecondaryContainerBrush}" />
+            <Setter Property="CornerRadius" Value="999" />
             <Setter Property="Padding" Value="14,4" />
             <Setter Property="UseLayoutRounding" Value="True" />
         </Style>
         <Style x:Key="CurrentStepTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="Foreground" Value="{ThemeResource GlassOnSecondaryContainerBrush}" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -112,49 +112,50 @@
                             <InfoBar x:Name="EnvironmentStatusInfoBar" IsOpen="False" IsClosable="True" Severity="Warning"
                                      AutomationProperties.LiveSetting="Assertive" />
 
-                            <!-- Hero Drop Zone Card (Radius 22, Welcoming Projection Booth Aesthetic) -->
+                            <!-- Hero Drop Zone Card (Radius 24, Material 3 Dark Surface) -->
                             <Border x:Name="DropTargetCard"
                                     Background="{ThemeResource GlassRaisedBrush}"
-                                    BorderBrush="{ThemeResource GlassHairlineBrush}"
+                                    BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
                                     BorderThickness="1"
                                     CornerRadius="{ThemeResource GlassRadiusStage}"
                                     AllowDrop="True" DragOver="DropTarget_DragOver" DragLeave="DropTarget_DragLeave" Drop="DropTarget_Drop"
                                     AutomationProperties.Name="Drop zone for video or GIF file"
-                                    Padding="32,44" HorizontalAlignment="Stretch">
-                                <StackPanel Spacing="18" HorizontalAlignment="Center">
-                                    <Border Width="64" Height="64" CornerRadius="32" Background="#14E8452C"
-                                            BorderBrush="#26E8452C" BorderThickness="1" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE8B9;" FontSize="28" Foreground="{ThemeResource GlassEmberHoverBrush}"
+                                    Padding="32,48" HorizontalAlignment="Stretch">
+                                <StackPanel Spacing="20" HorizontalAlignment="Center">
+                                    <Border Width="64" Height="64" CornerRadius="32" Background="{ThemeResource GlassSecondaryContainerBrush}"
+                                            BorderThickness="0" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE714;" FontSize="28" Foreground="{ThemeResource GlassPrimaryBrush}"
                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                     <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                        <TextBlock Text="Drag and drop a video or GIF here"
-                                                   FontSize="20" FontWeight="SemiBold"
+                                        <TextBlock Text="Drop a video or GIF here"
+                                                   Style="{StaticResource PageTitleStyle}"
+                                                   FontSize="24" FontWeight="SemiBold"
                                                    Foreground="{ThemeResource GlassTextPrimaryBrush}" TextAlignment="Center" />
-                                        <TextBlock Text="or choose an animation from your computer"
+                                        <TextBlock Text="or click Browse below to pick a file from your PC"
                                                    Foreground="{ThemeResource GlassTextSecondaryBrush}" TextAlignment="Center" FontSize="13" />
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,6,0,0">
-                                        <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Style="{StaticResource GlassPrimaryButtonStyle}"
+                                    <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" Margin="0,6,0,0">
+                                        <Button x:Name="BrowseVideoButton" Click="OpenVideoButton_click" Style="{StaticResource MaterialFilledButtonLargeStyle}"
                                                 AutomationProperties.Name="Choose video file to animate"
                                                 AccessKey="V" ToolTipService.ToolTip="Select a video file to trim and animate (Alt+V)">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <FontIcon Glyph="&#xE714;" FontSize="15" />
-                                                <TextBlock Text="Choose Video…" FontWeight="SemiBold" />
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <FontIcon Glyph="&#xE714;" FontSize="16" Foreground="{ThemeResource GlassOnPrimaryBrush}" />
+                                                <TextBlock Text="Browse videos…" FontWeight="SemiBold" FontSize="15" />
                                             </StackPanel>
                                         </Button>
-                                        <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Style="{StaticResource GlassButtonStyle}"
+                                        <Button x:Name="BrowseGifButton" Click="OpenGifButton_click" Style="{StaticResource MaterialTonalButtonLargeStyle}"
                                                 AutomationProperties.Name="Choose existing GIF file to animate"
                                                 AccessKey="G" ToolTipService.ToolTip="Select an existing animated GIF file (Alt+G)">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <FontIcon Glyph="&#xE8B9;" FontSize="15" />
-                                                <TextBlock Text="Choose GIF…" />
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <FontIcon Glyph="&#xEB9F;" FontSize="16" Foreground="{ThemeResource GlassOnSecondaryContainerBrush}" />
+                                                <TextBlock Text="Browse GIFs…" FontWeight="SemiBold" FontSize="15" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
 
                                     <!-- Clean Metadata Readout -->
-                                    <TextBlock Text="Supported: MP4 · WEBM · MOV · MKV · AVI · GIF (up to 4K)"
+                                    <TextBlock Text="Supported: MP4, WebM, MOV, MKV, AVI, and animated GIF"
                                                Foreground="{ThemeResource GlassTextTertiaryBrush}" FontSize="12"
                                                HorizontalAlignment="Center" Margin="0,6,0,0" />
                                 </StackPanel>
@@ -251,12 +252,13 @@
                             <TextBlock x:Name="CurrentSelectionSummary" Visibility="Collapsed" TextWrapping="Wrap"
                                        Foreground="{ThemeResource GlassTextSecondaryBrush}" />
 
-                            <!-- Separated, quieter Revert / Destructive Action -->
+                            <!-- Separated Material 3 Text Button for Restore -->
                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0,4,0,0">
-                                <FontIcon Glyph="&#xE777;" FontSize="13" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
-                                <HyperlinkButton x:Name="RemoveAnimationLink" Content="Restore Windows default lock screen"
-                                                 Style="{StaticResource GlassHyperlinkButtonStyle}"
-                                                 AutomationProperties.Name="Restore Windows default lock screen"
+                                <FontIcon Glyph="&#xE777;" FontSize="13" Foreground="{ThemeResource GlassPrimaryBrush}" VerticalAlignment="Center" />
+                                <HyperlinkButton x:Name="RemoveAnimationLink" Content="Put the Windows lock screen back"
+                                                 Style="{StaticResource MaterialTextButtonStyle}"
+                                                 Foreground="{ThemeResource GlassPrimaryBrush}"
+                                                 AutomationProperties.Name="Put the Windows lock screen back"
                                                  Click="RestoreDefaultLockscreen_Click" />
                             </StackPanel>
                         </StackPanel>
@@ -270,6 +272,11 @@
                                 <Grid x:Name="VideoPreviewPanel" Visibility="Collapsed">
                                     <MediaPlayerElement x:Name="VideoPreview" AreTransportControlsEnabled="False" MaxHeight="370" />
                                     <Image x:Name="PreviewStill" Stretch="Uniform" Visibility="Collapsed" IsHitTestVisible="False" MaxHeight="370" />
+                                    <!-- Editorial Serif Clock Overlay (Simulated Lock Screen as in Figma) -->
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,28,0,0" Spacing="2" IsHitTestVisible="False">
+                                        <TextBlock Text="10:24" Style="{StaticResource HeroClockTextStyle}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Wednesday, November 18" FontSize="15" Foreground="{ThemeResource GlassTextPrimaryBrush}" HorizontalAlignment="Center" />
+                                    </StackPanel>
                                     <Border x:Name="PreviewLoadingPanel" Visibility="Collapsed"
                                             Background="#CC1A1917"
                                             CornerRadius="{ThemeResource GlassRadiusStage}" IsHitTestVisible="False">
@@ -664,26 +671,26 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Back button: quiet pill secondary action -->
+                                <!-- Back button: Material 3 Outlined pill -->
                                 <Button x:Name="BackButton" Content="Back" Click="Back_Click" Visibility="Collapsed"
-                                        Style="{StaticResource GlassButtonStyle}"
+                                        Style="{StaticResource MaterialOutlinedButtonStyle}"
                                         AccessKey="B"
                                         AutomationProperties.Name="Return to previous stage" />
 
-                                <!-- Primary Action Buttons: Solid Ember Pills -->
+                                <!-- Primary Action Buttons: Material 3 Filled Large Pills -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
                                     <Button x:Name="ContinueSelectionButton" Content="Continue" Click="ContinueSelection_Click"
                                             AccessKey="C"
                                             AutomationProperties.Name="Continue to editor"
-                                            Visibility="Collapsed" Style="{StaticResource GlassPrimaryButtonStyle}" />
+                                            Visibility="Collapsed" Style="{StaticResource MaterialFilledButtonLargeStyle}" />
                                     <Button x:Name="GenerateButton" Content="Continue" Click="GenerateButton_Click" IsEnabled="False"
                                             AccessKey="C"
                                             AutomationProperties.Name="Generate lock screen animation"
-                                            Visibility="Collapsed" Style="{StaticResource GlassPrimaryButtonStyle}" />
+                                            Visibility="Collapsed" Style="{StaticResource MaterialFilledButtonLargeStyle}" />
                                     <Button x:Name="ApplyButton" Content="Set lock screen" Click="SetLockscreenButton_click" IsEnabled="False"
                                             AccessKey="S"
                                             AutomationProperties.Name="Set animated GIF as Windows lock screen"
-                                            Visibility="Collapsed" Style="{StaticResource GlassPrimaryButtonStyle}" />
+                                            Visibility="Collapsed" Style="{StaticResource MaterialFilledButtonLargeStyle}" />
                                 </StackPanel>
 
                                 <!-- Help Icon Pill Button -->
@@ -720,16 +727,19 @@
             </ContentControl>
         </ScrollViewer>
 
-        <!-- Outside ScrollView: Dimmed Modal Liquid Glass Overlay for Video Loading -->
-        <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#80000000"
+        <!-- Outside ScrollView: Dimmed Modal Material 3 Card Overlay for Video Loading (Screen 6) -->
+        <Grid x:Name="VideoLoadPanel" Visibility="Collapsed" Background="#B3000000"
               KeyDown="VideoLoadPanel_KeyDown" TabFocusNavigation="Cycle">
-            <Border MaxWidth="460" Margin="24" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Style="{StaticResource GlassFloatingTrayStyle}">
+            <Border MaxWidth="440" Margin="24" Padding="32,28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{ThemeResource GlassRaisedBrush}"
+                    BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource GlassRadiusStage}">
                 <StackPanel Spacing="16">
-                    <ProgressRing x:Name="VideoLoadRing" Width="36" Height="36" Foreground="{ThemeResource GlassEmberHoverBrush}" IsActive="False"
+                    <ProgressRing x:Name="VideoLoadRing" Width="44" Height="44" Foreground="{ThemeResource GlassPrimaryBrush}" IsActive="False"
                                   HorizontalAlignment="Center"
                                   AutomationProperties.Name="Preparing video" />
-                    <TextBlock Text="Preparing your video" Style="{StaticResource SectionTitleStyle}"
+                    <TextBlock Text="Preparing your video" Style="{StaticResource PageTitleStyle}" FontSize="22"
                                TextAlignment="Center" TextWrapping="Wrap" />
                     <TextBlock x:Name="VideoLoadFileName" TextTrimming="CharacterEllipsis" TextAlignment="Center"
                                Foreground="{ThemeResource GlassTextSecondaryBrush}" FontSize="12" />
@@ -740,7 +750,7 @@
                                Style="{StaticResource GlassReadoutTextStyle}"
                                TextAlignment="Center" AutomationProperties.LiveSetting="Polite" FontSize="12" />
                     <Button x:Name="CancelVideoLoadButton" Content="Cancel" Click="CancelVideoLoad_Click"
-                            Style="{StaticResource GlassButtonStyle}"
+                            Style="{StaticResource MaterialTextButtonStyle}"
                             HorizontalAlignment="Center" MinWidth="120" AutomationProperties.Name="Cancel video loading" />
                 </StackPanel>
             </Border>

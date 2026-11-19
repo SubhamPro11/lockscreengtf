@@ -126,7 +126,7 @@
                         </StackPanel>
                         <HyperlinkButton Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                          Click="ChooseSource_Click"
-                                         Style="{StaticResource GlassHyperlinkButtonStyle}"
+                                         Style="{StaticResource MaterialTextButtonStyle}"
                                          AutomationProperties.Name="Select source animation on Lockscreen page"
                                          IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -209,10 +209,10 @@
                     <StackPanel Spacing="6">
                         <Button HorizontalAlignment="Stretch"
                                 Click="Start_Click"
-                                Content="Start test and apply"
+                                Content="Run test and apply"
                                 AutomationProperties.Name="Start diagnostic test and apply animation"
                                 IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                                Style="{StaticResource GlassPrimaryButtonStyle}" />
+                                Style="{StaticResource MaterialFilledButtonLargeStyle}" />
                         <TextBlock HorizontalAlignment="Center"
                                    TextAlignment="Center"
                                    FontFamily="{StaticResource GlassFontUi}"
@@ -420,9 +420,9 @@
                     <StackPanel Spacing="6">
                         <Button HorizontalAlignment="Stretch"
                                 Click="Export_Click"
-                                Content="Export Sanitized Report (ZIP)…"
+                                Content="Save report (.zip)..."
                                 IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
-                                Style="{StaticResource GlassPrimaryButtonStyle}"
+                                Style="{StaticResource MaterialTonalButtonStyle}"
                                 AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
                                 ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
                         <TextBlock HorizontalAlignment="Center"

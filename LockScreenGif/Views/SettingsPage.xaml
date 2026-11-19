@@ -26,11 +26,11 @@
 
             <!-- 2. Lock Screen Behavior & System Integration -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Lock Screen"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
+                <TextBlock Text="LOCK SCREEN"
+                           FontFamily="{StaticResource GlassFontMonospace}"
+                           FontSize="11"
                            FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
 
                 <Border Background="{ThemeResource GlassRaisedBrush}"
                         BorderBrush="{ThemeResource GlassHairlineBrush}"
@@ -177,9 +177,10 @@
                                 </StackPanel>
                                 <Button x:Name="RemoveLockscreenButton"
                                         Grid.Column="1"
-                                        Content="Remove"
+                                        Content="Restore"
                                         Click="RemoveLockscreen_Click"
-                                        Style="{StaticResource GlassDestructiveButtonStyle}"
+                                        Style="{StaticResource MaterialOutlinedButtonStyle}"
+                                        Foreground="{ThemeResource GlassStatusAlertBrush}"
                                         VerticalAlignment="Center"
                                         AutomationProperties.Name="Remove animated lock screen from Windows" />
                             </Grid>
@@ -191,11 +192,11 @@
 
             <!-- 3. System Startup & Wallpaper -->
             <StackPanel Spacing="8">
-                <TextBlock Text="System Startup"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
+                <TextBlock Text="DESKTOP WALLPAPER &amp; STARTUP"
+                           FontFamily="{StaticResource GlassFontMonospace}"
+                           FontSize="11"
                            FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
 
                 <Border Background="{ThemeResource GlassRaisedBrush}"
                         BorderBrush="{ThemeResource GlassHairlineBrush}"
@@ -229,11 +230,11 @@
 
             <!-- 4. Diagnostics, Logs & Privacy -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Diagnostics &amp; Privacy"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
+                <TextBlock Text="DIAGNOSTICS &amp; PRIVACY"
+                           FontFamily="{StaticResource GlassFontMonospace}"
+                           FontSize="11"
                            FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
 
                 <Border Background="{ThemeResource GlassRaisedBrush}"
                         BorderBrush="{ThemeResource GlassHairlineBrush}"
@@ -261,14 +262,14 @@
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <Button x:Name="OpenLogFolderButton"
-                                        Content="Open folder"
+                                        Content="Open logs folder"
                                         Click="OpenLogFolder_Click"
-                                        Style="{StaticResource GlassButtonStyle}"
+                                        Style="{StaticResource MaterialTonalButtonStyle}"
                                         AutomationProperties.Name="Open application log folder in File Explorer" />
                                 <Button x:Name="SaveLogsButton"
                                         Content="Save as ZIP…"
                                         Click="SaveLogs_Click"
-                                        Style="{StaticResource GlassButtonStyle}"
+                                        Style="{StaticResource MaterialOutlinedButtonStyle}"
                                         AutomationProperties.Name="Save application logs as ZIP file" />
                             </StackPanel>
                         </Grid>
@@ -316,11 +317,11 @@
 
             <!-- 5. About Section -->
             <StackPanel Spacing="8">
-                <TextBlock Text="About"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
+                <TextBlock Text="ABOUT"
+                           FontFamily="{StaticResource GlassFontMonospace}"
+                           FontSize="11"
                            FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
 
                 <Border Background="{ThemeResource GlassRaisedBrush}"
                         BorderBrush="{ThemeResource GlassHairlineBrush}"
@@ -402,7 +403,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                             <Button x:Name="ViewLicensesButton"
                                     Click="ViewLicenses_Click"
-                                    Style="{StaticResource GlassButtonStyle}"
+                                    Style="{StaticResource MaterialTonalButtonStyle}"
                                     Content="Open-source licenses"
                                     AutomationProperties.Name="View open-source software licenses" />
                         </StackPanel>

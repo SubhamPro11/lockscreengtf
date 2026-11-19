@@ -10,8 +10,8 @@ namespace LockscreenGif.Helpers;
 
 public static class AmbientColorExtractor
 {
-    public static readonly Color DefaultPrimary = Color.FromArgb(0xFF, 0xE8, 0x45, 0x2C); // Warm Ember
-    public static readonly Color DefaultSecondary = Color.FromArgb(0xFF, 0x54, 0x3D, 0x2E); // Warm Dark Bronze
+    public static readonly Color DefaultPrimary = Color.FromArgb(0xFF, 0xFF, 0xA7, 0x9B); // Material 3 Coral Primary
+    public static readonly Color DefaultSecondary = Color.FromArgb(0xFF, 0x5D, 0x3F, 0x3B); // Material 3 Secondary Container
 
     private static Color _currentPrimary = DefaultPrimary;
     private static Color _currentSecondary = DefaultSecondary;

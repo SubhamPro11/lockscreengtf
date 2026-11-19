@@ -102,7 +102,7 @@
                                 <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,4,0,0">
                                     <Button x:Name="ChooseFileButton"
                                             Content="Choose file…"
-                                            Style="{StaticResource GlassPrimaryButtonStyle}"
+                                            Style="{StaticResource MaterialFilledButtonStyle}"
                                             Click="ChooseFile_Click"
                                             AutomationProperties.Name="Choose wallpaper media file">
                                         <Button.KeyboardAccelerators>
@@ -112,7 +112,7 @@
 
                                     <Button x:Name="ApplyWallpaperButton"
                                             Content="Apply to desktop"
-                                            Style="{StaticResource GlassButtonStyle}"
+                                            Style="{StaticResource MaterialTonalButtonStyle}"
                                             Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
                                             IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
                                             AutomationProperties.Name="Apply selected wallpaper to desktop" />
@@ -120,7 +120,7 @@
                                     <Button x:Name="ApplyBothButton"
                                             Content="Also set as lock screen"
                                             ToolTipService.ToolTip="Apply this animation as both your desktop wallpaper and Windows lock screen"
-                                            Style="{StaticResource GlassButtonStyle}"
+                                            Style="{StaticResource MaterialOutlinedButtonStyle}"
                                             Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
                                             IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
                                             AutomationProperties.Name="Also set as lock screen" />
@@ -215,7 +215,7 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- Floating Liquid Glass Action Tray (Anchored at the base of the Stage) -->
+                            <!-- Floating Action Tray (Anchored at the base of the Stage) -->
                             <Border Grid.Row="1"
                                     Style="{StaticResource GlassFloatingTrayStyle}"
                                     HorizontalAlignment="Center"
@@ -223,14 +223,14 @@
                                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                                     <Button x:Name="PauseResumeButton"
                                             Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
-                                            Style="{StaticResource GlassButtonStyle}"
+                                            Style="{StaticResource MaterialTonalButtonStyle}"
                                             Command="{x:Bind ViewModel.TogglePauseCommand}"
                                             IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
                                             AutomationProperties.Name="Pause or resume wallpaper" />
 
                                     <Button x:Name="StartEngineButton"
                                             Content="Start wallpaper"
-                                            Style="{StaticResource GlassPrimaryButtonStyle}"
+                                            Style="{StaticResource MaterialFilledButtonStyle}"
                                             Command="{x:Bind ViewModel.StartCommand}"
                                             IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
                                             Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
@@ -238,7 +238,7 @@
 
                                     <Button x:Name="StopEngineButton"
                                             Content="Stop"
-                                            Style="{StaticResource GlassButtonStyle}"
+                                            Style="{StaticResource MaterialOutlinedButtonStyle}"
                                             Command="{x:Bind ViewModel.StopCommand}"
                                             IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
                                             Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"

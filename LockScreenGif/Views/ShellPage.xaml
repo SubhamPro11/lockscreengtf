@@ -10,14 +10,14 @@
         <!-- 1. Ambient Background Layer (drifting dominant color fields behind the page) -->
         <Grid x:Name="AmbientRootGrid" Background="{ThemeResource GlassBaseBrush}" IsHitTestVisible="False">
             <!-- Dynamic Drifting Ambient Color Fields -->
-            <Canvas x:Name="AmbientCanvas" Opacity="1.0" IsHitTestVisible="False">
-                <!-- Blob 1 (Primary Dominant / Warm Ember) -->
+            <Canvas x:Name="AmbientCanvas" Opacity="0.8" IsHitTestVisible="False">
+                <!-- Blob 1 (Primary Dominant / Material 3 Coral #FFA79B) -->
                 <Ellipse x:Name="Blob1" Width="720" Height="580" Margin="-100,-80,0,0">
                     <Ellipse.Fill>
                         <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                            <GradientStop x:Name="Blob1Stop0" Color="#18E8452C" Offset="0.0" />
-                            <GradientStop x:Name="Blob1Stop1" Color="#0CE8452C" Offset="0.5" />
-                            <GradientStop Color="#00E8452C" Offset="1.0" />
+                            <GradientStop x:Name="Blob1Stop0" Color="#12FFA79B" Offset="0.0" />
+                            <GradientStop x:Name="Blob1Stop1" Color="#08FFA79B" Offset="0.5" />
+                            <GradientStop Color="#00FFA79B" Offset="1.0" />
                         </RadialGradientBrush>
                     </Ellipse.Fill>
                     <Ellipse.RenderTransform>
@@ -25,13 +25,13 @@
                     </Ellipse.RenderTransform>
                 </Ellipse>
 
-                <!-- Blob 2 (Secondary Dominant / Warm Dark Bronze) -->
+                <!-- Blob 2 (Secondary Dominant / Material 3 Warm Bronze #5D3F3B) -->
                 <Ellipse x:Name="Blob2" Width="820" Height="680" Margin="200,120,0,0">
                     <Ellipse.Fill>
                         <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                            <GradientStop x:Name="Blob2Stop0" Color="#12543D2E" Offset="0.0" />
-                            <GradientStop x:Name="Blob2Stop1" Color="#06543D2E" Offset="0.55" />
-                            <GradientStop Color="#00543D2E" Offset="1.0" />
+                            <GradientStop x:Name="Blob2Stop0" Color="#185D3F3B" Offset="0.0" />
+                            <GradientStop x:Name="Blob2Stop1" Color="#085D3F3B" Offset="0.55" />
+                            <GradientStop Color="#005D3F3B" Offset="1.0" />
                         </RadialGradientBrush>
                     </Ellipse.Fill>
                     <Ellipse.RenderTransform>
@@ -44,8 +44,8 @@
             <Border Height="80" VerticalAlignment="Top" IsHitTestVisible="False">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#50121110" Offset="0.0" />
-                        <GradientStop Color="#00121110" Offset="1.0" />
+                        <GradientStop Color="#501A1110" Offset="0.0" />
+                        <GradientStop Color="#001A1110" Offset="1.0" />
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>

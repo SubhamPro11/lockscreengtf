@@ -6,9 +6,9 @@
     xmlns:local="using:LockscreenGif"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:windowex="using:WinUIEx"
-    Width="960"
-    Height="720"
-    MinWidth="720"
+    Width="1280"
+    Height="800"
+    MinWidth="840"
     MinHeight="600"
     PersistenceId="MainWindow"
     mc:Ignorable="d">
