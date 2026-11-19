@@ -1,0 +1,1595 @@
+{
+  "SchemaVersion": 1,
+  "CapturedAtUtc": "2026-11-19T09:40:44.4380217Z",
+  "TargetUserSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+  "RunningUserSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+  "TargetMatchesRunningUser": true,
+  "ElevatedAdministrator": false,
+  "ProcessSessionId": 1,
+  "PowerShellVersion": "7.7.0",
+  "RuntimeVersion": "11.0.0",
+  "Is64BitProcess": true,
+  "Windows": {
+    "Status": "Ok",
+    "Value": {
+      "ProductName": "Windows 10 Home Single Language",
+      "DisplayVersion": "26H2",
+      "Build": "26300",
+      "Revision": 9974
+    },
+    "Error": null
+  },
+  "Token": {
+    "Status": "Ok",
+    "Value": {
+      "ExitCode": 0,
+      "Text": "\r\nUSER INFORMATION\r\n----------------\r\n\r\nUser Name       SID                                         \r\n=============== ============================================\r\ntitancore\\badbo S-1-5-21-2266382096-606964300-635372331-1001\r\n\r\n\r\nGROUP INFORMATION\r\n-----------------\r\n\r\nGroup Name                                                    Type             SID                                                                                                         Attributes                                        \r\n============================================================= ================ =========================================================================================================== ==================================================\r\nMandatory Label\\Medium Mandatory Level                        Label            S-1-16-8192                                                                                                                                                   \r\nEveryone                                                      Well-known group S-1-1-0                                                                                                     Mandatory group, Enabled by default, Enabled group\r\nNT AUTHORITY\\Local account and member of Administrators group Well-known group S-1-5-114                                                                                                   Group used for deny only                          \r\nTITANCORE\\docker-users                                        Alias            S-1-5-21-2266382096-606964300-635372331-1005                                                                Mandatory group, Enabled by default, Enabled group\r\nBUILTIN\\Administrators                                        Alias            S-1-5-32-544                                                                                                Group used for deny only                          \r\nBUILTIN\\Users                                                 Alias            S-1-5-32-545                                                                                                Mandatory group, Enabled by default, Enabled group\r\nNT AUTHORITY\\INTERACTIVE                                      Well-known group S-1-5-4                                                                                                     Mandatory group, Enabled by default, Enabled group\r\nCONSOLE LOGON                                                 Well-known group S-1-2-1                                                                                                     Mandatory group, Enabled by default, Enabled group\r\nNT AUTHORITY\\Authenticated Users                              Well-known group S-1-5-11                                                                                                    Mandatory group, Enabled by default, Enabled group\r\nNT AUTHORITY\\This Organization                                Well-known group S-1-5-15                                                                                                    Mandatory group, Enabled by default, Enabled group\r\nMicrosoftAccount\\badboystone11@outlook.com                    User             S-1-11-96-3623454863-58364-18864-2661722203-1597581903-2786502728-3138270969-669536643-256564371-1241117586 Mandatory group, Enabled by default, Enabled group\r\nNT AUTHORITY\\Local account                                    Well-known group S-1-5-113                                                                                                   Mandatory group, Enabled by default, Enabled group\r\nLOCAL                                                         Well-known group S-1-2-0                                                                                                     Mandatory group, Enabled by default, Enabled group\r\nNT AUTHORITY\\Cloud Account Authentication                     Well-known group S-1-5-64-36                                                                                                 Mandatory group, Enabled by default, Enabled group\r\n\r\n\r\nPRIVILEGES INFORMATION\r\n----------------------\r\n\r\nPrivilege Name                Description                          State   \r\n============================= ==================================== ========\r\nSeShutdownPrivilege           Shut down the system                 Disabled\r\nSeChangeNotifyPrivilege       Bypass traverse checking             Enabled \r\nSeUndockPrivilege             Remove computer from docking station Disabled\r\nSeIncreaseWorkingSetPrivilege Increase a process working set       Disabled\r\nSeTimeZonePrivilege           Change the time zone                 Disabled\r\n"
+    },
+    "Error": null
+  },
+  "Cache": {
+    "CacheRoot": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly",
+    "RootValidation": {
+      "Status": "Blocked",
+      "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001",
+      "Reason": "AccessDenied"
+    },
+    "AncestorsLeafFirst": [
+      {
+        "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly",
+        "Attributes": {
+          "Status": "Ok",
+          "Value": {
+            "Flags": "Directory, NotContentIndexed",
+            "IsReparsePoint": false
+          },
+          "Error": null
+        },
+        "Acl": {
+          "Status": "Ok",
+          "Value": {
+            "OwnerSid": "S-1-5-18",
+            "GroupSid": "S-1-5-18",
+            "InheritanceDisabled": true,
+            "Sddl": "O:SYG:SYD:P(A;;FA;;;SY)(A;;FR;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+            "Rules": [
+              {
+                "Sid": "S-1-5-18",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "None",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "Type": "Allow",
+                "Rights": "Read, Synchronize",
+                "RightsMask": 1179785,
+                "Inherited": false,
+                "InheritanceFlags": "None",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "None",
+                "PropagationFlags": "None"
+              }
+            ]
+          },
+          "Error": null
+        }
+      },
+      {
+        "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001",
+        "Attributes": {
+          "Status": "AccessDenied",
+          "Value": null,
+          "Error": {
+            "Type": "System.UnauthorizedAccessException",
+            "HResult": "0x80070005",
+            "NativeErrorCode": null,
+            "Message": "Access to the path 'C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001' is denied."
+          }
+        },
+        "Acl": {
+          "Status": "AccessDenied",
+          "Value": null,
+          "Error": {
+            "Type": "System.UnauthorizedAccessException",
+            "HResult": "0x80070005",
+            "NativeErrorCode": null,
+            "Message": "Access to the path 'C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001' is denied."
+          }
+        }
+      },
+      {
+        "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData",
+        "Attributes": {
+          "Status": "Ok",
+          "Value": {
+            "Flags": "Directory, NotContentIndexed",
+            "IsReparsePoint": false
+          },
+          "Error": null
+        },
+        "Acl": {
+          "Status": "AccessDenied",
+          "Value": null,
+          "Error": {
+            "Type": "System.UnauthorizedAccessException",
+            "HResult": "0x80070005",
+            "NativeErrorCode": null,
+            "Message": "Attempted to perform an unauthorized operation."
+          }
+        }
+      },
+      {
+        "Path": "C:\\ProgramData\\Microsoft\\Windows",
+        "Attributes": {
+          "Status": "Ok",
+          "Value": {
+            "Flags": "Directory, NotContentIndexed",
+            "IsReparsePoint": false
+          },
+          "Error": null
+        },
+        "Acl": {
+          "Status": "Ok",
+          "Value": {
+            "OwnerSid": "S-1-5-18",
+            "GroupSid": "S-1-5-18",
+            "InheritanceDisabled": false,
+            "Sddl": "O:SYG:SYD:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;0x1200a9;;;BU)(A;OICIID;0x1200a9;;;WD)",
+            "Rules": [
+              {
+                "Sid": "S-1-5-18",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": true,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-544",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": true,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-545",
+                "Type": "Allow",
+                "Rights": "ReadAndExecute, Synchronize",
+                "RightsMask": 1179817,
+                "Inherited": true,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-1-0",
+                "Type": "Allow",
+                "Rights": "ReadAndExecute, Synchronize",
+                "RightsMask": 1179817,
+                "Inherited": true,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              }
+            ]
+          },
+          "Error": null
+        }
+      },
+      {
+        "Path": "C:\\ProgramData\\Microsoft",
+        "Attributes": {
+          "Status": "Ok",
+          "Value": {
+            "Flags": "System, Directory, NotContentIndexed",
+            "IsReparsePoint": false
+          },
+          "Error": null
+        },
+        "Acl": {
+          "Status": "Ok",
+          "Value": {
+            "OwnerSid": "S-1-5-18",
+            "GroupSid": "S-1-5-18",
+            "InheritanceDisabled": true,
+            "Sddl": "O:SYG:SYD:PAI(A;OICI;0x1200a9;;;WD)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)",
+            "Rules": [
+              {
+                "Sid": "S-1-1-0",
+                "Type": "Allow",
+                "Rights": "ReadAndExecute, Synchronize",
+                "RightsMask": 1179817,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-18",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-544",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-545",
+                "Type": "Allow",
+                "Rights": "ReadAndExecute, Synchronize",
+                "RightsMask": 1179817,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              }
+            ]
+          },
+          "Error": null
+        }
+      },
+      {
+        "Path": "C:\\ProgramData",
+        "Attributes": {
+          "Status": "Ok",
+          "Value": {
+            "Flags": "Hidden, Directory, NotContentIndexed",
+            "IsReparsePoint": false
+          },
+          "Error": null
+        },
+        "Acl": {
+          "Status": "Ok",
+          "Value": {
+            "OwnerSid": "S-1-5-18",
+            "GroupSid": "S-1-5-18",
+            "InheritanceDisabled": true,
+            "Sddl": "O:SYG:SYD:PAI(A;OICIIO;GA;;;CO)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)(A;CI;DCLCRPCR;;;BU)",
+            "Rules": [
+              {
+                "Sid": "S-1-3-0",
+                "Type": "Allow",
+                "Rights": "268435456",
+                "RightsMask": 268435456,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "InheritOnly"
+              },
+              {
+                "Sid": "S-1-5-18",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-544",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-545",
+                "Type": "Allow",
+                "Rights": "ReadAndExecute, Synchronize",
+                "RightsMask": 1179817,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-545",
+                "Type": "Allow",
+                "Rights": "Write",
+                "RightsMask": 278,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit",
+                "PropagationFlags": "None"
+              }
+            ]
+          },
+          "Error": null
+        }
+      },
+      {
+        "Path": "C:\\",
+        "Attributes": {
+          "Status": "Ok",
+          "Value": {
+            "Flags": "Hidden, System, Directory",
+            "IsReparsePoint": false
+          },
+          "Error": null
+        },
+        "Acl": {
+          "Status": "Ok",
+          "Value": {
+            "OwnerSid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+            "GroupSid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+            "InheritanceDisabled": true,
+            "Sddl": "O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:PAI(A;;LC;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)(A;;0x1000a1;;;S-1-15-3-65536-1888954469-739942743-1668119174-2468466756-4239452838-1296943325-355587736-700089176)",
+            "Rules": [
+              {
+                "Sid": "S-1-5-11",
+                "Type": "Allow",
+                "Rights": "CreateDirectories",
+                "RightsMask": 4,
+                "Inherited": false,
+                "InheritanceFlags": "None",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-11",
+                "Type": "Allow",
+                "Rights": "-536805376",
+                "RightsMask": -536805376,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "InheritOnly"
+              },
+              {
+                "Sid": "S-1-5-18",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-544",
+                "Type": "Allow",
+                "Rights": "FullControl",
+                "RightsMask": 2032127,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-5-32-545",
+                "Type": "Allow",
+                "Rights": "ReadAndExecute, Synchronize",
+                "RightsMask": 1179817,
+                "Inherited": false,
+                "InheritanceFlags": "ContainerInherit, ObjectInherit",
+                "PropagationFlags": "None"
+              },
+              {
+                "Sid": "S-1-15-3-65536-1888954469-739942743-1668119174-2468466756-4239452838-1296943325-355587736-700089176",
+                "Type": "Allow",
+                "Rights": "ListDirectory, Traverse, ReadAttributes, Synchronize",
+                "RightsMask": 1048737,
+                "Inherited": false,
+                "InheritanceFlags": "None",
+                "PropagationFlags": "None"
+              }
+            ]
+          },
+          "Error": null
+        }
+      }
+    ],
+    "FolderEnumeration": {
+      "Status": "Ok",
+      "Value": {
+        "Entries": [
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_A",
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_C",
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_D",
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_E",
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_F",
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_G",
+          "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_Z"
+        ],
+        "Truncated": false,
+        "Limit": 32
+      },
+      "Error": null
+    },
+    "Folders": [
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_A",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-32-544",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:BAG:SYD:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Modify, Synchronize",
+                  "RightsMask": 1245631,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_A\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_A\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_A\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": false,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:AI(A;;FA;;;SY)(A;;0x1200a9;;;S-1-5-5-0-3920956)(A;;FA;;;S-1-5-21-2266382096-606964300-635372331-1001)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-5-0-3920956",
+                    "Type": "Allow",
+                    "Rights": "ReadAndExecute, Synchronize",
+                    "RightsMask": 1179817,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      },
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_C",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-32-544",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:BAG:SYD:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Modify, Synchronize",
+                  "RightsMask": 1245631,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_C\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_C\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_C\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": false,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:AI(A;;FA;;;SY)(A;;0x1200a9;;;S-1-5-5-0-996788)(A;;FA;;;S-1-5-21-2266382096-606964300-635372331-1001)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-5-0-996788",
+                    "Type": "Allow",
+                    "Rights": "ReadAndExecute, Synchronize",
+                    "RightsMask": 1179817,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      },
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_D",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-32-544",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:BAG:SYD:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Modify, Synchronize",
+                  "RightsMask": 1245631,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_D\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_D\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_D\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": false,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:AI(A;;FA;;;SY)(A;;0x1200a9;;;S-1-5-5-0-996788)(A;;FA;;;S-1-5-21-2266382096-606964300-635372331-1001)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-5-0-996788",
+                    "Type": "Allow",
+                    "Rights": "ReadAndExecute, Synchronize",
+                    "RightsMask": 1179817,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      },
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_E",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-32-544",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:BAG:SYD:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Modify, Synchronize",
+                  "RightsMask": 1245631,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_E\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_E\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_E\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      },
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_F",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-32-544",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:BAG:SYD:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Modify, Synchronize",
+                  "RightsMask": 1245631,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_F\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_F\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_F\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": false,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:AI(A;;FA;;;SY)(A;;0x1200a9;;;S-1-5-5-0-996788)(A;;FA;;;S-1-5-21-2266382096-606964300-635372331-1001)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-5-0-996788",
+                    "Type": "Allow",
+                    "Rights": "ReadAndExecute, Synchronize",
+                    "RightsMask": 1179817,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      },
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_G",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-18",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:SYG:SYD:P(A;;FA;;;SY)(A;;FR;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Read, Synchronize",
+                  "RightsMask": 1179785,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_G\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_G\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Modify, Synchronize",
+                    "RightsMask": 1245631,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_G\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": false,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:AI(A;;FA;;;SY)(A;;0x1200a9;;;S-1-5-5-0-245440)(A;;FA;;;S-1-5-21-2266382096-606964300-635372331-1001)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-5-0-245440",
+                    "Type": "Allow",
+                    "Rights": "ReadAndExecute, Synchronize",
+                    "RightsMask": 1179817,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      },
+      {
+        "Folder": {
+          "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_Z",
+          "Attributes": {
+            "Status": "Ok",
+            "Value": {
+              "Flags": "Directory, NotContentIndexed",
+              "IsReparsePoint": false
+            },
+            "Error": null
+          },
+          "Acl": {
+            "Status": "Ok",
+            "Value": {
+              "OwnerSid": "S-1-5-32-544",
+              "GroupSid": "S-1-5-18",
+              "InheritanceDisabled": true,
+              "Sddl": "O:BAG:SYD:PAI(A;;FA;;;SY)(A;;0x1301bf;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+              "Rules": [
+                {
+                  "Sid": "S-1-5-18",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                  "Type": "Allow",
+                  "Rights": "Modify, Synchronize",
+                  "RightsMask": 1245631,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                },
+                {
+                  "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                  "Type": "Allow",
+                  "Rights": "FullControl",
+                  "RightsMask": 2032127,
+                  "Inherited": false,
+                  "InheritanceFlags": "None",
+                  "PropagationFlags": "None"
+                }
+              ]
+            },
+            "Error": null
+          }
+        },
+        "VariantEnumeration": {
+          "Status": "Ok",
+          "Value": {
+            "Entries": [
+              "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_Z\\LockScreen___1920_1080_notdimmed.jpg"
+            ],
+            "Truncated": false,
+            "Limit": 128
+          },
+          "Error": null
+        },
+        "Files": [
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_Z\\LockScreen.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": false,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:AI(A;;FA;;;WD)(A;;FA;;;SY)(A;;0x1200a9;;;S-1-5-5-0-3457920)(A;;FA;;;S-1-5-21-2266382096-606964300-635372331-1001)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-1-0",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-5-0-3457920",
+                    "Type": "Allow",
+                    "Rights": "ReadAndExecute, Synchronize",
+                    "RightsMask": 1179817,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          },
+          {
+            "Path": "C:\\ProgramData\\Microsoft\\Windows\\SystemData\\S-1-5-21-2266382096-606964300-635372331-1001\\ReadOnly\\LockScreen_Z\\LockScreen___1920_1080_notdimmed.jpg",
+            "Attributes": {
+              "Status": "Ok",
+              "Value": {
+                "Flags": "Archive, NotContentIndexed",
+                "IsReparsePoint": false
+              },
+              "Error": null
+            },
+            "Acl": {
+              "Status": "Ok",
+              "Value": {
+                "OwnerSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "GroupSid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                "InheritanceDisabled": true,
+                "Sddl": "O:S-1-5-21-2266382096-606964300-635372331-1001G:S-1-5-21-2266382096-606964300-635372331-1001D:PAI(A;;FA;;;WD)(A;;FA;;;SY)(A;;FR;;;S-1-5-21-2266382096-606964300-635372331-1001)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)",
+                "Rules": [
+                  {
+                    "Sid": "S-1-1-0",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-18",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-21-2266382096-606964300-635372331-1001",
+                    "Type": "Allow",
+                    "Rights": "Read, Synchronize",
+                    "RightsMask": 1179785,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  },
+                  {
+                    "Sid": "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464",
+                    "Type": "Allow",
+                    "Rights": "FullControl",
+                    "RightsMask": 2032127,
+                    "Inherited": false,
+                    "InheritanceFlags": "None",
+                    "PropagationFlags": "None"
+                  }
+                ]
+              },
+              "Error": null
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "Limits": [
+    "Metadata only; no image contents or write-access tests.",
+    "No recursive inventory; at most 32 cache folders and 128 variants per folder.",
+    "Probes are sequential, not an atomic snapshot.",
+    "PowerShell runtime may differ from the app runtime; this report does not prove playback or helper repair success."
+  ]
+}
