@@ -40,7 +40,7 @@
 |---|---|
 | 🔒 **Native Animated Lock Screen** | Converts high-fps clips into Windows lock-screen cache animations. Plays via the native Windows Desktop Window Manager (`dwm.exe`) — the app closes with **0% ongoing CPU and 0 MB RAM usage**. |
 | 🖥️ **Live Desktop Wallpaper Engine** | Smooth, hardware-accelerated video loops and interactive web applications rendered directly behind Windows desktop icons. |
-| ⚡ **Intelligent Battery & Game Guard** | Automatically pauses animations when fullscreen games or apps are focused, when desktop is completely covered, or when Windows enters Battery Saver mode. |
+| ⚡ **Intelligent Power, Game & EcoQoS Guard** | Runs with Windows Efficiency Mode (EcoQoS) power throttling, auto-pauses when fullscreen games or apps are focused, when desktop is covered, or when Windows enters Energy Saver mode. Supports adaptive frame pacing up to 144Hz. |
 | 🎵 **Audio-Reactive Visuals** | Real-time WASAPI audio loopback streaming with spectrum frequency analysis, allowing web wallpapers to react dynamically to music and system sound. |
 | 🛡️ **Fail-Safe Restoration** | Automatically backs up your current Windows static wallpaper. Restores cleanly when stopping, closing the app, or if `explorer.exe` restarts. |
 | 💎 **Windows 11 Fluent Glass UI** | Polished WinUI 3 interface with Mica material, Segoe UI Variable typography, sharp rendering, and complete Light, Dark, and High Contrast support. |

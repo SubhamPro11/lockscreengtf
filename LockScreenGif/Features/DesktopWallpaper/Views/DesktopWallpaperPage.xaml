@@ -486,19 +486,19 @@
 
                         <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
 
-                        <!-- Battery Saver -->
+                        <!-- Energy Saver (Windows 11) -->
                         <Grid ColumnSpacing="16" MinHeight="44">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="200" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Pause in battery saver mode"
+                                <TextBlock Text="Pause in Energy Saver mode"
                                            FontFamily="{StaticResource GlassFontUi}"
                                            FontSize="14"
                                            FontWeight="Medium"
                                            Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Automatically pauses wallpaper whenever Windows battery saver is active."
+                                <TextBlock Text="Automatically pauses wallpaper whenever Windows Energy Saver is active (applies to laptops and desktops)."
                                            FontFamily="{StaticResource GlassFontUi}"
                                            FontSize="12"
                                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
@@ -506,7 +506,7 @@
                             <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                           IsOn="{x:Bind ViewModel.PauseInBatterySaver, Mode=TwoWay}"
                                           Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Pause in battery saver mode" />
+                                          AutomationProperties.Name="Pause in Energy Saver mode" />
                         </Grid>
 
                         <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
@@ -583,10 +583,12 @@
                                       SelectedIndex="{x:Bind ViewModel.FpsLimitIndex, Mode=TwoWay}"
                                       Style="{StaticResource GlassComboBoxStyle}"
                                       AutomationProperties.Name="Frame rate limit">
-                                <ComboBoxItem Content="60 FPS (Fluid)" />
+                                <ComboBoxItem Content="15 FPS (Ultra Light)" />
+                                <ComboBoxItem Content="24 FPS (Cinematic)" />
                                 <ComboBoxItem Content="30 FPS (Standard)" />
-                                <ComboBoxItem Content="15 FPS (Power saving)" />
-                                <ComboBoxItem Content="Unlimited" />
+                                <ComboBoxItem Content="60 FPS (Fluid)" />
+                                <ComboBoxItem Content="Match monitor (144 Hz)" />
+                                <ComboBoxItem Content="Adaptive (Auto-throttle)" />
                             </ComboBox>
                         </Grid>
 

@@ -42,6 +42,13 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         _lastCpuSampleTime = DateTime.UtcNow;
 
         _timer = new Timer(OnTimerTick, null, Timeout.Infinite, Timeout.Infinite);
+
+        try
+        {
+            Windows.System.Power.PowerManager.EnergySaverStatusChanged += (s, e) => EvaluateRules();
+            Windows.System.Power.PowerManager.PowerSupplyStatusChanged += (s, e) => EvaluateRules();
+        }
+        catch { }
     }
 
     public void Start()
@@ -218,18 +225,38 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
             triggerReason = "Screen is locked";
         }
 
-        // Rule 2 & 3: Power and Battery
+        // Rule 2 & 3: Power and Energy Saver
         if (triggerReason == null && (Rules.PauseOnBattery || Rules.PauseInBatterySaver))
         {
-            if (DesktopNativeMethods.GetSystemPowerStatus(out var powerStatus))
+            try
             {
-                if (Rules.PauseOnBattery && powerStatus.ACLineStatus == 0)
+                if (
+                    Rules.PauseInBatterySaver
+                    && Windows.System.Power.PowerManager.EnergySaverStatus == Windows.System.Power.EnergySaverStatus.On
+                )
+                {
+                    triggerReason = "Windows Energy Saver is active";
+                }
+                else if (
+                    Rules.PauseOnBattery
+                    && Windows.System.Power.PowerManager.PowerSupplyStatus != Windows.System.Power.PowerSupplyStatus.Adequate
+                )
                 {
                     triggerReason = "Running on battery power";
                 }
-                else if (Rules.PauseInBatterySaver && powerStatus.SystemStatusFlag == 1)
+            }
+            catch
+            {
+                if (DesktopNativeMethods.GetSystemPowerStatus(out var powerStatus))
                 {
-                    triggerReason = "Windows battery saver is active";
+                    if (Rules.PauseOnBattery && powerStatus.ACLineStatus == 0)
+                    {
+                        triggerReason = "Running on battery power";
+                    }
+                    else if (Rules.PauseInBatterySaver && powerStatus.SystemStatusFlag == 1)
+                    {
+                        triggerReason = "Windows Energy Saver is active";
+                    }
                 }
             }
         }

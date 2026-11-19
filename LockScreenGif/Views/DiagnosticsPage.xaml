@@ -197,11 +197,12 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <Button HorizontalAlignment="Left"
-                                AutomationProperties.Name="Check setup problems again"
+                                AutomationProperties.Name="Run compatibility and environment check"
                                 Click="Refresh_Click"
-                                Content="Check again"
+                                Content="Run compatibility check"
                                 Style="{StaticResource GlassButtonStyle}"
-                                IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}" />
+                                IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}"
+                                ToolTipService.ToolTip="Re-evaluates Windows 11 26H2 build compatibility, feature IDs, permissions, and session monitors." />
                     </StackPanel>
 
                     <TextBlock Foreground="{ThemeResource GlassTextSecondaryBrush}"

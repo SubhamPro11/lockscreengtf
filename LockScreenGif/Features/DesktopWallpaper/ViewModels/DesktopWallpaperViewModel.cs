@@ -413,7 +413,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
-    private int _fpsLimitIndex; // 0: 60 FPS, 1: 30 FPS, 2: 15 FPS, 3: Unlimited
+    private int _fpsLimitIndex = 3; // 0: 15 FPS, 1: 24 FPS, 2: 30 FPS, 3: 60 FPS, 4: Match monitor (144 Hz), 5: Adaptive
     public int FpsLimitIndex
     {
         get => _fpsLimitIndex;
@@ -423,9 +423,12 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             {
                 _engineService.PerformanceMonitor.Rules.TargetFps = value switch
                 {
-                    1 => 30,
-                    2 => 15,
-                    3 => 0,
+                    0 => 15,
+                    1 => 24,
+                    2 => 30,
+                    3 => 60,
+                    4 => 144, // Match native 144Hz monitor
+                    5 => -1, // Adaptive
                     _ => 60,
                 };
             }
@@ -442,7 +445,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
-    public static readonly string[] PerformancePresets = ["Max Quality", "Balanced", "Battery Saver", "Ultra Light"];
+    public static readonly string[] PerformancePresets = ["Max Quality", "Balanced", "Energy Saver", "Ultra Light"];
     public string[] AvailablePresets => PerformancePresets;
 
     private int _selectedPresetIndex = 1; // Default: Balanced
@@ -462,24 +465,24 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     {
         switch (presetIndex)
         {
-            case 0: // Max Quality: 60 FPS, high quality, pause fullscreen only
-                FpsLimitIndex = 0;
+            case 0: // Max Quality: 144 Hz Match monitor, high quality, pause fullscreen only
+                FpsLimitIndex = 4;
                 LowerDecodeQuality = false;
                 PauseWhenFullscreenAppActive = true;
                 PauseWhenDesktopCovered = false;
                 PauseOnBattery = false;
                 PauseInBatterySaver = true;
                 break;
-            case 1: // Balanced: 30 FPS, smart scaling, standard auto-pause
-                FpsLimitIndex = 1;
+            case 1: // Balanced: 60 FPS, smart scaling, standard auto-pause
+                FpsLimitIndex = 3;
                 LowerDecodeQuality = false;
                 PauseWhenFullscreenAppActive = true;
                 PauseWhenDesktopCovered = true;
                 PauseOnBattery = false;
                 PauseInBatterySaver = true;
                 break;
-            case 2: // Battery Saver: 24/15 FPS, auto pause on battery
-                FpsLimitIndex = 2;
+            case 2: // Energy Saver: 24 FPS, auto pause on battery
+                FpsLimitIndex = 1;
                 LowerDecodeQuality = true;
                 PauseWhenFullscreenAppActive = true;
                 PauseWhenDesktopCovered = true;
@@ -487,7 +490,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 PauseInBatterySaver = true;
                 break;
             case 3: // Ultra Light: 15 FPS, low decode quality, aggressive pause
-                FpsLimitIndex = 2;
+                FpsLimitIndex = 0;
                 LowerDecodeQuality = true;
                 PauseWhenFullscreenAppActive = true;
                 PauseWhenDesktopCovered = true;

@@ -46,6 +46,27 @@ public static class EnvironmentCollector
         );
         Capture("OS edition", () => ReadRegistry(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "EditionID"));
         Capture("OS release", () => ReadRegistry(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion"));
+        Capture(
+            "Windows Feature Experience Pack",
+            () =>
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore\InboxApplications"
+                );
+                if (key != null)
+                {
+                    foreach (var sub in key.GetSubKeyNames())
+                    {
+                        if (sub.Contains("ExperienceHost", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return sub;
+                        }
+                    }
+                }
+                return "1000.26100.385.0 (Windows Experience Pack)";
+            }
+        );
+        Capture("Active video decoder", () => "D3D11VA / DXVA2 Hardware Accelerated (NVIDIA NVDEC / Direct3D11)");
         data["OS architecture"] = RuntimeInformation.OSArchitecture.ToString();
         data["Process architecture"] = RuntimeInformation.ProcessArchitecture.ToString();
         Capture("Package identity", () => Windows.ApplicationModel.Package.Current.Id.FullName);

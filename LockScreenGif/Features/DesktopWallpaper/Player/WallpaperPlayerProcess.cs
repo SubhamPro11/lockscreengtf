@@ -190,6 +190,29 @@ public static class WallpaperPlayerProcess
         {
             EnsureDefaultDesktop();
 
+            // Configure EcoQoS / Efficiency Mode and BelowNormal priority for background wallpaper rendering
+            try
+            {
+                using var currentProc = Process.GetCurrentProcess();
+                currentProc.PriorityClass = ProcessPriorityClass.BelowNormal;
+
+                var throttling = new DesktopNativeMethods.PROCESS_POWER_THROTTLING_STATE
+                {
+                    Version = DesktopNativeMethods.PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+                    ControlMask =
+                        DesktopNativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED
+                        | DesktopNativeMethods.PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION,
+                    StateMask = DesktopNativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
+                };
+                DesktopNativeMethods.SetProcessInformation(
+                    currentProc.Handle,
+                    DesktopNativeMethods.ProcessPowerThrottling,
+                    ref throttling,
+                    (uint)Marshal.SizeOf<DesktopNativeMethods.PROCESS_POWER_THROTTLING_STATE>()
+                );
+            }
+            catch { }
+
             _msgThreadId = DesktopNativeMethods.GetCurrentThreadId();
             _originalWallpaperPath = DesktopAttachHelper.GetCurrentWallpaperPath();
             WritePidFile();
@@ -685,12 +708,22 @@ public static class WallpaperPlayerProcess
             shouldPause = true;
         }
 
-        // 2. Battery / Power Saver
-        if (!shouldPause && DesktopNativeMethods.GetSystemPowerStatus(out var powerStatus))
+        // 2. Battery / Energy Saver
+        if (!shouldPause)
         {
-            if (powerStatus.SystemStatusFlag == 1) // Battery Saver
+            try
             {
-                shouldPause = true;
+                if (Windows.System.Power.PowerManager.EnergySaverStatus == Windows.System.Power.EnergySaverStatus.On)
+                {
+                    shouldPause = true;
+                }
+            }
+            catch
+            {
+                if (DesktopNativeMethods.GetSystemPowerStatus(out var powerStatus) && powerStatus.SystemStatusFlag == 1)
+                {
+                    shouldPause = true;
+                }
             }
         }
 

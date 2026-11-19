@@ -186,6 +186,9 @@ public partial class App : Application
                 {
                     try
                     {
+                        // Delay wallpaper start at Windows login (8s) so login and desktop icons settle without contention
+                        await Task.Delay(8000);
+
                         var libService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService>();
                         var engineService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>();
                         await libService.InitializeAsync();

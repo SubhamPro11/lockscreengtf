@@ -11,6 +11,14 @@ public sealed class WallpaperPerformanceRules
     public bool PauseInBatterySaver { get; set; } = true;
     public bool PauseWhenLockedOrDisplayOff { get; set; } = true;
     public int TargetFps { get; set; } = 60;
+    public bool IsAdaptiveFps => TargetFps == -1;
+    public int EffectiveFps =>
+        TargetFps switch
+        {
+            -1 => (PauseOnBattery || PauseInBatterySaver) ? 24 : 60,
+            <= 0 => 60,
+            _ => TargetFps,
+        };
     public bool LowerDecodeQuality { get; set; }
 
     // Extended rules for smart power & process management

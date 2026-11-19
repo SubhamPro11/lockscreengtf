@@ -147,6 +147,12 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
         settings.IsStatusBarEnabled = false;
         settings.IsZoomControlEnabled = false;
         settings.AreDevToolsEnabled = false;
+        settings.AreDefaultScriptDialogsEnabled = false;
+        settings.AreBrowserAcceleratorKeysEnabled = false;
+        settings.IsWebMessageEnabled = false;
+
+        // Sandboxing: Prevent web wallpapers from opening popup windows or hijacking desktop focus
+        _controller.CoreWebView2.NewWindowRequested += (s, args) => args.Handled = true;
     }
 
     public async Task LoadAsync(WallpaperItem item)
