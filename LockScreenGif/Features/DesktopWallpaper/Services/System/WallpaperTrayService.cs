@@ -187,10 +187,14 @@ public sealed class WallpaperTrayService : IDisposable
         {
             var isRunning = _engineService.IsRunning;
             var isPaused = _engineService.Status == WallpaperEngineStatus.Paused;
+            var isMuted = _engineService.CurrentWallpaper?.IsMuted ?? true;
 
             var pauseResumeText = isPaused ? "Resume Wallpaper" : "Pause Wallpaper";
+            var muteText = isMuted ? "Unmute Audio" : "Mute Audio";
+
             DesktopNativeMethods.AppendMenu(hMenu, DesktopNativeMethods.MF_STRING, new nint(1), pauseResumeText);
             DesktopNativeMethods.AppendMenu(hMenu, DesktopNativeMethods.MF_STRING, new nint(2), "Next Wallpaper");
+            DesktopNativeMethods.AppendMenu(hMenu, DesktopNativeMethods.MF_STRING, new nint(5), muteText);
             DesktopNativeMethods.AppendMenu(hMenu, DesktopNativeMethods.MF_SEPARATOR, 0, string.Empty);
             DesktopNativeMethods.AppendMenu(hMenu, DesktopNativeMethods.MF_STRING, new nint(3), "Open LockscreenGif");
             DesktopNativeMethods.AppendMenu(hMenu, DesktopNativeMethods.MF_SEPARATOR, 0, string.Empty);
@@ -222,6 +226,10 @@ public sealed class WallpaperTrayService : IDisposable
 
                 case 2:
                     _ = _libraryService.RotatePlaylistNextAsync();
+                    break;
+
+                case 5:
+                    _ = _engineService.SetMutedAsync(!isMuted);
                     break;
 
                 case 3:
