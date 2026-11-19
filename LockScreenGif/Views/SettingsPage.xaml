@@ -7,7 +7,7 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel MaxWidth="1040"
-                    Margin="28,20,28,40"
+                    Margin="28,20,28,80"
                     Spacing="24"
                     HorizontalAlignment="Stretch">
 
@@ -215,7 +215,7 @@
                                                FontSize="14"
                                                FontWeight="Medium"
                                                Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                    <TextBlock Text="Controls internal feature (ID 48433719). Keeping it enabled forces static picture rendering and blocks animations."
+                                    <TextBlock Text="Controls internal feature (ID 38943831). Keeping it enabled forces static picture rendering and blocks animations."
                                                FontFamily="{StaticResource GlassFontUi}"
                                                FontSize="12"
                                                Foreground="{ThemeResource GlassTextSecondaryBrush}"

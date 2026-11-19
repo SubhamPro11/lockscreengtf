@@ -45,7 +45,7 @@
     </Page.Resources>
 
     <Grid Background="Transparent">
-        <ScrollViewer x:Name="StageScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,8,0,32">
+        <ScrollViewer x:Name="StageScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,8,0,80">
             <ContentControl x:Name="PageContent" HorizontalContentAlignment="Stretch">
                 <StackPanel HorizontalAlignment="Center" MaxWidth="920" Margin="24,12,24,24" Spacing="24">
 

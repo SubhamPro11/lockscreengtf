@@ -77,6 +77,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 OnPropertyChanged(nameof(CanPauseResume));
                 OnPropertyChanged(nameof(CanApply));
                 OnPropertyChanged(nameof(CanApplyBoth));
+                OnPropertyChanged(nameof(ApplyButtonTooltip));
+                OnPropertyChanged(nameof(ApplyBothTooltip));
                 OnPropertyChanged(nameof(StartButtonVisibility));
                 OnPropertyChanged(nameof(StopButtonVisibility));
                 OnPropertyChanged(nameof(BusyVisibility));
@@ -222,6 +224,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             {
                 OnPropertyChanged(nameof(CanApply));
                 OnPropertyChanged(nameof(CanApplyBoth));
+                OnPropertyChanged(nameof(ApplyButtonTooltip));
+                OnPropertyChanged(nameof(ApplyBothTooltip));
                 ApplyWallpaperCommand?.NotifyCanExecuteChanged();
                 ApplyBothDesktopAndLockscreenCommand?.NotifyCanExecuteChanged();
             }
@@ -298,7 +302,12 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
-    private int _speedIndex = 1; // 1.0x
+    public static readonly string[] SpeedOptions = ["0.25×", "0.5×", "0.75×", "1.0× (Normal)", "1.25×", "1.5×", "1.75×", "2.0×"];
+    private static readonly double[] SpeedValues = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+
+    public string[] AvailableSpeeds => SpeedOptions;
+
+    private int _speedIndex = 3; // Default: 1.0× (Normal)
     public int SpeedIndex
     {
         get => _speedIndex;
@@ -306,17 +315,19 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             if (SetProperty(ref _speedIndex, value))
             {
-                var speed = value switch
-                {
-                    0 => 0.5,
-                    2 => 1.5,
-                    3 => 2.0,
-                    _ => 1.0,
-                };
+                var speed = (value >= 0 && value < SpeedValues.Length) ? SpeedValues[value] : 1.0;
                 _ = _engineService.SetPlaybackRateAsync(speed);
             }
         }
     }
+
+    public string ApplyButtonTooltip =>
+        CanApply ? "Apply selected wallpaper to desktop" : "Choose or drag a video, image, or web wallpaper file first to apply";
+
+    public string ApplyBothTooltip =>
+        CanApplyBoth
+            ? "Apply this animation as both your desktop wallpaper and Windows lock screen"
+            : "Choose or load a media file first to apply to both desktop and lock screen";
 
     private bool _loop = true;
     public bool Loop

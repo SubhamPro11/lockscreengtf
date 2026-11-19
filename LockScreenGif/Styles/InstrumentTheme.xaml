@@ -122,6 +122,15 @@
             <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource GlassTextPrimaryColor}" />
 
+            <!-- ComboBox & Dropdown Styling -->
+            <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#F2221816" />
+            <SolidColorBrush x:Key="ComboBoxItemBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="#1EFFFFFF" />
+            <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{StaticResource GlassSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForeground" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{StaticResource GlassOnSecondaryContainerColor}" />
+
             <!-- WinUI 3 AcrylicBrush (In-app acrylic with Base tint and 65% opacity) -->
             <AcrylicBrush x:Key="GlassBackdropBrush"
                           TintColor="#1A1110"
@@ -244,6 +253,15 @@
             <SolidColorBrush x:Key="ToolTipBackground" Color="#F5FFFFFF" />
             <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource GlassHairlineColor}" />
             <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource GlassTextPrimaryColor}" />
+
+            <!-- ComboBox & Dropdown Styling -->
+            <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#F5FFFFFF" />
+            <SolidColorBrush x:Key="ComboBoxItemBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="#14000000" />
+            <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{StaticResource GlassSecondaryContainerColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForeground" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{StaticResource GlassTextPrimaryColor}" />
+            <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{StaticResource GlassOnSecondaryContainerColor}" />
 
             <AcrylicBrush x:Key="GlassBackdropBrush"
                           TintColor="#FFF8F6"
@@ -555,7 +573,7 @@
     <CornerRadius x:Key="GlassCornerRadiusCard">16</CornerRadius>
     <CornerRadius x:Key="GlassCornerRadiusControl">12</CornerRadius>
     <CornerRadius x:Key="GlassCornerRadiusPill">999</CornerRadius>
-    <CornerRadius x:Key="ControlCornerRadius">999</CornerRadius>
+    <CornerRadius x:Key="ControlCornerRadius">12</CornerRadius>
     <CornerRadius x:Key="ButtonCornerRadius">999</CornerRadius>
 
     <!-- 4px Grid Spacing Primitives -->
@@ -957,6 +975,7 @@
 
     <Style TargetType="TextBox" BasedOn="{StaticResource GlassTextBoxStyle}" />
     <Style TargetType="ComboBox" BasedOn="{StaticResource GlassComboBoxStyle}" />
+
     <Style TargetType="Slider" BasedOn="{StaticResource GlassSliderStyle}" />
     <Style TargetType="ToggleSwitch" BasedOn="{StaticResource GlassToggleSwitchStyle}" />
     <Style TargetType="ProgressBar" BasedOn="{StaticResource GlassProgressBarStyle}" />
@@ -993,7 +1012,7 @@
     </Style>
 
     <!-- ToolTip Style -->
-    <Style TargetType="ToolTip">
+    <Style TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}">
         <Setter Property="CornerRadius" Value="{StaticResource ToolTipCornerRadius}" />
         <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />

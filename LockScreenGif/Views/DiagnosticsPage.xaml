@@ -76,7 +76,7 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel MaxWidth="1040"
-                    Margin="28,20,28,40"
+                    Margin="28,20,28,80"
                     Spacing="24"
                     HorizontalAlignment="Stretch">
 
@@ -138,13 +138,17 @@
                         </HyperlinkButton>
                     </Grid>
 
-                    <!-- Bundled reference animation checkbox (Wrapped to prevent any clipping) -->
-                    <CheckBox IsChecked="{x:Bind ViewModel.UseReference, Mode=TwoWay}"
-                              IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}">
+                    <!-- Bundled reference animation checkbox (Clean padding, no clipping) -->
+                    <CheckBox x:Name="BundledAnimationCheckBox"
+                              IsChecked="{x:Bind ViewModel.UseReference, Mode=TwoWay}"
+                              IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}"
+                              Margin="0,4"
+                              AutomationProperties.Name="Use the bundled reference animation">
                         <TextBlock Text="Use the bundled reference animation (simple loop)"
                                    FontFamily="{StaticResource GlassFontUi}"
                                    FontSize="13"
-                                   TextWrapping="Wrap" />
+                                   Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                                   VerticalAlignment="Center" />
                     </CheckBox>
 
                     <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
@@ -207,12 +211,14 @@
 
                     <!-- Start Action Button -->
                     <StackPanel Spacing="6">
-                        <Button HorizontalAlignment="Stretch"
-                                Click="Start_Click"
-                                Content="Run test and apply"
-                                AutomationProperties.Name="Start diagnostic test and apply animation"
-                                IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                                Style="{StaticResource MaterialFilledButtonLargeStyle}" />
+                        <Grid ToolTipService.ToolTip="{x:Bind ViewModel.StartDisabledReason, Mode=OneWay}">
+                            <Button HorizontalAlignment="Stretch"
+                                    Click="Start_Click"
+                                    Content="Run test and apply"
+                                    AutomationProperties.Name="Start diagnostic test and apply animation"
+                                    IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                    Style="{StaticResource MaterialFilledButtonLargeStyle}" />
+                        </Grid>
                         <TextBlock HorizontalAlignment="Center"
                                    TextAlignment="Center"
                                    FontFamily="{StaticResource GlassFontUi}"
@@ -418,13 +424,14 @@
 
                     <!-- Export Action Button -->
                     <StackPanel Spacing="6">
-                        <Button HorizontalAlignment="Stretch"
-                                Click="Export_Click"
-                                Content="Save report (.zip)..."
-                                IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
-                                Style="{StaticResource MaterialTonalButtonStyle}"
-                                AutomationProperties.Name="Export sanitized diagnostic report as ZIP"
-                                ToolTipService.ToolTip="Save a sanitized ZIP archive containing summary.md, session.json, events.jsonl, and redacted logs." />
+                        <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ExportDisabledReason, Mode=OneWay}">
+                            <Button HorizontalAlignment="Stretch"
+                                    Click="Export_Click"
+                                    Content="Save report (.zip)..."
+                                    IsEnabled="{x:Bind ViewModel.CanExport, Mode=OneWay}"
+                                    Style="{StaticResource MaterialTonalButtonStyle}"
+                                    AutomationProperties.Name="Export sanitized diagnostic report as ZIP" />
+                        </Grid>
                         <TextBlock HorizontalAlignment="Center"
                                    TextAlignment="Center"
                                    FontFamily="{StaticResource GlassFontUi}"

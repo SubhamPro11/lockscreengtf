@@ -11,7 +11,7 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel MaxWidth="1040"
-                    Margin="28,20,28,40"
+                    Margin="28,20,28,80"
                     Spacing="24"
                     HorizontalAlignment="Stretch">
 
@@ -110,20 +110,23 @@
                                         </Button.KeyboardAccelerators>
                                     </Button>
 
-                                    <Button x:Name="ApplyWallpaperButton"
-                                            Content="Apply to desktop"
-                                            Style="{StaticResource MaterialTonalButtonStyle}"
-                                            Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
-                                            AutomationProperties.Name="Apply selected wallpaper to desktop" />
+                                    <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ApplyButtonTooltip, Mode=OneWay}">
+                                        <Button x:Name="ApplyWallpaperButton"
+                                                Content="Apply to desktop"
+                                                Style="{StaticResource MaterialTonalButtonStyle}"
+                                                Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
+                                                IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
+                                                AutomationProperties.Name="Apply selected wallpaper to desktop" />
+                                    </Grid>
 
-                                    <Button x:Name="ApplyBothButton"
-                                            Content="Also set as lock screen"
-                                            ToolTipService.ToolTip="Apply this animation as both your desktop wallpaper and Windows lock screen"
-                                            Style="{StaticResource MaterialOutlinedButtonStyle}"
-                                            Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
-                                            AutomationProperties.Name="Also set as lock screen" />
+                                    <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ApplyBothTooltip, Mode=OneWay}">
+                                        <Button x:Name="ApplyBothButton"
+                                                Content="Also set as lock screen"
+                                                Style="{StaticResource MaterialOutlinedButtonStyle}"
+                                                Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
+                                                IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
+                                                AutomationProperties.Name="Also set as lock screen" />
+                                    </Grid>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -377,16 +380,11 @@
                                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <ComboBox SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
-                                          Width="110"
-                                          IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                <ComboBox ItemsSource="{x:Bind ViewModel.AvailableSpeeds, Mode=OneTime}"
+                                          SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
+                                          Width="140"
                                           Style="{StaticResource GlassComboBoxStyle}"
-                                          AutomationProperties.Name="Playback speed">
-                                    <ComboBoxItem Content="0.5x" />
-                                    <ComboBoxItem Content="1.0x" />
-                                    <ComboBoxItem Content="1.5x" />
-                                    <ComboBoxItem Content="2.0x" />
-                                </ComboBox>
+                                          AutomationProperties.Name="Playback speed" />
                                 <ToggleSwitch IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
                                               IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
                                               Style="{StaticResource GlassToggleSwitchStyle}"
