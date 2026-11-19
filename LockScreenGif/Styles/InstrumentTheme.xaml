@@ -906,6 +906,8 @@
         <Setter Property="Padding" Value="0" />
     </Style>
 
+    <Style TargetType="HyperlinkButton" BasedOn="{StaticResource GlassHyperlinkButtonStyle}" />
+
     <!-- Implicit Default Button Style: Tonal Button -->
     <Style TargetType="Button" BasedOn="{StaticResource MaterialTonalButtonStyle}" />
 

@@ -256,7 +256,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0,4,0,0">
                                 <FontIcon Glyph="&#xE777;" FontSize="13" Foreground="{ThemeResource GlassPrimaryBrush}" VerticalAlignment="Center" />
                                 <HyperlinkButton x:Name="RemoveAnimationLink" Content="Put the Windows lock screen back"
-                                                 Style="{StaticResource MaterialTextButtonStyle}"
+                                                 Style="{StaticResource GlassHyperlinkButtonStyle}"
                                                  Foreground="{ThemeResource GlassPrimaryBrush}"
                                                  AutomationProperties.Name="Put the Windows lock screen back"
                                                  Click="RestoreDefaultLockscreen_Click" />

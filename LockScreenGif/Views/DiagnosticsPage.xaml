@@ -126,7 +126,7 @@
                         </StackPanel>
                         <HyperlinkButton Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                                          Click="ChooseSource_Click"
-                                         Style="{StaticResource MaterialTextButtonStyle}"
+                                         Style="{StaticResource GlassHyperlinkButtonStyle}"
                                          AutomationProperties.Name="Select source animation on Lockscreen page"
                                          IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="6">
