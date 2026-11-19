@@ -1,3 +1,4 @@
+using System;
 using LockscreenGif.Services.Analytics;
 using LockscreenGif.ViewModels;
 using Microsoft.UI.Xaml;
@@ -30,6 +31,33 @@ public sealed partial class SettingsPage : Page
         _analytics = App.GetService<AnalyticsService>();
         RefreshPreference();
         InitializeWindowsImageFeatureSettings();
+        UpdateThemeButtons(ViewModel.ElementTheme);
+    }
+
+    private async void ThemeOption_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is string tag && Enum.TryParse<ElementTheme>(tag, out var theme))
+        {
+            await ViewModel.SetThemeAsync(theme);
+            UpdateThemeButtons(theme);
+        }
+    }
+
+    private void UpdateThemeButtons(ElementTheme currentTheme)
+    {
+        ApplyThemeButtonState(ThemeLightButton, currentTheme == ElementTheme.Light);
+        ApplyThemeButtonState(ThemeDarkButton, currentTheme == ElementTheme.Dark);
+        ApplyThemeButtonState(ThemeDefaultButton, currentTheme == ElementTheme.Default);
+    }
+
+    private static void ApplyThemeButtonState(Button? button, bool isSelected)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        button.Style = (Style)Application.Current.Resources[isSelected ? "MaterialFilledButtonStyle" : "MaterialTextButtonStyle"];
     }
 
     private void RefreshPreference()

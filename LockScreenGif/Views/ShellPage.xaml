@@ -41,14 +41,8 @@
             </Canvas>
 
             <!-- Subtle Top Vignette Layer to keep Title Bar text razor sharp -->
-            <Border Height="80" VerticalAlignment="Top" IsHitTestVisible="False">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#501A1110" Offset="0.0" />
-                        <GradientStop Color="#001A1110" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+            <Border Height="80" VerticalAlignment="Top" IsHitTestVisible="False"
+                    Background="{ThemeResource GlassTopVignetteBrush}" />
         </Grid>
 
         <!-- 2. Windows 11 Unified Top Navigation & Custom Title Bar (Height ~46px, single row) -->
