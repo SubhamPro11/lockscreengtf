@@ -41,6 +41,17 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
             throw new FileNotFoundException($"Executable file not found: {exePath}");
         }
 
+        var ext = Path.GetExtension(exePath).ToLowerInvariant();
+        if (ext != ".exe")
+        {
+            throw new InvalidOperationException($"Only compiled .exe binaries are permitted as application wallpapers; '{ext}' is rejected.");
+        }
+
+        if (!IsSignedExecutable(exePath))
+        {
+            Logger.Warn($"Executable wallpaper '{Path.GetFileName(exePath)}' is not digitally signed or has an untrusted certificate.");
+        }
+
         var psi = new ProcessStartInfo
         {
             FileName = exePath,
@@ -178,5 +189,18 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
         }
         _isDisposed = true;
         await CloseAsync();
+    }
+
+    private static bool IsSignedExecutable(string path)
+    {
+        try
+        {
+            using var cert = global::System.Security.Cryptography.X509Certificates.X509CertificateLoader.LoadCertificateFromFile(path);
+            return cert.Verify();
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
