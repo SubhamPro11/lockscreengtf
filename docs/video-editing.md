@@ -98,7 +98,7 @@ Generate, preview, save, apply, retry, and choose a replacement; do not interpre
 success as observed playback. The flow harness covers navigation, readiness,
 stale operation tokens, and outcome classification without modifying Windows.
 
-1. Load `Demos/Video Example.mp4`; confirm the timeline, labels, and thumbnails fit at normal and narrow window widths and increased display scaling. While thumbnails are loading, confirm the black background and spinner are visible and that trimming and seeking still work.
+1. Load a sample video file (e.g. MP4 or WebM); confirm the timeline, labels, and thumbnails fit at normal and narrow window widths and increased display scaling. While thumbnails are loading, confirm the black background and spinner are visible and that trimming and seeking still work.
 2. Pause, drag each boundary, and release: remain paused on its included boundary frame. Repeat while playing: resume playback. Drag the playhead during playback and verify it resumes at that location within the selection.
 3. Step backward and forward, including the first/last source frames and a one-frame selection. Verify button limits, distinct handle hit areas, keyboard focus, and screen-reader range values.
 4. Enter invalid, crossed, out-of-range, and hour-long times. Verify Enter/Escape, preserved invalid text while scrubbing, and disabled generation until correction.

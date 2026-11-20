@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon-source/png/icon-128.png" width="96" height="96" alt="LockscreenGif Logo" />
+  <img src="LockScreenGif/Assets/WindowIcon.png" width="96" height="96" alt="LockscreenGif Logo" />
 </p>
 
 <h1 align="center">LockscreenGif</h1>
