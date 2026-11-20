@@ -20,18 +20,33 @@ public static class WallpaperMediaHelper
         "WallpaperCache"
     );
 
+    internal static Func<string>? FfmpegPathResolver { get; set; }
+
     private static string? FindFfmpegPath()
     {
-        var localFfmpeg = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Vendor", "FFMPEG", "ffmpeg.exe");
-        if (File.Exists(localFfmpeg))
+        if (FfmpegPathResolver != null)
         {
-            return localFfmpeg;
+            var resolved = FfmpegPathResolver();
+            if (File.Exists(resolved))
+            {
+                return resolved;
+            }
         }
 
-        var parentFfmpeg = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "Vendor", "FFMPEG", "ffmpeg.exe");
-        if (File.Exists(parentFfmpeg))
+        var candidates = new[]
         {
-            return Path.GetFullPath(parentFfmpeg);
+            Path.Combine(AppContext.BaseDirectory, "Vendor", "FFMPEG", "ffmpeg.exe"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Vendor", "FFMPEG", "ffmpeg.exe"),
+            Path.Combine(Path.GetDirectoryName(typeof(WallpaperMediaHelper).Assembly.Location) ?? "", "Vendor", "FFMPEG", "ffmpeg.exe"),
+            Path.Combine(AppContext.BaseDirectory, "..", "Vendor", "FFMPEG", "ffmpeg.exe"),
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (!string.IsNullOrEmpty(candidate) && File.Exists(candidate))
+            {
+                return Path.GetFullPath(candidate);
+            }
         }
 
         return null;
@@ -88,7 +103,10 @@ public static class WallpaperMediaHelper
         }
 
         // Try fast remux first (-c copy)
-        var fastRemuxSuccess = await RunFfmpegAsync(ffmpeg, $"-y -i \"{inputFilePath}\" -c copy -movflags +faststart \"{tempOutputFile}\"");
+        var fastRemuxSuccess = await RunFfmpegAsync(
+            ffmpeg,
+            (string[])["-y", "-i", inputFilePath, "-c", "copy", "-movflags", "+faststart", tempOutputFile]
+        );
 
         if (fastRemuxSuccess && File.Exists(tempOutputFile) && new FileInfo(tempOutputFile).Length > 1024)
         {
@@ -113,11 +131,33 @@ public static class WallpaperMediaHelper
         }
 
         var scaleFilter =
-            $"-vf \"scale='min({screenW},iw)':'min({screenH},ih)':force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2\"";
+            $"scale='min({screenW},iw)':'min({screenH},ih)':force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2";
 
         var transcodeSuccess = await RunFfmpegAsync(
             ffmpeg,
-            $"-y -i \"{inputFilePath}\" -c:v libx264 -preset ultrafast -crf 22 {scaleFilter} -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart \"{tempOutputFile}\""
+            (string[])
+            [
+                "-y",
+                "-i",
+                inputFilePath,
+                "-c:v",
+                "libx264",
+                "-preset",
+                "ultrafast",
+                "-crf",
+                "22",
+                "-vf",
+                scaleFilter,
+                "-pix_fmt",
+                "yuv420p",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "192k",
+                "-movflags",
+                "+faststart",
+                tempOutputFile,
+            ]
         );
 
         if (transcodeSuccess && File.Exists(tempOutputFile))
@@ -164,24 +204,42 @@ public static class WallpaperMediaHelper
 
         var success = await RunFfmpegAsync(
             ffmpeg,
-            $"-y -ss 00:00:01 -i \"{inputFilePath}\" -vframes 1 -q:v 2 -vf \"scale=480:-1\" \"{thumbPath}\""
+            (string[])
+            [
+                "-y",
+                "-ss",
+                "00:00:01",
+                "-i",
+                inputFilePath,
+                "-vframes",
+                "1",
+                "-q:v",
+                "2",
+                "-vf",
+                "scale=480:-1",
+                thumbPath,
+            ]
         );
 
         return success && File.Exists(thumbPath) ? thumbPath : null;
     }
 
-    private static async Task<bool> RunFfmpegAsync(string ffmpegExe, string arguments)
+    private static async Task<bool> RunFfmpegAsync(string ffmpegExe, string[] arguments)
     {
         try
         {
             var psi = new ProcessStartInfo
             {
                 FileName = ffmpegExe,
-                Arguments = arguments,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardError = true,
             };
+
+            foreach (var arg in arguments)
+            {
+                psi.ArgumentList.Add(arg);
+            }
 
             using var process = Process.Start(psi);
             if (process == null)
