@@ -467,7 +467,7 @@
                                             Padding="8,2"
                                             VerticalAlignment="Center">
                                         <TextBlock Text="{x:Bind AppVersion, Mode=OneWay}"
-                                                   ToolTipService.ToolTip="{x:Bind helpers:BuildInfo.DisplayVersion, Mode=OneTime}"
+                                                   ToolTipService.ToolTip="{x:Bind helpers:BuildInfo.BuildStamp, Mode=OneTime}"
                                                    FontFamily="{StaticResource GlassFontMonospace}"
                                                    FontSize="11"
                                                    FontWeight="SemiBold"
@@ -490,6 +490,43 @@
                                            FontFamily="{StaticResource GlassFontUi}"
                                            FontSize="12"
                                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                <Border Background="{ThemeResource GlassSubtleBrush}"
+                                        BorderBrush="{ThemeResource GlassHairlineBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="{StaticResource GlassRadiusSmall}"
+                                        Padding="10,6"
+                                        Margin="0,4,0,0">
+                                    <StackPanel Spacing="3">
+                                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                            <TextBlock Text="BUILD"
+                                                       FontFamily="{StaticResource GlassFontMonospace}"
+                                                       FontSize="10"
+                                                       FontWeight="Bold"
+                                                       Foreground="{ThemeResource GlassTextTertiaryBrush}" />
+                                            <TextBlock Text="{x:Bind helpers:BuildInfo.ShortCommit, Mode=OneTime}"
+                                                       FontFamily="{StaticResource GlassFontMonospace}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                            <TextBlock Text="·" Foreground="{ThemeResource GlassTextTertiaryBrush}" />
+                                            <TextBlock Text="{x:Bind helpers:BuildInfo.GitBranch, Mode=OneTime}"
+                                                       FontFamily="{StaticResource GlassFontMonospace}"
+                                                       FontSize="11"
+                                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                            <TextBlock Text="·" Foreground="{ThemeResource GlassTextTertiaryBrush}" />
+                                            <TextBlock Text="{x:Bind helpers:BuildInfo.BuildConfiguration, Mode=OneTime}"
+                                                       FontFamily="{StaticResource GlassFontMonospace}"
+                                                       FontSize="11"
+                                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind helpers:BuildInfo.ExecutablePath, Mode=OneTime}"
+                                                   ToolTipService.ToolTip="{x:Bind helpers:BuildInfo.BuildStamp, Mode=OneTime}"
+                                                   FontFamily="{StaticResource GlassFontMonospace}"
+                                                   FontSize="10"
+                                                   Foreground="{ThemeResource GlassTextTertiaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </StackPanel>
 
