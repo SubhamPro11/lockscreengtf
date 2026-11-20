@@ -153,6 +153,13 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
         // Sandboxing: Prevent web wallpapers from opening popup windows or hijacking desktop focus
         _controller.CoreWebView2.NewWindowRequested += (s, args) => args.Handled = true;
+
+        // Sandboxing: Prevent web wallpapers from initiating background file downloads
+        _controller.CoreWebView2.DownloadStarting += (s, args) =>
+        {
+            args.Cancel = true;
+            args.Handled = true;
+        };
     }
 
     public async Task LoadAsync(WallpaperItem item)
