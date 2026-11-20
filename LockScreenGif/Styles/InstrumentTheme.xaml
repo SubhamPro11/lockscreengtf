@@ -1180,7 +1180,7 @@
     </Style>
 
     <!-- ToolTip Style -->
-    <Style TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}">
+    <Style TargetType="ToolTip">
         <Setter Property="CornerRadius" Value="{StaticResource ToolTipCornerRadius}" />
         <Setter Property="Background" Value="{ThemeResource GlassRaisedBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource GlassHairlineBrush}" />
