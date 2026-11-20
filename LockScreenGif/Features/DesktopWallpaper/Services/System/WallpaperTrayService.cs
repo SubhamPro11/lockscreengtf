@@ -23,6 +23,7 @@ public sealed class WallpaperTrayService : IDisposable
     private readonly uint _wmTaskbarCreated;
 
     private nint _messageHwnd;
+    private nint _currentHIcon;
     private bool _isIconVisible;
     private bool _disposed;
 
@@ -75,12 +76,17 @@ public sealed class WallpaperTrayService : IDisposable
             return;
         }
 
+        if (_currentHIcon != 0)
+        {
+            DestroyIcon(_currentHIcon);
+            _currentHIcon = 0;
+        }
+
         var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "app.ico");
-        nint hIcon = 0;
         if (File.Exists(iconPath))
         {
             // Load icon
-            hIcon = ExtractIcon(iconPath);
+            _currentHIcon = ExtractIcon(iconPath);
         }
 
         var nid = new DesktopNativeMethods.NOTIFYICONDATA
@@ -90,7 +96,7 @@ public sealed class WallpaperTrayService : IDisposable
             uID = TrayIconId,
             uFlags = DesktopNativeMethods.NIF_MESSAGE | DesktopNativeMethods.NIF_ICON | DesktopNativeMethods.NIF_TIP,
             uCallbackMessage = WM_TRAYICON,
-            hIcon = hIcon,
+            hIcon = _currentHIcon,
             szTip = "LockscreenGif - Live Wallpaper",
         };
 
@@ -113,6 +119,12 @@ public sealed class WallpaperTrayService : IDisposable
 
         DesktopNativeMethods.Shell_NotifyIcon(DesktopNativeMethods.NIM_DELETE, ref nid);
         _isIconVisible = false;
+
+        if (_currentHIcon != 0)
+        {
+            DestroyIcon(_currentHIcon);
+            _currentHIcon = 0;
+        }
     }
 
     private nint TrayWindowProc(nint hWnd, uint msg, nint wParam, nint lParam)
@@ -301,6 +313,9 @@ public sealed class WallpaperTrayService : IDisposable
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     private static extern nint ExtractIconW(nint hInst, string lpszExeFileName, int nIconIndex);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool DestroyIcon(nint hIcon);
+
     public void Dispose()
     {
         if (_disposed)
@@ -310,6 +325,11 @@ public sealed class WallpaperTrayService : IDisposable
         _disposed = true;
 
         HideTrayIcon();
+        if (_currentHIcon != 0)
+        {
+            DestroyIcon(_currentHIcon);
+            _currentHIcon = 0;
+        }
         if (_messageHwnd != 0)
         {
             DesktopNativeMethods.DestroyWindow(_messageHwnd);
