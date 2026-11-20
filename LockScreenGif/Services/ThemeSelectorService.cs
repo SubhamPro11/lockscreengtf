@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using LockscreenGif.Contracts.Services;
 using LockscreenGif.Helpers;
 using Microsoft.UI.Xaml;

@@ -101,11 +101,17 @@ public static class GlassFallbackManager
         {
             if (fallback)
             {
-                _window.SystemBackdrop = null;
+                if (_window.SystemBackdrop != null)
+                {
+                    _window.SystemBackdrop = null;
+                }
             }
             else
             {
-                _window.SystemBackdrop = new MicaBackdrop();
+                if (_window.SystemBackdrop == null)
+                {
+                    _window.SystemBackdrop = new MicaBackdrop();
+                }
             }
         }
         catch
