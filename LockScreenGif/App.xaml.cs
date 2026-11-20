@@ -195,7 +195,8 @@ public partial class App : Application
                         }
                         else
                         {
-                            delaySeconds = LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperStartupService.GetStartupDelaySeconds();
+                            delaySeconds =
+                                LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperStartupService.GetStartupDelaySeconds();
                         }
 
                         if (delaySeconds > 0)

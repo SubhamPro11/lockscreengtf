@@ -44,7 +44,9 @@ public sealed class AppWallpaperRenderer : IWallpaperRenderer
         var ext = Path.GetExtension(exePath).ToLowerInvariant();
         if (ext != ".exe")
         {
-            throw new InvalidOperationException($"Only compiled .exe binaries are permitted as application wallpapers; '{ext}' is rejected.");
+            throw new InvalidOperationException(
+                $"Only compiled .exe binaries are permitted as application wallpapers; '{ext}' is rejected."
+            );
         }
 
         if (!IsSignedExecutable(exePath))

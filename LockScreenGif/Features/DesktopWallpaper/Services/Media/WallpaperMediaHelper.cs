@@ -136,28 +136,28 @@ public static class WallpaperMediaHelper
         var transcodeSuccess = await RunFfmpegAsync(
             ffmpeg,
             (string[])
-            [
-                "-y",
-                "-i",
-                inputFilePath,
-                "-c:v",
-                "libx264",
-                "-preset",
-                "ultrafast",
-                "-crf",
-                "22",
-                "-vf",
-                scaleFilter,
-                "-pix_fmt",
-                "yuv420p",
-                "-c:a",
-                "aac",
-                "-b:a",
-                "192k",
-                "-movflags",
-                "+faststart",
-                tempOutputFile,
-            ]
+                [
+                    "-y",
+                    "-i",
+                    inputFilePath,
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    "ultrafast",
+                    "-crf",
+                    "22",
+                    "-vf",
+                    scaleFilter,
+                    "-pix_fmt",
+                    "yuv420p",
+                    "-c:a",
+                    "aac",
+                    "-b:a",
+                    "192k",
+                    "-movflags",
+                    "+faststart",
+                    tempOutputFile,
+                ]
         );
 
         if (transcodeSuccess && File.Exists(tempOutputFile))
@@ -204,21 +204,7 @@ public static class WallpaperMediaHelper
 
         var success = await RunFfmpegAsync(
             ffmpeg,
-            (string[])
-            [
-                "-y",
-                "-ss",
-                "00:00:01",
-                "-i",
-                inputFilePath,
-                "-vframes",
-                "1",
-                "-q:v",
-                "2",
-                "-vf",
-                "scale=480:-1",
-                thumbPath,
-            ]
+            (string[])["-y", "-ss", "00:00:01", "-i", inputFilePath, "-vframes", "1", "-q:v", "2", "-vf", "scale=480:-1", thumbPath]
         );
 
         return success && File.Exists(thumbPath) ? thumbPath : null;
