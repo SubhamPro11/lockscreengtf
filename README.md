@@ -34,6 +34,18 @@
   <em>Next-generation Material 3 interface with pill buttons, Editorial typography, and Mica backdrop</em>
 </p>
 
+<p align="center">
+  <img src="docs/trimmer-preview.png" alt="LockscreenGif Frame-Accurate Video Trimmer" width="760" />
+  <br>
+  <em>Precise frame-accurate video editor with dual-handle trimming and realtime previews</em>
+</p>
+
+<p align="center">
+  <img src="docs/wallpaper-preview.png" alt="LockscreenGif Live Desktop Wallpaper Engine" width="760" />
+  <br>
+  <em>Hardware-accelerated live desktop wallpaper engine with multi-display and audio visualization</em>
+</p>
+
 ---
 
 ## ✨ Features at a Glance
@@ -75,9 +87,6 @@
 3. Configure your display layout (Per-monitor, Duplicate, or Span) and audio preferences.
 4. Click **Apply Wallpaper** — your live wallpaper begins running behind desktop icons instantly. Control playback at any time from the top **Now Playing** card or the Windows system tray.
 
-<p align="center">
-  <img src="docs/wallpaper-preview.png" alt="LockscreenGif Live Desktop Wallpaper Engine" width="760" />
-</p>
 
 ---
 
