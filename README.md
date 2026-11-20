@@ -29,7 +29,9 @@
 ---
 
 <p align="center">
-  <img src="docs/preview.png" alt="LockscreenGif User Interface Preview" width="760" />
+  <img src="docs/preview.png" alt="LockscreenGif Redesigned Lock Screen Interface" width="760" />
+  <br>
+  <em>Next-generation Material 3 interface with pill buttons, Editorial typography, and Mica backdrop</em>
 </p>
 
 ---
@@ -72,6 +74,10 @@
 2. Choose a video file or enter an interactive web URL/HTML page.
 3. Configure your display layout (Per-monitor, Duplicate, or Span) and audio preferences.
 4. Click **Apply Wallpaper** — your live wallpaper begins running behind desktop icons instantly. Control playback at any time from the top **Now Playing** card or the Windows system tray.
+
+<p align="center">
+  <img src="docs/wallpaper-preview.png" alt="LockscreenGif Live Desktop Wallpaper Engine" width="760" />
+</p>
 
 ---
 
