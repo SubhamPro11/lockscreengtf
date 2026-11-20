@@ -88,6 +88,24 @@ jobs:
           aip-commands: |
             SetVersion ${{ steps.version.outputs.version }}
 
+      - name: Sign binaries and installer (if certificate configured)
+        if: env.SIGNING_CERTIFICATE != ''
+        env:
+          SIGNING_CERTIFICATE: ${{ secrets.SIGNING_CERTIFICATE }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        shell: pwsh
+        run: |
+          try {
+            $pfxBytes = [System.Convert]::FromBase64String($env:SIGNING_CERTIFICATE)
+            $pfxPath = "$env:TEMP\signing_cert.pfx"
+            [System.IO.File]::WriteAllBytes($pfxPath, $pfxBytes)
+            & signtool.exe sign /f $pfxPath /p $env:SIGNING_PASSWORD /tr http://timestamp.digicert.com /td sha256 /fd sha256 artifacts/app/LockscreenGif.exe artifacts/app/LockscreenGif.Privileged.Helper.exe setup/installLockscreenGif.msi
+            Remove-Item $pfxPath -Force
+            Write-Host "Authenticode code signing completed successfully."
+          } catch {
+            Write-Warning "Code signing failed or skipped: $($_.Exception.Message)"
+          }
+
       - name: Package release assets
         env:
           BUILD_VERSION: ${{ steps.version.outputs.version }}

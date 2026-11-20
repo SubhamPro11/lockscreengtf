@@ -106,6 +106,11 @@ Download `LockscreenGif-*-x64.msi`. Run the installer for full Start menu integr
 ### Option B: Portable Package
 Download `LockscreenGif-*-win-x64.zip`. Extract the archive anywhere on your machine and run `LockscreenGif.exe` with zero installation required.
 
+> [!NOTE]
+> **Windows SmartScreen / Smart App Control Notice:**  
+> Because LockscreenGif is an independent open-source project without an enterprise EV certificate, Windows SmartScreen may show an initial advisory: *"Windows protected your PC — Unknown publisher"*.  
+> To continue installation, click **More info** and then select **Run anyway**. All source code is 100% public, automated builds run via GitHub Actions, and releases are scanned for malware.
+
 ---
 
 ## 🛠️ Building from Source
