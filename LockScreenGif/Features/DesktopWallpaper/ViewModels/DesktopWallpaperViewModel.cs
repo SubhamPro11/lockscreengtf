@@ -125,7 +125,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         get => WallpaperStartupService.IsStartupEnabled();
         set
         {
-            WallpaperStartupService.SetStartupEnabled(value);
+            WallpaperStartupService.SetStartupEnabled(value, WallpaperStartupService.GetStartupDelaySeconds());
             OnPropertyChanged();
         }
     }

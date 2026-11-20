@@ -19,8 +19,44 @@ public sealed class SettingsViewModel : ObservableObject
         get => WallpaperStartupService.IsStartupEnabled();
         set
         {
-            WallpaperStartupService.SetStartupEnabled(value);
+            WallpaperStartupService.SetStartupEnabled(value, StartupDelaySeconds);
             OnPropertyChanged(nameof(IsRunAtStartup));
+        }
+    }
+
+    public int StartupDelaySeconds
+    {
+        get => WallpaperStartupService.GetStartupDelaySeconds();
+        set
+        {
+            if (WallpaperStartupService.IsStartupEnabled())
+            {
+                WallpaperStartupService.SetStartupEnabled(true, value);
+            }
+            OnPropertyChanged(nameof(StartupDelaySeconds));
+            OnPropertyChanged(nameof(StartupDelayIndex));
+        }
+    }
+
+    public int StartupDelayIndex
+    {
+        get => StartupDelaySeconds switch
+        {
+            5 => 1,
+            10 => 2,
+            30 => 3,
+            _ => 0,
+        };
+        set
+        {
+            var seconds = value switch
+            {
+                1 => 5,
+                2 => 10,
+                3 => 30,
+                _ => 0,
+            };
+            StartupDelaySeconds = seconds;
         }
     }
 

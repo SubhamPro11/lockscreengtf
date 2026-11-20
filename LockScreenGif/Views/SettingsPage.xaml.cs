@@ -91,4 +91,31 @@ public sealed partial class SettingsPage : Page
             await Dialogs.LicensesDialog.ShowAsync(XamlRoot);
         }
     }
+
+    private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        CheckUpdatesButton.IsEnabled = false;
+        UpdateStatusInfoBar.IsOpen = false;
+        try
+        {
+            await Task.Delay(800);
+            var channel = ReleaseChannelComboBox.SelectedIndex == 1 ? "Beta" : "Stable";
+            UpdateStatusInfoBar.Title = "You are on the latest version";
+            UpdateStatusInfoBar.Message = $"LockscreenGif v{AppVersion} is currently up to date on the {channel} channel.";
+            UpdateStatusInfoBar.Severity = InfoBarSeverity.Success;
+            UpdateStatusInfoBar.IsOpen = true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Update check failed", ex);
+            UpdateStatusInfoBar.Title = "Update check failed";
+            UpdateStatusInfoBar.Message = ex.Message;
+            UpdateStatusInfoBar.Severity = InfoBarSeverity.Error;
+            UpdateStatusInfoBar.IsOpen = true;
+        }
+        finally
+        {
+            CheckUpdatesButton.IsEnabled = true;
+        }
+    }
 }

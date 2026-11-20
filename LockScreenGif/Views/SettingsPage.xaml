@@ -287,28 +287,64 @@
                         BorderThickness="1"
                         CornerRadius="{StaticResource GlassRadiusControl}"
                         Padding="20,12">
-                    <Grid ColumnSpacing="16" MinHeight="48">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="240" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="2" VerticalAlignment="Center">
-                            <TextBlock Text="Run at Windows startup"
-                                       FontFamily="{StaticResource GlassFontUi}"
-                                       FontSize="14"
-                                       FontWeight="Medium"
-                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            <TextBlock Text="Automatically launches LockscreenGif in the background and restores your active wallpaper when signing into Windows."
-                                       FontFamily="{StaticResource GlassFontUi}"
-                                       FontSize="12"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                        <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                      Style="{StaticResource GlassToggleSwitchStyle}"
-                                      IsOn="{x:Bind ViewModel.IsRunAtStartup, Mode=TwoWay}"
-                                      AutomationProperties.Name="Run at Windows startup" />
-                    </Grid>
+                    <StackPanel Spacing="12">
+                        <Grid ColumnSpacing="16" MinHeight="48">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="240" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Run at Windows startup"
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                <TextBlock Text="Automatically launches LockscreenGif in the background and restores your active wallpaper when signing into Windows."
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          IsOn="{x:Bind ViewModel.IsRunAtStartup, Mode=TwoWay}"
+                                          AutomationProperties.Name="Run at Windows startup" />
+                        </Grid>
+
+                        <!-- Hairline Divider -->
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
+
+                        <!-- Startup Delay Row (44px) -->
+                        <Grid ColumnSpacing="16" MinHeight="44">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="240" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Startup delay"
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                <TextBlock Text="Delay before loading wallpaper to let desktop icons and shell settle without contention."
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <ComboBox Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                      Width="140"
+                                      Style="{StaticResource GlassComboBoxStyle}"
+                                      SelectedIndex="{x:Bind ViewModel.StartupDelayIndex, Mode=TwoWay}"
+                                      IsEnabled="{x:Bind ViewModel.IsRunAtStartup, Mode=OneWay}"
+                                      AutomationProperties.Name="Startup delay duration">
+                                <ComboBoxItem Content="None (0s)" />
+                                <ComboBoxItem Content="5 seconds" />
+                                <ComboBoxItem Content="10 seconds" />
+                                <ComboBoxItem Content="30 seconds" />
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
                 </Border>
             </StackPanel>
 
@@ -480,6 +516,43 @@
                                              NavigateUri="https://github.com/SubhamPro11/lockscreengtf/issues"
                                              AutomationProperties.Name="Report an issue on GitHub" />
                         </StackPanel>
+
+                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" Margin="0,2,0,2" />
+
+                        <!-- Updates & Release Channel Row -->
+                        <Grid ColumnSpacing="16" MinHeight="44">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Application updates"
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                <TextBlock Text="Check for newer releases or switch release channels."
+                                           FontFamily="{StaticResource GlassFontUi}"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <ComboBox x:Name="ReleaseChannelComboBox"
+                                          Width="110"
+                                          SelectedIndex="0"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Select update release channel">
+                                    <ComboBoxItem Content="Stable" />
+                                    <ComboBoxItem Content="Beta" />
+                                </ComboBox>
+                                <Button x:Name="CheckUpdatesButton"
+                                        Content="Check for updates"
+                                        Click="CheckUpdates_Click"
+                                        Style="{StaticResource MaterialFilledButtonStyle}"
+                                        AutomationProperties.Name="Check for application updates" />
+                            </StackPanel>
+                        </Grid>
+                        <InfoBar x:Name="UpdateStatusInfoBar" IsOpen="False" IsClosable="True" />
 
                         <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" Margin="0,2,0,2" />
 

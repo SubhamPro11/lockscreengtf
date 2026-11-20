@@ -186,8 +186,22 @@ public partial class App : Application
                 {
                     try
                     {
-                        // Delay wallpaper start at Windows login (8s) so login and desktop icons settle without contention
-                        await Task.Delay(8000);
+                        var cmdArgs = Environment.GetCommandLineArgs();
+                        var delayIdx = Array.FindIndex(cmdArgs, a => string.Equals(a, "--delay", StringComparison.OrdinalIgnoreCase));
+                        var delaySeconds = 0;
+                        if (delayIdx >= 0 && delayIdx + 1 < cmdArgs.Length && int.TryParse(cmdArgs[delayIdx + 1], out var parsedDelay))
+                        {
+                            delaySeconds = parsedDelay;
+                        }
+                        else
+                        {
+                            delaySeconds = LockscreenGif.Features.DesktopWallpaper.Services.System.WallpaperStartupService.GetStartupDelaySeconds();
+                        }
+
+                        if (delaySeconds > 0)
+                        {
+                            await Task.Delay(delaySeconds * 1000);
+                        }
 
                         var libService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.Library.IWallpaperLibraryService>();
                         var engineService = GetService<LockscreenGif.Features.DesktopWallpaper.Services.IWallpaperEngineService>();

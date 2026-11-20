@@ -27,7 +27,29 @@ public static class WallpaperStartupService
         }
     }
 
-    public static bool SetStartupEnabled(bool enable)
+    public static int GetStartupDelaySeconds()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(RunRegistryKey, false);
+            var val = key?.GetValue(AppValueName) as string;
+            if (!string.IsNullOrWhiteSpace(val))
+            {
+                var match = global::System.Text.RegularExpressions.Regex.Match(val, @"--delay\s+(\d+)");
+                if (match.Success && int.TryParse(match.Groups[1].Value, out var delay))
+                {
+                    return delay;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn($"Failed to read startup delay: {ex.Message}");
+        }
+        return 0;
+    }
+
+    public static bool SetStartupEnabled(bool enable, int delaySeconds = 0)
     {
         try
         {
@@ -42,8 +64,9 @@ public static class WallpaperStartupService
                 var exePath = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName;
                 if (!string.IsNullOrWhiteSpace(exePath) && File.Exists(exePath))
                 {
-                    key.SetValue(AppValueName, $"\"{exePath}\" --autostart");
-                    Logger.Info("Registered LockscreenGif to run at startup.");
+                    var delayArg = delaySeconds > 0 ? $" --delay {delaySeconds}" : string.Empty;
+                    key.SetValue(AppValueName, $"\"{exePath}\" --autostart{delayArg}");
+                    Logger.Info($"Registered LockscreenGif to run at startup with {delaySeconds}s delay.");
                     return true;
                 }
             }
