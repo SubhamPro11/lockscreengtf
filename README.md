@@ -14,6 +14,7 @@
   <a href="https://github.com/SubhamPro11/lockscreengtf/actions/workflows/format.yml"><img src="https://github.com/SubhamPro11/lockscreengtf/actions/workflows/format.yml/badge.svg" alt="Code Formatting" /></a>
   <a href="https://github.com/SubhamPro11/lockscreengtf"><img src="https://img.shields.io/badge/Platform-Windows%2011%2024H2%2B%20(x64)-0078D4.svg?logo=windows&logoColor=white" alt="Platform" /></a>
   <a href="https://dotnet.microsoft.com/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10%20Desktop-512BD4.svg?logo=dotnet&logoColor=white" alt=".NET 10" /></a>
+  <a href="https://github.com/SubhamPro11/lockscreengtf/releases"><img src="https://img.shields.io/badge/Version-v4.26.11-brightgreen.svg" alt="Version v4.26.11" /></a>
   <a href="https://github.com/SubhamPro11/lockscreengtf/releases"><img src="https://img.shields.io/github/v/release/SubhamPro11/lockscreengtf?label=Release&color=success" alt="Latest Release" /></a>
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
 </p>

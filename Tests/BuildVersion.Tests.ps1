@@ -2,10 +2,10 @@ $ErrorActionPreference = 'Stop'
 $script = Join-Path $PSScriptRoot '../scripts/Get-BuildVersion.ps1'
 $sha = '0123456789abcdef0123456789abcdef01234567'
 foreach ($case in @(
-    @{ Run = 1; Expected = '3.0.1' },
-    @{ Run = 65534; Expected = '3.0.65534' },
-    @{ Run = 65535; Expected = '3.1.0' },
-    @{ Run = 16776959; Expected = '3.255.65534' }
+    @{ Run = 1; Expected = '4.26.11' },
+    @{ Run = 65534; Expected = '4.26.11' },
+    @{ Run = 65535; Expected = '4.26.11' },
+    @{ Run = 16776959; Expected = '4.26.11' }
 )) {
     $first = & $script -RunNumber $case.Run -RunAttempt 1 -Commit $sha
     $rerun = & $script -RunNumber $case.Run -RunAttempt 2 -Commit $sha
@@ -24,7 +24,7 @@ $output = Join-Path ([IO.Path]::GetTempPath()) ("build-version-" + [guid]::NewGu
 try {
     & $script -RunNumber 42 -RunAttempt 3 -Commit $sha -OutputPath $output | Out-Null
     $lines = Get-Content $output
-    if ($lines.Count -ne 3 -or $lines[0] -ne 'version=3.0.42' -or $lines[2] -ne 'tag=build-42') { throw 'Incorrect GitHub outputs' }
+    if ($lines.Count -ne 3 -or $lines[0] -ne 'version=4.26.11' -or $lines[2] -ne 'tag=build-42') { throw 'Incorrect GitHub outputs' }
 } finally {
     if (Test-Path -LiteralPath $output) { Remove-Item -LiteralPath $output }
 }
