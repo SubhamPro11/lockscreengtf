@@ -14,6 +14,7 @@
   <a href="https://github.com/SubhamPro11/lockscreengtf/actions/workflows/format.yml"><img src="https://github.com/SubhamPro11/lockscreengtf/actions/workflows/format.yml/badge.svg" alt="Code Formatting" /></a>
   <a href="https://github.com/SubhamPro11/lockscreengtf"><img src="https://img.shields.io/badge/Platform-Windows%2011%2024H2%2B%20(x64)-0078D4.svg?logo=windows&logoColor=white" alt="Platform" /></a>
   <a href="https://dotnet.microsoft.com/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10%20Desktop-512BD4.svg?logo=dotnet&logoColor=white" alt=".NET 10" /></a>
+  <a href="https://github.com/SubhamPro11/lockscreengtf/releases"><img src="https://img.shields.io/badge/Version-v4.26.11-brightgreen.svg" alt="Version v4.26.11" /></a>
   <a href="https://github.com/SubhamPro11/lockscreengtf/releases"><img src="https://img.shields.io/github/v/release/SubhamPro11/lockscreengtf?label=Release&color=success" alt="Latest Release" /></a>
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
 </p>
@@ -32,6 +33,18 @@
   <img src="docs/preview.png" alt="LockscreenGif Redesigned Lock Screen Interface" width="760" />
   <br>
   <em>Next-generation Material 3 interface with pill buttons, Editorial typography, and Mica backdrop</em>
+</p>
+
+<p align="center">
+  <img src="docs/trimmer-preview.png" alt="LockscreenGif Frame-Accurate Video Trimmer" width="760" />
+  <br>
+  <em>Precise frame-accurate video editor with dual-handle trimming and realtime previews</em>
+</p>
+
+<p align="center">
+  <img src="docs/wallpaper-preview.png" alt="LockscreenGif Live Desktop Wallpaper Engine" width="760" />
+  <br>
+  <em>Hardware-accelerated live desktop wallpaper engine with multi-display and audio visualization</em>
 </p>
 
 ---
@@ -75,9 +88,6 @@
 3. Configure your display layout (Per-monitor, Duplicate, or Span) and audio preferences.
 4. Click **Apply Wallpaper** — your live wallpaper begins running behind desktop icons instantly. Control playback at any time from the top **Now Playing** card or the Windows system tray.
 
-<p align="center">
-  <img src="docs/wallpaper-preview.png" alt="LockscreenGif Live Desktop Wallpaper Engine" width="760" />
-</p>
 
 ---
 

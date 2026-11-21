@@ -6,11 +6,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-# MSI limits major/minor to 255 and build to 65535. Stay below 65535
-# for .NET assembly components too. Epoch 3 sorts after existing 2.1.N installers.
-$minor = [long][Math]::Floor($RunNumber / 65535)
-$patch = $RunNumber % 65535
-$version = "3.$minor.$patch"
+# Epoch 4: v4.26.11 release line
+$version = "4.26.11"
 $identity = [ordered]@{
     version = $version
     informational_version = "$version-ci+$($Commit.ToLowerInvariant()).attempt.$RunAttempt"

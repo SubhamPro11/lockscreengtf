@@ -2,6 +2,19 @@
 
 All notable changes to LockscreenGif will be documented in this file.
 
+## [4.26.11] - 2026-11-21
+
+### Added
+- **Material 3 Design System**:
+  - Full Red Dark Material 3 theme palette with Editorial typography (`Fraunces` / serif headings).
+  - Standardized pill buttons (`MaterialFilledButtonStyle`, `MaterialTonalButtonStyle`, `MaterialOutlinedButtonStyle`, `MaterialTextButtonStyle`).
+  - Synced native DWM title bar and window frame with application theme (Light/Dark/System).
+- **Automated Verification & Slimming**:
+  - Added XAML resource regression guard (`test-xaml-resources.ps1`).
+  - Added deterministic developer launcher (`dev-run.ps1`).
+  - Purged 4.03 MB of untracked and dead clutter.
+  - Runtime build stamp in Settings and App Mark.
+
 ## [3.0.58] - 2026-11-19
 
 ### Added

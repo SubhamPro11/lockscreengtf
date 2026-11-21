@@ -11,5 +11,9 @@
     <PackageProjectUrl>https://lockscreen-gtf-web.morbius.workers.dev</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SubhamPro11/lockscreengtf</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version Condition="'$(Version)' == ''">4.26.11</Version>
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">4.26.11.0</AssemblyVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">4.26.11.0</FileVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">4.26.11</InformationalVersion>
   </PropertyGroup>
 </Project>
