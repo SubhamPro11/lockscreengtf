@@ -89,36 +89,6 @@ public static class GlassFallbackManager
 
     public static void UpdateFallbackState()
     {
-        if (_window == null)
-        {
-            return;
-        }
-
-        // Suspend blur composition when window is inactive to conserve GPU budget
-        bool fallback = IsFallbackActive || !_isWindowActive;
-
-        try
-        {
-            if (fallback)
-            {
-                if (_window.SystemBackdrop != null)
-                {
-                    _window.SystemBackdrop = null;
-                }
-            }
-            else
-            {
-                if (_window.SystemBackdrop == null)
-                {
-                    _window.SystemBackdrop = new MicaBackdrop();
-                }
-            }
-        }
-        catch
-        {
-            // SystemBackdrop may be unsupported on specific hardware
-        }
-
         FallbackStateChanged?.Invoke(null, IsFallbackActive);
     }
 

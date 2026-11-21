@@ -7,7 +7,7 @@
     KeyDown="ShellPage_KeyDown"
     UseLayoutRounding="True">
 
-    <Grid Background="Transparent">
+    <Grid Background="{ThemeResource GlassBaseBrush}">
         <!-- 1. Ambient Background Layer (drifting dominant color fields behind the page) -->
         <Grid x:Name="AmbientRootGrid" Background="{ThemeResource GlassBaseBrush}" IsHitTestVisible="False">
             <!-- Dynamic Drifting Ambient Color Fields -->

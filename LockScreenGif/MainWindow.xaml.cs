@@ -17,7 +17,6 @@ public sealed partial class MainWindow : WindowEx
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "app.ico"));
         Content = null;
         Title = "AppDisplayName".GetLocalized();
-        SystemBackdrop = new MicaBackdrop();
         ExtendsContentIntoTitleBar = true;
 
         // Theme change code picked from https://github.com/microsoft/WinUI-Gallery/pull/1239
