@@ -9,451 +9,355 @@
     mc:Ignorable="d"
     UseLayoutRounding="True">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel MaxWidth="1280"
-                    Margin="48,20,48,60"
-                    Spacing="24"
-                    HorizontalAlignment="Stretch">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,8,0,48">
+        <Grid HorizontalAlignment="Center" MaxWidth="1280" Padding="48,20,48,32" ColumnSpacing="48">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.65*" MinWidth="440" />
+                <ColumnDefinition Width="*" MinWidth="340" MaxWidth="430" />
+            </Grid.ColumnDefinitions>
 
-            <!-- 1. Header & Lead-in -->
-            <StackPanel Spacing="6">
-                <TextBlock Text="Desktop Wallpaper"
-                           FontFamily="{StaticResource GlassFontDisplay}"
-                           FontSize="32"
-                           FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                <TextBlock Text="Render live animated videos, interactive web pages, or media behind your desktop icons."
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="14"
-                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-            </StackPanel>
+            <!-- =================================================================== -->
+            <!-- LEFT COLUMN: DESKTOP PREVIEW STAGE, PLAYBACK TRAY & URL INPUT       -->
+            <!-- =================================================================== -->
+            <StackPanel Grid.Column="0" Spacing="18">
+                <!-- System / Error / Sync InfoBars -->
+                <InfoBar x:Name="ErrorBanner"
+                         IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
+                         Severity="Error"
+                         Title="Desktop wallpaper notice"
+                         Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
 
-            <!-- 2. System / Error / Sync InfoBars -->
-            <InfoBar x:Name="ErrorBanner"
-                     IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
-                     Severity="Error"
-                     Title="Desktop wallpaper notice"
-                     Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
+                <InfoBar x:Name="SyncNoticeBanner"
+                         IsOpen="{x:Bind ViewModel.HasSyncNotice, Mode=OneWay}"
+                         Severity="Informational"
+                         Title="Lock screen &amp; desktop sync"
+                         Message="{x:Bind ViewModel.SyncNotice, Mode=OneWay}"
+                         IsClosable="True" />
 
-            <InfoBar x:Name="SyncNoticeBanner"
-                     IsOpen="{x:Bind ViewModel.HasSyncNotice, Mode=OneWay}"
-                     Severity="Informational"
-                     Title="Lock screen &amp; desktop sync"
-                     Message="{x:Bind ViewModel.SyncNotice, Mode=OneWay}"
-                     IsClosable="True" />
+                <ProgressBar IsIndeterminate="True"
+                             Visibility="{x:Bind ViewModel.BusyVisibility, Mode=OneWay}"
+                             Foreground="{ThemeResource GlassPrimaryBrush}"
+                             HorizontalAlignment="Stretch" />
 
-            <!-- Activity Progress Bar -->
-            <ProgressBar IsIndeterminate="True"
-                         Visibility="{x:Bind ViewModel.BusyVisibility, Mode=OneWay}"
-                         Foreground="{ThemeResource GlassEmberBrush}"
-                         HorizontalAlignment="Stretch" />
-
-            <!-- 3. THE PROJECTION BOOTH HERO STAGE -->
-            <Grid>
-                <!-- Stage Obsidian Frame (22 px radius) -->
-                <Border Background="#0A0908"
-                        BorderBrush="{ThemeResource GlassHairlineBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource GlassRadiusStage}"
-                        MinHeight="340"
-                        Padding="24">
-                    <Grid>
-                        <!-- A: Drop Target State (Shown when no media loaded) -->
-                        <Border x:Name="DropTargetCard"
-                                AllowDrop="True"
-                                DragOver="DropTarget_DragOver"
-                                DragLeave="DropTarget_DragLeave"
-                                Drop="DropTarget_Drop"
-                                Background="{ThemeResource GlassRaisedBrush}"
-                                BorderBrush="{ThemeResource GlassHairlineBrush}"
-                                BorderThickness="1"
-                                CornerRadius="{StaticResource GlassRadiusTray}"
-                                Padding="32,28"
-                                Visibility="{x:Bind ViewModel.MediaPlaceholderVisibility, Mode=OneWay}">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" MaxWidth="520">
-                                <!-- Circular Accent Media Badge -->
-                                <Border Width="56" Height="56"
-                                        CornerRadius="28"
-                                        Background="{ThemeResource GlassHairlineBrush}"
-                                        BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                        BorderThickness="1"
-                                        HorizontalAlignment="Center">
-                                    <FontIcon Glyph="&#xE8B9;"
-                                              FontSize="24"
-                                              Foreground="{ThemeResource GlassEmberBrush}" />
-                                </Border>
-
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Drop your desktop animation here"
-                                               FontFamily="{StaticResource GlassFontUi}"
-                                               FontSize="18"
-                                               FontWeight="SemiBold"
-                                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                                               TextAlignment="Center" />
-                                    <TextBlock Text="Supports video files (MP4, WebM, MKV, MOV), animated GIFs, web pages, and images"
-                                               FontFamily="{StaticResource GlassFontUi}"
-                                               FontSize="13"
-                                               Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                               TextAlignment="Center"
-                                               TextWrapping="Wrap" />
-                                </StackPanel>
-
-                                <!-- Action Buttons Row -->
-                                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,4,0,0">
-                                    <Button x:Name="ChooseFileButton"
-                                            Content="Choose file…"
-                                            Style="{StaticResource MaterialFilledButtonStyle}"
-                                            Click="ChooseFile_Click"
-                                            AutomationProperties.Name="Choose wallpaper media file">
-                                        <Button.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="O" Modifiers="Control" />
-                                        </Button.KeyboardAccelerators>
-                                    </Button>
-
-                                    <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ApplyButtonTooltip, Mode=OneWay}">
-                                        <Button x:Name="ApplyWallpaperButton"
-                                                Content="Apply to desktop"
-                                                Style="{StaticResource MaterialTonalButtonStyle}"
-                                                Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
-                                                IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
-                                                AutomationProperties.Name="Apply selected wallpaper to desktop" />
-                                    </Grid>
-
-                                    <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ApplyBothTooltip, Mode=OneWay}">
-                                        <Button x:Name="ApplyBothButton"
-                                                Content="Also set as lock screen"
-                                                Style="{StaticResource MaterialOutlinedButtonStyle}"
-                                                Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
-                                                IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
-                                                AutomationProperties.Name="Also set as lock screen" />
-                                    </Grid>
-                                </StackPanel>
+                <!-- A: Drop Target State (Shown when no media loaded) -->
+                <Grid Visibility="{x:Bind ViewModel.MediaPlaceholderVisibility, Mode=OneWay}">
+                    <Border x:Name="DropTargetCard"
+                            AllowDrop="True"
+                            DragOver="DropTarget_DragOver"
+                            DragLeave="DropTarget_DragLeave"
+                            Drop="DropTarget_Drop"
+                            Background="{ThemeResource GlassStageSurfaceBrush}"
+                            CornerRadius="28"
+                            MinHeight="410"
+                            Padding="36,48">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="14">
+                            <FontIcon Glyph="&#xE8B9;" FontSize="44" Foreground="{ThemeResource GlassPrimaryBrush}"
+                                      HorizontalAlignment="Center" Margin="0,0,0,4" />
+                            <TextBlock Text="Drop a video, GIF, or web page"
+                                       Style="{StaticResource PageTitleStyle}"
+                                       FontSize="30" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}"
+                                       TextAlignment="Center" />
+                            <TextBlock Text="MP4 · WebM · MKV · MOV · GIF · WebP · HTML · Images"
+                                       FontFamily="{StaticResource GlassFontMonospace}"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
+                                       TextAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,12,0,0">
+                                <Button x:Name="ChooseFileButton"
+                                        Content="Choose file…"
+                                        Style="{StaticResource MaterialFilledButtonLargeStyle}"
+                                        Click="ChooseFile_Click"
+                                        AutomationProperties.Name="Choose wallpaper media file">
+                                    <Button.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                    </Button.KeyboardAccelerators>
+                                </Button>
                             </StackPanel>
-                        </Border>
+                        </StackPanel>
+                    </Border>
+                    <Rectangle RadiusX="28" RadiusY="28"
+                               Stroke="{ThemeResource GlassOutlineVariantBrush}"
+                               StrokeThickness="1.5"
+                               StrokeDashArray="6,4"
+                               IsHitTestVisible="False" />
+                </Grid>
 
-                        <!-- B: Active Media Stage State (Shown when media is loaded) -->
-                        <Grid Visibility="{x:Bind ViewModel.MediaSelectedVisibility, Mode=OneWay}">
+                <!-- B: Active Media Desktop Preview Stage (Shown when media is loaded) -->
+                <StackPanel Spacing="16" Visibility="{x:Bind ViewModel.MediaSelectedVisibility, Mode=OneWay}">
+                    <Border MinHeight="394" CornerRadius="28"
+                            BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
+                            BorderThickness="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#4D1F1A" Offset="0.0" />
+                                <GradientStop Color="#241217" Offset="0.4" />
+                                <GradientStop Color="#120D12" Offset="0.75" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Hero Media Presentation -->
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="14" Margin="16,24,16,64">
-                                <Border Width="64" Height="64"
-                                        CornerRadius="32"
-                                        Background="{ThemeResource GlassRaisedBrush}"
-                                        BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                        BorderThickness="1"
+                            <!-- Simulated Desktop Icons (Left Edge, Figma 7:618) -->
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,28,0,0" Spacing="18" IsHitTestVisible="False" Opacity="0.75">
+                                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                    <Border Width="34" Height="34" CornerRadius="8" Background="#22FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1">
+                                        <FontIcon Glyph="&#xE74D;" FontSize="15" Foreground="#F5EDE5" />
+                                    </Border>
+                                    <TextBlock Text="Recycle Bin" FontSize="10" Foreground="#F5EDE5" HorizontalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                    <Border Width="34" Height="34" CornerRadius="8" Background="#22FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1">
+                                        <FontIcon Glyph="&#xE8B7;" FontSize="15" Foreground="#F5EDE5" />
+                                    </Border>
+                                    <TextBlock Text="Projects" FontSize="10" Foreground="#F5EDE5" HorizontalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                    <Border Width="34" Height="34" CornerRadius="8" Background="#22FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1">
+                                        <FontIcon Glyph="&#xE70B;" FontSize="15" Foreground="#F5EDE5" />
+                                    </Border>
+                                    <TextBlock Text="Notes" FontSize="10" Foreground="#F5EDE5" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Centered Active Media Readout -->
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="96,24,48,24">
+                                <Border Width="60" Height="60" CornerRadius="30"
+                                        Background="#22FFFFFF" BorderBrush="#44FFFFFF" BorderThickness="1"
                                         HorizontalAlignment="Center">
-                                    <FontIcon Glyph="&#xE8B9;"
-                                              FontSize="28"
-                                              Foreground="{ThemeResource GlassEmberBrush}" />
+                                    <FontIcon Glyph="&#xE8B9;" FontSize="26" Foreground="#FFB4A8" />
                                 </Border>
 
                                 <StackPanel Spacing="4" HorizontalAlignment="Center">
                                     <TextBlock Text="{x:Bind ViewModel.WallpaperTitle, Mode=OneWay}"
-                                               FontFamily="{StaticResource GlassFontUi}"
-                                               FontSize="20"
-                                               FontWeight="SemiBold"
-                                               Foreground="{ThemeResource GlassTextPrimaryBrush}"
-                                               TextAlignment="Center"
-                                               TextTrimming="CharacterEllipsis"
-                                               MaxWidth="680" />
+                                               FontFamily="{StaticResource GlassFontDisplay}"
+                                               FontSize="24" FontWeight="SemiBold"
+                                               Foreground="#F5EDE5" TextAlignment="Center"
+                                               TextTrimming="CharacterEllipsis" MaxWidth="520" />
                                     <TextBlock Text="{x:Bind ViewModel.SourceInput, Mode=OneWay, TargetNullValue='No file or URL selected yet.'}"
                                                FontFamily="{StaticResource GlassFontMonospace}"
-                                               FontSize="12"
-                                               Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                               TextAlignment="Center"
-                                               TextTrimming="CharacterEllipsis"
-                                               MaxWidth="640" />
+                                               FontSize="12" Foreground="#D8C2BE"
+                                               TextAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="480" />
                                 </StackPanel>
 
                                 <!-- Type & Status Badges -->
                                 <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                                    <Border Background="{ThemeResource GlassRaisedBrush}"
-                                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="{StaticResource GlassRadiusSmall}"
-                                            Padding="10,4">
+                                    <Border Background="#22FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1"
+                                            CornerRadius="999" Padding="12,4">
                                         <TextBlock Text="{x:Bind ViewModel.WallpaperTypeDescription, Mode=OneWay}"
-                                                   FontFamily="{StaticResource GlassFontUi}"
-                                                   FontSize="11"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                                                   FontFamily="{StaticResource GlassFontUi}" FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="#F5EDE5" />
                                     </Border>
-
-                                    <Border Background="{ThemeResource GlassRaisedBrush}"
-                                            BorderBrush="{ThemeResource GlassBorderRimBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="{StaticResource GlassRadiusSmall}"
-                                            Padding="10,4">
+                                    <Border Background="#38FFB4A8" BorderBrush="#55FFB4A8" BorderThickness="1"
+                                            CornerRadius="999" Padding="12,4">
                                         <TextBlock Text="{x:Bind ViewModel.StateBadgeText, Mode=OneWay}"
-                                                   FontFamily="{StaticResource GlassFontMonospace}"
-                                                   FontSize="11"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{ThemeResource GlassEmberHoverBrush}" />
+                                                   FontFamily="{StaticResource GlassFontMonospace}" FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="#FFDAD5" />
                                     </Border>
+                                </StackPanel>
 
-                                    <!-- Resource Usage Telemetry Readouts -->
-                                    <StackPanel Orientation="Horizontal" Spacing="6"
-                                                VerticalAlignment="Center"
-                                                Visibility="{x:Bind ViewModel.ResourceUsageVisibility, Mode=OneWay}">
-                                        <TextBlock Text="·" Foreground="{ThemeResource GlassTextTertiaryBrush}" />
-                                        <TextBlock Text="{x:Bind ViewModel.CpuTextWithLabel, Mode=OneWay}"
-                                                   FontFamily="{StaticResource GlassFontMonospace}"
-                                                   FontSize="11"
-                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                        <TextBlock Text="·" Foreground="{ThemeResource GlassTextTertiaryBrush}" />
-                                        <TextBlock Text="{x:Bind ViewModel.MemoryTextWithLabel, Mode=OneWay}"
-                                                   FontFamily="{StaticResource GlassFontMonospace}"
-                                                   FontSize="11"
-                                                   Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                        <TextBlock Text="{x:Bind ViewModel.AutoPausedReasonText, Mode=OneWay}"
-                                                   FontFamily="{StaticResource GlassFontUi}"
-                                                   FontSize="11"
-                                                   Foreground="{ThemeResource GlassStatusAlertBrush}"
-                                                   Visibility="{x:Bind ViewModel.AutoPausedVisibility, Mode=OneWay}" />
-                                    </StackPanel>
+                                <!-- Resource Usage Readout -->
+                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center"
+                                            Visibility="{x:Bind ViewModel.ResourceUsageVisibility, Mode=OneWay}">
+                                    <TextBlock Text="{x:Bind ViewModel.CpuTextWithLabel, Mode=OneWay}"
+                                               FontFamily="{StaticResource GlassFontMonospace}" FontSize="11" Foreground="#D8C2BE" />
+                                    <TextBlock Text="·" Foreground="#9A8582" />
+                                    <TextBlock Text="{x:Bind ViewModel.MemoryTextWithLabel, Mode=OneWay}"
+                                               FontFamily="{StaticResource GlassFontMonospace}" FontSize="11" Foreground="#D8C2BE" />
+                                    <TextBlock Text="{x:Bind ViewModel.AutoPausedReasonText, Mode=OneWay}"
+                                               FontFamily="{StaticResource GlassFontUi}" FontSize="11"
+                                               Foreground="{ThemeResource GlassStatusAlertBrush}"
+                                               Visibility="{x:Bind ViewModel.AutoPausedVisibility, Mode=OneWay}" />
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- Floating Action Tray (Anchored at the base of the Stage) -->
-                            <Border Grid.Row="1"
-                                    Style="{StaticResource GlassFloatingTrayStyle}"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,0,12">
-                                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                                    <Button x:Name="PauseResumeButton"
-                                            Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
-                                            Style="{StaticResource MaterialTonalButtonStyle}"
-                                            Command="{x:Bind ViewModel.TogglePauseCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
-                                            AutomationProperties.Name="Pause or resume wallpaper" />
-
-                                    <Button x:Name="StartEngineButton"
-                                            Content="Start wallpaper"
-                                            Style="{StaticResource MaterialFilledButtonStyle}"
-                                            Command="{x:Bind ViewModel.StartCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                                            Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
-                                            AutomationProperties.Name="Start desktop wallpaper engine" />
-
-                                    <Button x:Name="StopEngineButton"
-                                            Content="Stop"
-                                            Style="{StaticResource MaterialOutlinedButtonStyle}"
-                                            Command="{x:Bind ViewModel.StopCommand}"
-                                            IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
-                                            Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
-                                            AutomationProperties.Name="Stop wallpaper and restore Windows wallpaper" />
+                            <!-- Simulated Windows 11 Taskbar Strip (Bottom, Figma 7:624) -->
+                            <Border Grid.Row="1" Height="36" Background="#33000000" CornerRadius="0,0,28,28" IsHitTestVisible="False">
+                                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Border Width="18" Height="18" CornerRadius="4" Background="#44FFFFFF" />
+                                    <Border Width="18" Height="18" CornerRadius="4" Background="#33FFFFFF" />
+                                    <Border Width="18" Height="18" CornerRadius="4" Background="#33FFFFFF" />
+                                    <Border Width="18" Height="18" CornerRadius="4" Background="#33FFFFFF" />
+                                    <Border Width="18" Height="18" CornerRadius="4" Background="#33FFFFFF" />
                                 </StackPanel>
                             </Border>
                         </Grid>
+                    </Border>
+
+                    <!-- Floating Playback Tray (Figma 7:630) -->
+                    <Border Background="{ThemeResource GlassTrayFillBrush}"
+                            BorderBrush="{ThemeResource GlassTrayBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="999"
+                            Padding="8"
+                            HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button x:Name="PauseResumeButton"
+                                    Content="{x:Bind ViewModel.PauseResumeButtonText, Mode=OneWay}"
+                                    Style="{StaticResource MaterialTonalButtonStyle}"
+                                    Command="{x:Bind ViewModel.TogglePauseCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanPauseResume, Mode=OneWay}"
+                                    AutomationProperties.Name="Pause or resume wallpaper" />
+
+                            <Button x:Name="StartEngineButton"
+                                    Content="Start"
+                                    Style="{StaticResource MaterialFilledButtonStyle}"
+                                    Command="{x:Bind ViewModel.StartCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.StartButtonVisibility, Mode=OneWay}"
+                                    AutomationProperties.Name="Start desktop wallpaper engine" />
+
+                            <Button x:Name="StopEngineButton"
+                                    Content="Stop"
+                                    Style="{StaticResource MaterialOutlinedButtonStyle}"
+                                    Command="{x:Bind ViewModel.StopCommand}"
+                                    IsEnabled="{x:Bind ViewModel.CanStop, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.StopButtonVisibility, Mode=OneWay}"
+                                    AutomationProperties.Name="Stop wallpaper and restore Windows wallpaper" />
+
+                            <Button Content="Change file…"
+                                    Style="{StaticResource MaterialTextButtonStyle}"
+                                    Click="ChooseFile_Click"
+                                    AutomationProperties.Name="Choose a different wallpaper file" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Compact Web Wallpaper URL Bar -->
+                <Border Background="{ThemeResource GlassRaisedBrush}"
+                        BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="14,10">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="UrlInputBox"
+                                 PlaceholderText="Or paste a web wallpaper URL (https://… or http://localhost:…)"
+                                 Text="{x:Bind ViewModel.WebUrlInput, Mode=TwoWay}"
+                                 Style="{StaticResource GlassTextBoxStyle}"
+                                 VerticalAlignment="Center"
+                                 AutomationProperties.Name="Web wallpaper URL input" />
+                        <Button Grid.Column="1"
+                                Content="Load URL"
+                                Style="{StaticResource MaterialTonalButtonStyle}"
+                                Click="LoadUrl_Click"
+                                AutomationProperties.Name="Load entered web wallpaper URL" />
                     </Grid>
                 </Border>
-            </Grid>
+            </StackPanel>
 
-            <!-- 4. Web URL Input Section (Clean Flat Raised surface) -->
-            <Border Background="{ThemeResource GlassRaisedBrush}"
-                    BorderBrush="{ThemeResource GlassHairlineBrush}"
-                    BorderThickness="1"
-                    CornerRadius="{StaticResource GlassRadiusControl}"
-                    Padding="16,12">
-                <Grid ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox x:Name="UrlInputBox"
-                             PlaceholderText="Enter a web wallpaper URL (e.g. https://… or http://localhost:…)"
-                             Text="{x:Bind ViewModel.WebUrlInput, Mode=TwoWay}"
-                             Style="{StaticResource GlassTextBoxStyle}"
-                             AutomationProperties.Name="Web wallpaper URL input" />
-                    <Button Grid.Column="1"
-                            Content="Load URL"
-                            Style="{StaticResource GlassButtonStyle}"
-                            Click="LoadUrl_Click"
-                            AutomationProperties.Name="Load entered web wallpaper URL" />
-                </Grid>
-            </Border>
+            <!-- =================================================================== -->
+            <!-- RIGHT COLUMN: WORKING SETTINGS PANEL                                -->
+            <!-- =================================================================== -->
+            <StackPanel Grid.Column="1" Spacing="22">
+                <!-- 1. Heading & Subtitle (Figma 7:652) -->
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Live wallpaper"
+                               Style="{StaticResource PageTitleStyle}"
+                               FontSize="32"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="Plays behind your desktop icons. It pauses on its own when a game or fullscreen app is in front."
+                               Style="{StaticResource SettingDescriptionStyle}"
+                               FontSize="14"
+                               TextWrapping="Wrap" />
+                </StackPanel>
 
-            <!-- 5. PLAYBACK & SCALING -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Playback &amp; Scaling"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                <!-- 2. Primary CTA Buttons -->
+                <StackPanel Spacing="10">
+                    <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ApplyButtonTooltip, Mode=OneWay}">
+                        <Button x:Name="ApplyWallpaperButton"
+                                Content="Apply to desktop"
+                                Style="{StaticResource MaterialFilledButtonLargeStyle}"
+                                HorizontalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanApply, Mode=OneWay}"
+                                AutomationProperties.Name="Apply selected wallpaper to desktop" />
+                    </Grid>
 
+                    <Grid ToolTipService.ToolTip="{x:Bind ViewModel.ApplyBothTooltip, Mode=OneWay}">
+                        <Button x:Name="ApplyBothButton"
+                                Content="Also set as lock screen"
+                                Style="{StaticResource MaterialOutlinedButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.ApplyBothDesktopAndLockscreenCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanApplyBoth, Mode=OneWay}"
+                                AutomationProperties.Name="Also set as lock screen" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- 3. Essential Playback Controls (Always visible, uncluttered) -->
                 <Border Background="{ThemeResource GlassRaisedBrush}"
-                        BorderBrush="{ThemeResource GlassHairlineBrush}"
+                        BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
                         BorderThickness="1"
-                        CornerRadius="{StaticResource GlassRadiusControl}"
-                        Padding="20,12">
-                    <StackPanel Spacing="12">
-                        <!-- Fit Mode Row -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
+                        CornerRadius="18"
+                        Padding="18,14">
+                    <StackPanel Spacing="14">
+                        <!-- Scaling Mode -->
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="240" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Scaling mode"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Choose how media is positioned on your display."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ComboBox Grid.Column="1"
-                                      HorizontalAlignment="Stretch"
+                            <TextBlock Text="Scaling mode" FontSize="14" FontWeight="Medium"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1" MinWidth="170"
                                       SelectedIndex="{x:Bind ViewModel.FitModeIndex, Mode=TwoWay}"
                                       IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
                                       Style="{StaticResource GlassComboBoxStyle}"
                                       AutomationProperties.Name="Wallpaper fit mode">
                                 <ComboBoxItem Content="Fill (Crop to cover)" />
-                                <ComboBoxItem Content="Fit (Letterbox full content)" />
-                                <ComboBoxItem Content="Stretch (Fit entire screen)" />
-                                <ComboBoxItem Content="Center (Original size)" />
+                                <ComboBoxItem Content="Fit (Letterbox)" />
+                                <ComboBoxItem Content="Stretch" />
+                                <ComboBoxItem Content="Center" />
                             </ComboBox>
                         </Grid>
 
-                        <!-- Hairline Divider -->
                         <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
 
-                        <!-- Audio Playback Row -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Audio playback"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Adjust audio output volume and mute status."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <ToggleSwitch IsOn="{x:Bind ViewModel.IsMuted, Mode=TwoWay}"
-                                              IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
-                                              Style="{StaticResource GlassToggleSwitchStyle}"
-                                              AutomationProperties.Name="Mute wallpaper audio" />
-                                <Slider Value="{x:Bind ViewModel.Volume, Mode=TwoWay}"
-                                        Minimum="0" Maximum="100"
-                                        MinWidth="140" Width="140"
-                                        IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
-                                        AutomationProperties.Name="Wallpaper volume slider" />
-                                <TextBlock Text="{x:Bind ViewModel.VolumeText, Mode=OneWay}"
-                                           FontFamily="{StaticResource GlassFontMonospace}"
-                                           Width="36" TextAlignment="Right"
-                                           FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Grid>
-
-                        <!-- Hairline Divider -->
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Speed & Repetition Row -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="240" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Speed &amp; repetition"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Control video playback rate and continuous looping."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <ComboBox ItemsSource="{x:Bind ViewModel.AvailableSpeeds, Mode=OneTime}"
-                                          SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
-                                          Width="140"
-                                          Style="{StaticResource GlassComboBoxStyle}"
-                                          AutomationProperties.Name="Playback speed" />
-                                <ToggleSwitch IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
-                                              IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
-                                              Style="{StaticResource GlassToggleSwitchStyle}"
-                                              AutomationProperties.Name="Loop playback" />
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <!-- 6. PERFORMANCE & SMART RULES -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Performance &amp; Rules"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                <Border Background="{ThemeResource GlassRaisedBrush}"
-                        BorderBrush="{ThemeResource GlassHairlineBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource GlassRadiusControl}"
-                        Padding="20,12">
-                    <StackPanel Spacing="12">
-                        <!-- Performance Presets -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="220" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Performance profile"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Quick presets to balance smoothness, decode quality, and battery impact."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ComboBox Grid.Column="1"
-                                      HorizontalAlignment="Stretch"
-                                      ItemsSource="{x:Bind ViewModel.AvailablePresets, Mode=OneTime}"
-                                      SelectedIndex="{x:Bind ViewModel.SelectedPresetIndex, Mode=TwoWay}"
-                                      Style="{StaticResource GlassComboBoxStyle}"
-                                      AutomationProperties.Name="Performance profile" />
-                        </Grid>
+                        <!-- Volume & Mute -->
+                        <StackPanel Spacing="6">
+                            <Grid>
+                                <TextBlock Text="Volume" FontSize="14" FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind ViewModel.VolumeText, Mode=OneWay}"
+                                               FontFamily="{StaticResource GlassFontMonospace}" FontSize="12"
+                                               Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
+                                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsMuted, Mode=TwoWay}"
+                                                  IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                                  OffContent="Sound" OnContent="Muted"
+                                                  Style="{StaticResource GlassToggleSwitchStyle}"
+                                                  AutomationProperties.Name="Mute wallpaper audio" />
+                                </StackPanel>
+                            </Grid>
+                            <Slider Value="{x:Bind ViewModel.Volume, Mode=TwoWay}"
+                                    Minimum="0" Maximum="100"
+                                    IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                    Style="{StaticResource GlassSliderStyle}"
+                                    AutomationProperties.Name="Wallpaper volume slider" />
+                        </StackPanel>
 
                         <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
 
-                        <!-- Fullscreen pause -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
+                        <!-- Pause when fullscreen -->
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Pause when fullscreen app or game is focused"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Suspends video decoding and web rendering while gaming or using fullscreen applications."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
+                                <TextBlock Text="Pause when a game is fullscreen" FontSize="14" FontWeight="Medium"
+                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="Saves battery and frames." FontSize="12"
                                            Foreground="{ThemeResource GlassTextSecondaryBrush}" />
                             </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            <ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
                                           IsOn="{x:Bind ViewModel.PauseWhenFullscreenAppActive, Mode=TwoWay}"
                                           Style="{StaticResource GlassToggleSwitchStyle}"
                                           AutomationProperties.Name="Pause when fullscreen app is active" />
@@ -461,416 +365,195 @@
 
                         <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
 
-                        <!-- Covered pause -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
+                        <!-- Loop playback -->
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Pause when desktop is fully covered"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Pauses rendering when active windows are maximized over the desktop."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.PauseWhenDesktopCovered, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Pause when desktop is fully covered" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Energy Saver (Windows 11) -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Pause in Energy Saver mode"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Automatically pauses wallpaper whenever Windows Energy Saver is active (applies to laptops and desktops)."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.PauseInBatterySaver, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Pause in Energy Saver mode" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- On Battery -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Pause on battery power"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Always pause playback when unplugged from AC power."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.PauseOnBattery, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Pause on battery power" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Locked / Display Off -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Pause when PC is locked or display is off"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Stops rendering when the workstation is locked (Win+L) or monitors sleep."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.PauseWhenLockedOrDisplayOff, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Pause when PC is locked" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- FPS Limit -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="240" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Frame rate limit"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Cap playback frame rate to reduce GPU utilization and thermals."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ComboBox Grid.Column="1"
-                                      HorizontalAlignment="Stretch"
-                                      SelectedIndex="{x:Bind ViewModel.FpsLimitIndex, Mode=TwoWay}"
-                                      Style="{StaticResource GlassComboBoxStyle}"
-                                      AutomationProperties.Name="Frame rate limit">
-                                <ComboBoxItem Content="15 FPS (Ultra Light)" />
-                                <ComboBoxItem Content="24 FPS (Cinematic)" />
-                                <ComboBoxItem Content="30 FPS (Standard)" />
-                                <ComboBoxItem Content="60 FPS (Fluid)" />
-                                <ComboBoxItem Content="Match monitor (144 Hz)" />
-                                <ComboBoxItem Content="Adaptive (Auto-throttle)" />
-                            </ComboBox>
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Lower Decode Quality -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Lower decode quality"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Favors power efficiency over maximum resolution decoding for background video."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Lower decode quality" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Live Resource Meter -->
-                <Border Background="{ThemeResource GlassRaisedBrush}"
-                        BorderBrush="{ThemeResource GlassHairlineBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource GlassRadiusControl}"
-                        Padding="20,14"
-                        Visibility="{x:Bind ViewModel.ResourceUsageVisibility, Mode=OneWay}">
-                    <Grid ColumnSpacing="20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource GlassSubtleBrush}"
-                                    CornerRadius="999"
-                                    Padding="12,6">
-                                <TextBlock Text="{x:Bind ViewModel.CpuTextWithLabel, Mode=OneWay}"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           FontWeight="SemiBold"
-                                           Foreground="{ThemeResource GlassPrimaryBrush}" />
-                            </Border>
-
-                            <Border Background="{ThemeResource GlassSubtleBrush}"
-                                    CornerRadius="999"
-                                    Padding="12,6">
-                                <TextBlock Text="{x:Bind ViewModel.MemoryTextWithLabel, Mode=OneWay}"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           FontWeight="SemiBold"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
-                            <TextBlock Text="{x:Bind ViewModel.GpuDescriptionText, Mode=OneWay}"
-                                       FontFamily="{StaticResource GlassFontUi}"
-                                       FontSize="12"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="{x:Bind ViewModel.BatteryImpactEstimate, Mode=OneWay}"
-                                       FontFamily="{StaticResource GlassFontUi}"
-                                       FontSize="12"
-                                       FontWeight="Medium"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </StackPanel>
-
-            <!-- 7. DISPLAYS & LAYOUT -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Displays &amp; Layout"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                <Border Background="{ThemeResource GlassRaisedBrush}"
-                        BorderBrush="{ThemeResource GlassHairlineBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource GlassRadiusControl}"
-                        Padding="20,12">
-                    <StackPanel Spacing="12">
-                        <!-- Multi-Monitor Layout Mode -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="240" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Multi-monitor layout"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Span across all screens, target a single display, or duplicate on each."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ComboBox Grid.Column="1"
-                                      HorizontalAlignment="Stretch"
-                                      SelectedIndex="{x:Bind ViewModel.LayoutModeIndex, Mode=TwoWay}"
-                                      IsEnabled="{x:Bind ViewModel.HasMultipleMonitors, Mode=OneWay}"
-                                      Style="{StaticResource GlassComboBoxStyle}"
-                                      AutomationProperties.Name="Multi-monitor layout mode">
-                                <ComboBoxItem Content="Span all displays" />
-                                <ComboBoxItem Content="Single display" />
-                                <ComboBoxItem Content="Duplicate on each" />
-                            </ComboBox>
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Detected Displays -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="260" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Detected displays"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="One display detected"
-                                           Visibility="{x:Bind ViewModel.SingleDisplayNoticeVisibility, Mode=OneWay}"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                                <TextBlock Text="Select a display or refresh to detect newly attached monitors."
-                                           Visibility="{x:Bind ViewModel.MultiDisplayControlsVisibility, Mode=OneWay}"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <ComboBox x:Name="MonitorPicker"
-                                          ItemsSource="{x:Bind ViewModel.Monitors, Mode=OneWay}"
-                                          SelectedItem="{x:Bind ViewModel.SelectedMonitor, Mode=TwoWay}"
-                                          DisplayMemberPath="DisplayName"
-                                          Width="160"
-                                          IsEnabled="{x:Bind ViewModel.IsMonitorPickerEnabled, Mode=OneWay}"
-                                          Style="{StaticResource GlassComboBoxStyle}"
-                                          AutomationProperties.Name="Selected display monitor" />
-                                <Button Content="Refresh"
-                                        Command="{x:Bind ViewModel.RefreshMonitorsCommand}"
-                                        Style="{StaticResource GlassButtonStyle}"
-                                        AutomationProperties.Name="Refresh display monitors" />
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <!-- 8. ADVANCED -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Advanced"
-                           FontFamily="{StaticResource GlassFontUi}"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-
-                <Border Background="{ThemeResource GlassRaisedBrush}"
-                        BorderBrush="{ThemeResource GlassHairlineBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource GlassRadiusControl}"
-                        Padding="20,12">
-                    <StackPanel Spacing="12">
-                        <!-- Mouse Forwarding -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Forward mouse input to web wallpapers"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Enables mouse clicks and cursor interaction on web wallpapers (WebGL, canvas, shaders)."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.ForwardInput, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Forward desktop mouse interaction" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Audio-Reactive Toggle -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="System audio visualization"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Allows web wallpapers to react to music and sounds via audio spectrum data."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.IsAudioReactiveEnabled, Mode=TwoWay}"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Audio reactive visualization toggle" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Executable Wallpapers -->
-                        <Grid ColumnSpacing="16" MinHeight="44">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="200" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="Allow executable (.exe) wallpapers"
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="14"
-                                           FontWeight="Medium"
-                                           Foreground="{ThemeResource GlassTextPrimaryBrush}" />
-                                <TextBlock Text="Permits running user-selected native Windows programs behind the desktop. Default is Off for security."
-                                           FontFamily="{StaticResource GlassFontUi}"
-                                           FontSize="12"
-                                           Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            </StackPanel>
-                            <ToggleSwitch x:Name="AdvancedExeToggle"
-                                          Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                          IsOn="{x:Bind ViewModel.AllowAdvancedExecutables, Mode=OneWay}"
-                                          Toggled="AdvancedExeToggle_Toggled"
-                                          Style="{StaticResource GlassToggleSwitchStyle}"
-                                          AutomationProperties.Name="Allow executable wallpapers switch" />
-                        </Grid>
-
-                        <Border Height="1" Background="{ThemeResource GlassHairlineBrush}" />
-
-                        <!-- Safeguard notice -->
-                        <Grid ColumnSpacing="10" MinHeight="32">
-                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <FontIcon Glyph="&#xE72D;" FontSize="14" Foreground="{ThemeResource GlassTextSecondaryBrush}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="1"
-                                       Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Safeguard: Windows default wallpaper restores automatically upon stopping.'}"
-                                       FontFamily="{StaticResource GlassFontUi}"
-                                       FontSize="12"
-                                       Foreground="{ThemeResource GlassTextSecondaryBrush}"
-                                       TextTrimming="CharacterEllipsis"
-                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Loop playback" FontSize="14" FontWeight="Medium"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                            <ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
+                                          IsOn="{x:Bind ViewModel.Loop, Mode=TwoWay}"
+                                          IsEnabled="{x:Bind ViewModel.HasActiveWallpaper, Mode=OneWay}"
+                                          Style="{StaticResource GlassToggleSwitchStyle}"
+                                          AutomationProperties.Name="Loop playback" />
                         </Grid>
                     </StackPanel>
                 </Border>
-            </StackPanel>
 
-        </StackPanel>
+                <!-- 4. Power & Smart Rules (Collapsible so UI stays calm) -->
+                <Border Background="{ThemeResource GlassRaisedBrush}"
+                        BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="14,8">
+                    <Expander IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                              Background="Transparent" AutomationProperties.Name="Performance and power rules">
+                        <Expander.Resources>
+                            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+                        </Expander.Resources>
+                        <Expander.Header>
+                            <TextBlock Text="Performance &amp; power rules" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                        </Expander.Header>
+                        <StackPanel Spacing="12" Margin="0,10,0,4">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Performance profile" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Width="170"
+                                          ItemsSource="{x:Bind ViewModel.AvailablePresets, Mode=OneTime}"
+                                          SelectedIndex="{x:Bind ViewModel.SelectedPresetIndex, Mode=TwoWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Performance profile" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Frame rate limit" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Width="170"
+                                          SelectedIndex="{x:Bind ViewModel.FpsLimitIndex, Mode=TwoWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Frame rate limit">
+                                    <ComboBoxItem Content="15 FPS (Ultra Light)" />
+                                    <ComboBoxItem Content="24 FPS (Cinematic)" />
+                                    <ComboBoxItem Content="30 FPS (Standard)" />
+                                    <ComboBoxItem Content="60 FPS (Fluid)" />
+                                    <ComboBoxItem Content="Match monitor" />
+                                    <ComboBoxItem Content="Adaptive" />
+                                </ComboBox>
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Pause when desktop is covered" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.PauseWhenDesktopCovered, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Pause when desktop is fully covered" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Pause in Energy Saver mode" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.PauseInBatterySaver, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Pause in Energy Saver mode" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Pause on battery power" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.PauseOnBattery, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Pause on battery power" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Pause when PC is locked" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.PauseWhenLockedOrDisplayOff, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Pause when PC is locked" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Lower decode quality" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Lower decode quality" />
+                            </Grid>
+                            <TextBlock Text="{x:Bind ViewModel.GpuDescriptionText, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                            <TextBlock Text="{x:Bind ViewModel.BatteryImpactEstimate, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander>
+                </Border>
+
+                <!-- 5. Displays & Layout (Collapsible) -->
+                <Border Background="{ThemeResource GlassRaisedBrush}"
+                        BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="14,8">
+                    <Expander IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                              Background="Transparent" AutomationProperties.Name="Displays and layout">
+                        <Expander.Resources>
+                            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+                        </Expander.Resources>
+                        <Expander.Header>
+                            <TextBlock Text="Displays &amp; layout" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                        </Expander.Header>
+                        <StackPanel Spacing="12" Margin="0,10,0,4">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Multi-monitor layout" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Width="170"
+                                          SelectedIndex="{x:Bind ViewModel.LayoutModeIndex, Mode=TwoWay}"
+                                          IsEnabled="{x:Bind ViewModel.HasMultipleMonitors, Mode=OneWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Multi-monitor layout mode">
+                                    <ComboBoxItem Content="Span all displays" />
+                                    <ComboBoxItem Content="Single display" />
+                                    <ComboBoxItem Content="Duplicate on each" />
+                                </ComboBox>
+                            </Grid>
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="One display detected" Visibility="{x:Bind ViewModel.SingleDisplayNoticeVisibility, Mode=OneWay}"
+                                           FontSize="12" Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <ComboBox x:Name="MonitorPicker"
+                                              ItemsSource="{x:Bind ViewModel.Monitors, Mode=OneWay}"
+                                              SelectedItem="{x:Bind ViewModel.SelectedMonitor, Mode=TwoWay}"
+                                              DisplayMemberPath="DisplayName"
+                                              Width="200"
+                                              IsEnabled="{x:Bind ViewModel.IsMonitorPickerEnabled, Mode=OneWay}"
+                                              Style="{StaticResource GlassComboBoxStyle}"
+                                              AutomationProperties.Name="Selected display monitor" />
+                                    <Button Content="Refresh"
+                                            Command="{x:Bind ViewModel.RefreshMonitorsCommand}"
+                                            Style="{StaticResource MaterialTonalButtonStyle}"
+                                            AutomationProperties.Name="Refresh display monitors" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Expander>
+                </Border>
+
+                <!-- 6. Advanced & Web Options (Collapsible) -->
+                <Border Background="{ThemeResource GlassRaisedBrush}"
+                        BorderBrush="{ThemeResource GlassOutlineVariantBrush}"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="14,8">
+                    <Expander IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                              Background="Transparent" AutomationProperties.Name="Advanced and web options">
+                        <Expander.Resources>
+                            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+                        </Expander.Resources>
+                        <Expander.Header>
+                            <TextBlock Text="Advanced &amp; web options" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource GlassTextPrimaryBrush}" />
+                        </Expander.Header>
+                        <StackPanel Spacing="12" Margin="0,10,0,4">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Playback speed" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Width="140"
+                                          ItemsSource="{x:Bind ViewModel.AvailableSpeeds, Mode=OneTime}"
+                                          SelectedIndex="{x:Bind ViewModel.SpeedIndex, Mode=TwoWay}"
+                                          Style="{StaticResource GlassComboBoxStyle}"
+                                          AutomationProperties.Name="Playback speed" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Forward mouse input to web" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.ForwardInput, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Forward desktop mouse interaction" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="System audio visualization" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.IsAudioReactiveEnabled, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Audio reactive visualization toggle" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Allow executable (.exe) wallpapers" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch x:Name="AdvancedExeToggle" Grid.Column="1"
+                                              IsOn="{x:Bind ViewModel.AllowAdvancedExecutables, Mode=OneWay}"
+                                              Toggled="AdvancedExeToggle_Toggled"
+                                              Style="{StaticResource GlassToggleSwitchStyle}"
+                                              AutomationProperties.Name="Allow executable wallpapers switch" />
+                            </Grid>
+                            <TextBlock Text="{x:Bind ViewModel.OriginalWallpaperPath, Mode=OneWay, TargetNullValue='Safeguard: Windows default wallpaper restores automatically upon stopping.'}"
+                                       FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander>
+                </Border>
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>
