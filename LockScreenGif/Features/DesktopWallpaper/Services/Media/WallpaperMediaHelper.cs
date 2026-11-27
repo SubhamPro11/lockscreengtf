@@ -20,6 +20,56 @@ public static class WallpaperMediaHelper
 
     private static string CacheDirectory => WallpaperCacheDirectory;
 
+    /// <summary>
+    /// Creates an isolated per-job GUID working directory inside wallpaper-cache.
+    /// </summary>
+    public static string CreateJobDirectory()
+    {
+        var jobDir = Path.Combine(CacheDirectory, $"job-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(jobDir);
+        return jobDir;
+    }
+
+    /// <summary>
+    /// Best-effort cleanup of a per-job working directory.
+    /// </summary>
+    public static void CleanupJobDirectory(string? jobDir)
+    {
+        if (string.IsNullOrWhiteSpace(jobDir))
+        {
+            return;
+        }
+
+        try
+        {
+            if (Directory.Exists(jobDir))
+            {
+                Directory.Delete(jobDir, recursive: true);
+            }
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// Removes orphaned per-job working directories left behind by a prior crash or forced close.
+    /// </summary>
+    public static void CleanupStaleJobDirectories()
+    {
+        try
+        {
+            if (!Directory.Exists(CacheDirectory))
+            {
+                return;
+            }
+
+            foreach (var dir in Directory.EnumerateDirectories(CacheDirectory, "job-*"))
+            {
+                CleanupJobDirectory(dir);
+            }
+        }
+        catch { }
+    }
+
     internal static Func<string>? FfmpegPathResolver { get; set; }
 
     private static string? FindFfmpegPath()
@@ -100,11 +150,19 @@ public static class WallpaperMediaHelper
             return cachedPath;
         }
 
-        var tempPath = $"{cachedPath}.{Guid.NewGuid():N}.tmp";
+        var jobDir = CreateJobDirectory();
+        var tempPath = Path.Combine(jobDir, $"src_{fileHash}{ext}.tmp");
         try
         {
             await using (
-                var src = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 81920, useAsync: true)
+                var src = new FileStream(
+                    sourcePath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete,
+                    bufferSize: 81920,
+                    useAsync: true
+                )
             )
             await using (
                 var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true)
@@ -113,19 +171,12 @@ public static class WallpaperMediaHelper
                 await src.CopyToAsync(dst, cancellationToken);
             }
 
-            File.Move(tempPath, cachedPath, overwrite: true);
+            MoveIntoCacheSafe(tempPath, cachedPath);
             return cachedPath;
         }
         finally
         {
-            try
-            {
-                if (File.Exists(tempPath))
-                {
-                    File.Delete(tempPath);
-                }
-            }
-            catch { }
+            CleanupJobDirectory(jobDir);
         }
     }
 
@@ -159,7 +210,8 @@ public static class WallpaperMediaHelper
 
         Logger.Info($"Remuxing/transcoding {inputFilePath} to {cachedMp4} using FFmpeg...");
 
-        var tempOutputFile = $"{cachedMp4}.{Guid.NewGuid():N}.tmp.mp4";
+        var jobDir = CreateJobDirectory();
+        var tempOutputFile = Path.Combine(jobDir, $"remux_{fileHash}.tmp.mp4");
         try
         {
             // Try fast remux first (-c copy)
@@ -171,7 +223,7 @@ public static class WallpaperMediaHelper
 
             if (fastRemuxSuccess && File.Exists(tempOutputFile) && new FileInfo(tempOutputFile).Length > 1024)
             {
-                File.Move(tempOutputFile, cachedMp4, true);
+                MoveIntoCacheSafe(tempOutputFile, cachedMp4);
                 Logger.Info($"Fast remux succeeded: {cachedMp4}");
                 return cachedMp4;
             }
@@ -223,7 +275,7 @@ public static class WallpaperMediaHelper
 
             if (transcodeSuccess && File.Exists(tempOutputFile))
             {
-                File.Move(tempOutputFile, cachedMp4, true);
+                MoveIntoCacheSafe(tempOutputFile, cachedMp4);
                 Logger.Info($"Transcode succeeded: {cachedMp4}");
                 return cachedMp4;
             }
@@ -233,14 +285,7 @@ public static class WallpaperMediaHelper
         }
         finally
         {
-            try
-            {
-                if (File.Exists(tempOutputFile))
-                {
-                    File.Delete(tempOutputFile);
-                }
-            }
-            catch { }
+            CleanupJobDirectory(jobDir);
         }
     }
 
@@ -275,12 +320,27 @@ public static class WallpaperMediaHelper
             return thumbPath;
         }
 
-        var success = await RunFfmpegAsync(
-            ffmpeg,
-            (string[])["-y", "-ss", "00:00:01", "-i", inputFilePath, "-vframes", "1", "-q:v", "2", "-vf", "scale=480:-1", thumbPath]
-        );
+        var jobDir = CreateJobDirectory();
+        var tempThumbPath = Path.Combine(jobDir, $"thumb_{fileHash}.tmp.jpg");
+        try
+        {
+            var success = await RunFfmpegAsync(
+                ffmpeg,
+                (string[])["-y", "-ss", "00:00:01", "-i", inputFilePath, "-vframes", "1", "-q:v", "2", "-vf", "scale=480:-1", tempThumbPath]
+            );
 
-        return success && File.Exists(thumbPath) ? thumbPath : null;
+            if (success && File.Exists(tempThumbPath) && new FileInfo(tempThumbPath).Length > 0)
+            {
+                MoveIntoCacheSafe(tempThumbPath, thumbPath);
+                return thumbPath;
+            }
+
+            return File.Exists(thumbPath) ? thumbPath : null;
+        }
+        finally
+        {
+            CleanupJobDirectory(jobDir);
+        }
     }
 
     private static async Task<bool> RunFfmpegAsync(string ffmpegExe, string[] arguments, CancellationToken cancellationToken = default)
@@ -295,6 +355,11 @@ public static class WallpaperMediaHelper
                 RedirectStandardError = true,
             };
 
+            // Cap threads so wallpaper FFmpeg never starves a concurrent lockscreen render
+            var threadCap = Math.Max(1, Math.Min(4, Environment.ProcessorCount / 2));
+            psi.ArgumentList.Add("-threads");
+            psi.ArgumentList.Add(threadCap.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+
             foreach (var arg in arguments)
             {
                 psi.ArgumentList.Add(arg);
@@ -305,6 +370,12 @@ public static class WallpaperMediaHelper
             {
                 return false;
             }
+
+            try
+            {
+                process.PriorityClass = ProcessPriorityClass.BelowNormal;
+            }
+            catch { }
 
             using var reg = cancellationToken.Register(() =>
             {
@@ -329,6 +400,29 @@ public static class WallpaperMediaHelper
         {
             Logger.Error($"FFmpeg invocation error: {ex.Message}");
             return false;
+        }
+    }
+
+    private static void MoveIntoCacheSafe(string tempFilePath, string destinationPath)
+    {
+        if (File.Exists(destinationPath) && new FileInfo(destinationPath).Length > 0)
+        {
+            return;
+        }
+
+        try
+        {
+            File.Move(tempFilePath, destinationPath, overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Another concurrent job already populated the same content-addressed cache file.
+            if (File.Exists(destinationPath) && new FileInfo(destinationPath).Length > 0)
+            {
+                return;
+            }
+
+            throw;
         }
     }
 

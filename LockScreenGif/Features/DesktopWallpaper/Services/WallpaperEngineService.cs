@@ -130,6 +130,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
     {
         _performanceMonitor = new WallpaperPerformanceMonitor(this);
         _audioCaptureService.SpectrumReady += OnAudioSpectrumReady;
+        WallpaperMediaHelper.CleanupStaleJobDirectories();
         RefreshMonitors();
         CheckExistingPlayerProcess();
     }
@@ -177,16 +178,20 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         }
     }
 
-    private void OnAudioSpectrumReady(object? sender, AudioSpectrumData data)
+    private async void OnAudioSpectrumReady(object? sender, AudioSpectrumData data)
     {
-        if (!_isAudioReactiveEnabled || !IsRunning)
+        if (!_isAudioReactiveEnabled || !IsRunning || _ipcGate.CurrentCount == 0)
         {
             return;
         }
 
-        var json =
-            $"{{\"type\":\"audioSpectrum\",\"peak\":{data.Peak.ToString("F3", CultureInfo.InvariantCulture)},\"bands\":[{string.Join(",", data.Bands.Select(b => b.ToString("F3", CultureInfo.InvariantCulture)))}]}}";
-        _ = SendCommandAsync($"WEB_MSG {json}", timeoutMs: 500);
+        try
+        {
+            var json =
+                $"{{\"type\":\"audioSpectrum\",\"peak\":{data.Peak.ToString("F3", CultureInfo.InvariantCulture)},\"bands\":[{string.Join(",", data.Bands.Select(b => b.ToString("F3", CultureInfo.InvariantCulture)))}]}}";
+            await SendCommandAsync($"WEB_MSG {json}", timeoutMs: 500);
+        }
+        catch { }
     }
 
     public void RefreshMonitors()

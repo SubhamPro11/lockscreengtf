@@ -272,7 +272,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                     3 => WallpaperFitMode.Center,
                     _ => WallpaperFitMode.Fill,
                 };
-                _ = _engineService.SetFitModeAsync(mode);
+                RunBackgroundTask(() => _engineService.SetFitModeAsync(mode), "Update wallpaper fit mode");
             }
         }
     }
@@ -286,7 +286,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             if (SetProperty(ref _volume, value))
             {
                 OnPropertyChanged(nameof(VolumeText));
-                _ = _engineService.SetVolumeAsync(value / 100.0);
+                RunBackgroundTask(() => _engineService.SetVolumeAsync(value / 100.0), "Update wallpaper volume");
             }
         }
     }
@@ -301,7 +301,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             if (SetProperty(ref _isMuted, value))
             {
-                _ = _engineService.SetMutedAsync(value);
+                RunBackgroundTask(() => _engineService.SetMutedAsync(value), "Update wallpaper mute");
             }
         }
     }
@@ -320,7 +320,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             if (SetProperty(ref _speedIndex, value))
             {
                 var speed = (value >= 0 && value < SpeedValues.Length) ? SpeedValues[value] : 1.0;
-                _ = _engineService.SetPlaybackRateAsync(speed);
+                RunBackgroundTask(() => _engineService.SetPlaybackRateAsync(speed), "Update wallpaper speed");
             }
         }
     }
@@ -348,7 +348,7 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         {
             if (SetProperty(ref _forwardInput, value))
             {
-                _ = _engineService.SetForwardInputAsync(value);
+                RunBackgroundTask(() => _engineService.SetForwardInputAsync(value), "Update mouse forwarding");
             }
         }
     }
@@ -1293,6 +1293,22 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     {
         _engineService.RefreshMonitors();
         RefreshFromEngine();
+    }
+
+    private void RunBackgroundTask(Func<Task> work, string context)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await work().ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                Logger.Warn($"{context} failed: {ex.Message}");
+            }
+        });
     }
 
     private void UpdateEngineLayoutMode()

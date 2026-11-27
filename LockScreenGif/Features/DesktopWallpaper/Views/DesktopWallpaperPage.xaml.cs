@@ -41,10 +41,6 @@ public sealed partial class DesktopWallpaperPage : Page
         if (e.PropertyName == nameof(DesktopWallpaperViewModel.IsMediaLoaded))
         {
             UpdatePrimaryButtonState();
-            if (ViewModel.IsMediaLoaded && !string.IsNullOrWhiteSpace(ViewModel.SourceInput))
-            {
-                AmbientColorExtractor.UpdateFromSelection(ViewModel.SourceInput);
-            }
         }
     }
 
