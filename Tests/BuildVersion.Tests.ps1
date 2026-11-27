@@ -2,10 +2,10 @@ $ErrorActionPreference = 'Stop'
 $script = Join-Path $PSScriptRoot '../scripts/Get-BuildVersion.ps1'
 $sha = '0123456789abcdef0123456789abcdef01234567'
 foreach ($case in @(
-    @{ Run = 1; Expected = '4.26.11' },
-    @{ Run = 65534; Expected = '4.26.11' },
-    @{ Run = 65535; Expected = '4.26.11' },
-    @{ Run = 16776959; Expected = '4.26.11' }
+    @{ Run = 1; Expected = '4.27.1' },
+    @{ Run = 65534; Expected = '4.27.65534' },
+    @{ Run = 65535; Expected = '4.28.0' },
+    @{ Run = 15007514; Expected = '4.255.65534' }
 )) {
     $first = & $script -RunNumber $case.Run -RunAttempt 1 -Commit $sha
     $rerun = & $script -RunNumber $case.Run -RunAttempt 2 -Commit $sha
@@ -14,7 +14,7 @@ foreach ($case in @(
     if ($first.informational_version -eq $rerun.informational_version) { throw 'Attempt missing from identity' }
     if ($first.informational_version -ne "$($case.Expected)-ci+$sha.attempt.1") { throw 'Incorrect source identity' }
 }
-foreach ($invalid in @(0, -1, 16776960)) {
+foreach ($invalid in @(0, -1, 15007515)) {
     $rejected = $false
     try { & $script -RunNumber $invalid -RunAttempt 1 -Commit $sha | Out-Null }
     catch { $rejected = $true }
@@ -24,7 +24,7 @@ $output = Join-Path ([IO.Path]::GetTempPath()) ("build-version-" + [guid]::NewGu
 try {
     & $script -RunNumber 42 -RunAttempt 3 -Commit $sha -OutputPath $output | Out-Null
     $lines = Get-Content $output
-    if ($lines.Count -ne 3 -or $lines[0] -ne 'version=4.26.11' -or $lines[2] -ne 'tag=build-42') { throw 'Incorrect GitHub outputs' }
+    if ($lines.Count -ne 3 -or $lines[0] -ne 'version=4.27.42' -or $lines[2] -ne 'tag=build-42') { throw 'Incorrect GitHub outputs' }
 } finally {
     if (Test-Path -LiteralPath $output) { Remove-Item -LiteralPath $output }
 }
