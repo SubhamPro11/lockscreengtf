@@ -70,3 +70,14 @@ A collection of window manager helpers and system backdrop extensions for WinUI 
 - **Microsoft.Diagnostics.Tracing.TraceEvent**: MIT License — [https://github.com/microsoft/perfview](https://github.com/microsoft/perfview)
 - **WindowsDisplayAPI**: MIT License — [https://github.com/fdiskyou/WindowsDisplayAPI](https://github.com/fdiskyou/WindowsDisplayAPI)
 
+---
+
+## 7. mpv (Optional Video Wallpaper Engine)
+
+- **Project**: [https://mpv.io](https://mpv.io)
+- **Source Code**: [https://github.com/mpv-player/mpv](https://github.com/mpv-player/mpv)
+- **License**: GNU General Public License v2.0 or later (GPLv2+) / GNU Lesser General Public License v2.1 or later (LGPLv2.1+)
+
+When `Wallpaper\mpv\mpv.exe` is present, LockscreenGif can optionally invoke the standalone, unmodified `mpv.exe` binary as an out-of-process Desktop Wallpaper renderer (`--wid` + JSON IPC) for video formats that WebView2 cannot decode natively.
+
+

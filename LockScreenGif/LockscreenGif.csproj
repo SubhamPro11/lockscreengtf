@@ -71,6 +71,12 @@
     <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Vendor\FFMPEG\" />
     <Folder Include="Vendor\gifski\" />
+    <Folder Include="Wallpaper\mpv\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Wallpaper\mpv\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 

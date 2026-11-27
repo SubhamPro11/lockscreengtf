@@ -51,6 +51,8 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
     <ROW Directory="Vendor_Dir" Directory_Parent="APPDIR" DefaultDir="Vendor" DirectoryOptions="3"/>
     <ROW Directory="Views_Dir" Directory_Parent="APPDIR" DefaultDir="Views" DirectoryOptions="3"/>
+    <ROW Directory="Wallpaper_Dir" Directory_Parent="APPDIR" DefaultDir="Wallpaper" DirectoryOptions="3"/>
+    <ROW Directory="mpv_Dir" Directory_Parent="Wallpaper_Dir" DefaultDir="mpv" DirectoryOptions="3"/>
     <ROW Directory="afZA_Dir" Directory_Parent="APPDIR" DefaultDir="af-ZA" DirectoryOptions="3"/>
     <ROW Directory="amET_Dir" Directory_Parent="APPDIR" DefaultDir="am-ET" DirectoryOptions="3"/>
     <ROW Directory="arSA_Dir" Directory_Parent="APPDIR" DefaultDir="ar-SA" DirectoryOptions="3"/>

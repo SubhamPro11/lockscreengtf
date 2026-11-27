@@ -20,6 +20,7 @@ public sealed class WallpaperPerformanceRules
             _ => TargetFps,
         };
     public bool LowerDecodeQuality { get; set; }
+    public bool PreferMpvForVideos { get; set; }
 
     // Extended rules for smart power & process management
     public bool PauseWhenIdle { get; set; }

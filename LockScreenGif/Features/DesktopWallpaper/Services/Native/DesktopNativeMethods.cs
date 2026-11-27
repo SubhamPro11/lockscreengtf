@@ -503,6 +503,7 @@ internal static class DesktopNativeMethods
     public static extern bool UnregisterPowerSettingNotification(nint Handle);
 
     public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+    public const uint EVENT_OBJECT_DESTROY = 0x8001;
     public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
 
     public delegate void WinEventDelegate(

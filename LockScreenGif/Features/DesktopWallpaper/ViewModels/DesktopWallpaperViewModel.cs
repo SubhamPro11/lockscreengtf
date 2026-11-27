@@ -448,6 +448,19 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         }
     }
 
+    public bool PreferMpvForVideos
+    {
+        get => _engineService.PerformanceMonitor.Rules.PreferMpvForVideos;
+        set
+        {
+            if (_engineService.PerformanceMonitor.Rules.PreferMpvForVideos != value)
+            {
+                _engineService.PerformanceMonitor.Rules.PreferMpvForVideos = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public static readonly string[] PerformancePresets = ["Max Quality", "Balanced", "Energy Saver", "Ultra Light"];
     public string[] AvailablePresets => PerformancePresets;
 
