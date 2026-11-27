@@ -33,7 +33,10 @@ internal static class DesktopNativeMethods
     public const uint WS_MAXIMIZEBOX = 0x00010000;
 
     public const uint WS_EX_TOOLWINDOW = 0x00000080;
+    public const uint WS_EX_LAYERED = 0x00080000;
     public const uint WS_EX_NOACTIVATE = 0x08000000;
+    public const uint WS_EX_NOREDIRECTIONBITMAP = 0x00200000;
+    public const uint LWA_ALPHA = 0x00000002;
 
     public const int GWL_STYLE = -16;
     public const int GWL_EXSTYLE = -20;
@@ -180,6 +183,13 @@ internal static class DesktopNativeMethods
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern nint SetParent(nint hWndChild, nint hWndNewParent);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern nint GetParent(nint hWnd);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetLayeredWindowAttributes(nint hwnd, uint crKey, byte bAlpha, uint dwFlags);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool SetWindowPos(nint hWnd, nint hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
