@@ -18,6 +18,8 @@ public static class WallpaperMediaHelper
     public static string WallpaperCacheDirectory { get; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LockscreenGif", "wallpaper-cache");
 
+    public const long LargeMediaStreamThresholdBytes = 64 * 1024 * 1024;
+
     private static string CacheDirectory => WallpaperCacheDirectory;
 
     /// <summary>
@@ -141,6 +143,16 @@ public static class WallpaperMediaHelper
 
         Directory.CreateDirectory(CacheDirectory);
 
+        // Zero-copy streaming for large videos (> 64 MB): stream directly from disk instead of duplicating multi-GB files.
+        try
+        {
+            if (new FileInfo(sourcePath).Length > LargeMediaStreamThresholdBytes)
+            {
+                return sourcePath;
+            }
+        }
+        catch { }
+
         var fileHash = ComputeFileHash(sourcePath);
         var ext = Path.GetExtension(sourcePath);
         var cachedPath = Path.Combine(CacheDirectory, $"src_{fileHash}{ext}");
@@ -227,6 +239,17 @@ public static class WallpaperMediaHelper
                 Logger.Info($"Fast remux succeeded: {cachedMp4}");
                 return cachedMp4;
             }
+
+            // Skip multi-minute CPU libx264 transcoding for large videos (> 64 MB); stream directly with hardware decode.
+            try
+            {
+                if (new FileInfo(inputFilePath).Length > LargeMediaStreamThresholdBytes)
+                {
+                    Logger.Info("Skipping CPU transcode for large video (>64 MB); using direct hardware-accelerated streaming.");
+                    return inputFilePath;
+                }
+            }
+            catch { }
 
             // Fallback: Transcode video to H.264 (downscaling to display native resolution if higher) and audio to AAC
             Logger.Info("Fast remux failed or codec incompatible; transcoding to H.264/AAC with smart display scaling...");

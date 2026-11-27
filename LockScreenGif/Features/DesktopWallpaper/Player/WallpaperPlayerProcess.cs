@@ -53,12 +53,16 @@ public static class WallpaperPlayerProcess
     private static nint _msgHwnd;
     private static nint _powerNotifyHandle;
     private static nint _winEventHook;
+    private static nint _workerWDestroyHook;
+    private static nint _watchedWorkerWHwnd;
+    private static int _parentPid;
     private static bool _wtsRegistered;
     private static StaSynchronizationContext? _syncContext;
 
     // Retain static delegate references to prevent garbage collection crash in Win32 callbacks
     private static readonly DesktopNativeMethods.WndProc _wndProcDelegate = MessageWindowProc;
     private static readonly DesktopNativeMethods.WinEventDelegate _winEventDelegate = OnForegroundWindowChanged;
+    private static readonly DesktopNativeMethods.WinEventDelegate _workerWDestroyDelegate = OnWorkerWDestroyed;
 
     public const string NamedPipeName = "LockscreenGif_WallpaperPlayer_Pipe";
     private static readonly string PidFilePath = Path.Combine(
@@ -242,6 +246,12 @@ public static class WallpaperPlayerProcess
             // Event-driven system/power/session/foreground monitors (zero idle polling timer)
             RegisterEventDrivenMonitors();
 
+            // Parent-process watchdog: auto-restore and exit if main app dies unexpectedly
+            if (_parentPid > 0)
+            {
+                _ = MonitorParentProcessAsync(_parentPid);
+            }
+
             // If an initial media path was supplied in args, post load immediately to the STA thread
             if (!string.IsNullOrWhiteSpace(_mediaPath))
             {
@@ -312,6 +322,13 @@ public static class WallpaperPlayerProcess
                     if (Enum.TryParse<WallpaperFitMode>(args[++i], true, out var fit))
                     {
                         _fitMode = fit;
+                    }
+                }
+                else if (string.Equals(arg, "--parent-pid", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (int.TryParse(args[++i], out var parentPid) && parentPid > 0)
+                    {
+                        _parentPid = parentPid;
                     }
                 }
                 else if (string.Equals(arg, "--speed", StringComparison.OrdinalIgnoreCase))
@@ -487,6 +504,7 @@ public static class WallpaperPlayerProcess
             _isPaused = false;
             _isAutoPaused = false;
 
+            HookWorkerWDestroy(hostTarget);
             EvaluatePerformanceRules();
 
             Console.WriteLine("READY");
@@ -710,6 +728,68 @@ public static class WallpaperPlayerProcess
             {
                 await Task.Delay(500);
             }
+        }
+    }
+
+    private static async Task MonitorParentProcessAsync(int parentPid)
+    {
+        try
+        {
+            using var parentProc = Process.GetProcessById(parentPid);
+            await parentProc.WaitForExitAsync();
+        }
+        catch { }
+
+        if (!_isExiting)
+        {
+            DesktopAttachHelper.LogAttach($"Parent process {parentPid} exited unexpectedly; restoring desktop and exiting player.");
+            RequestExit();
+        }
+    }
+
+    private static void HookWorkerWDestroy(DesktopAttachTarget target)
+    {
+        if (_workerWDestroyHook != 0)
+        {
+            DesktopNativeMethods.UnhookWinEvent(_workerWDestroyHook);
+            _workerWDestroyHook = 0;
+        }
+
+        _watchedWorkerWHwnd = target.IsRaisedDesktop ? target.WorkerWHwnd : 0;
+        if (_watchedWorkerWHwnd == 0)
+        {
+            return;
+        }
+
+        var tid = DesktopNativeMethods.GetWindowThreadProcessId(_watchedWorkerWHwnd, out _);
+        if (tid != 0)
+        {
+            _workerWDestroyHook = DesktopNativeMethods.SetWinEventHook(
+                DesktopNativeMethods.EVENT_OBJECT_DESTROY,
+                DesktopNativeMethods.EVENT_OBJECT_DESTROY,
+                0,
+                _workerWDestroyDelegate,
+                0,
+                tid,
+                DesktopNativeMethods.WINEVENT_OUTOFCONTEXT
+            );
+        }
+    }
+
+    private static void OnWorkerWDestroyed(
+        nint hWinEventHook,
+        uint eventType,
+        nint hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime
+    )
+    {
+        if (!_isExiting && _watchedWorkerWHwnd != 0 && hwnd == _watchedWorkerWHwnd)
+        {
+            DesktopAttachHelper.LogAttach($"Watched WorkerW=0x{hwnd:X} destroyed; re-attaching wallpaper.");
+            ReattachOrReloadOnDesktop(150);
         }
     }
 
@@ -1118,6 +1198,12 @@ public static class WallpaperPlayerProcess
         {
             DesktopNativeMethods.UnhookWinEvent(_winEventHook);
             _winEventHook = 0;
+        }
+
+        if (_workerWDestroyHook != 0)
+        {
+            DesktopNativeMethods.UnhookWinEvent(_workerWDestroyHook);
+            _workerWDestroyHook = 0;
         }
 
         if (_powerNotifyHandle != 0)

@@ -304,7 +304,8 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 + $"--loop {(item.Loop ? "true" : "false")} "
                 + $"--fit {item.FitMode} "
                 + $"--speed {item.PlaybackSpeed.ToString("F2", CultureInfo.InvariantCulture)} "
-                + $"--layout {_layoutMode}";
+                + $"--layout {_layoutMode} "
+                + $"--parent-pid {Environment.ProcessId}";
 
             var psi = new ProcessStartInfo
             {
