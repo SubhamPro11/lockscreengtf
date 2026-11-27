@@ -43,6 +43,8 @@ public static class WallpaperPlayerProcess
     private static bool _isPlaying;
     private static bool _isPaused;
     private static bool _isAutoPaused;
+    private static bool _preferMpv;
+    private static bool _mpvRestartAttempted;
     private static bool _isSessionLocked;
     private static bool _isDisplayOff;
     private static bool _isSuspended;
@@ -331,6 +333,13 @@ public static class WallpaperPlayerProcess
                         _parentPid = parentPid;
                     }
                 }
+                else if (string.Equals(arg, "--prefer-mpv", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (bool.TryParse(args[++i], out var preferMpv))
+                    {
+                        _preferMpv = preferMpv;
+                    }
+                }
                 else if (string.Equals(arg, "--speed", StringComparison.OrdinalIgnoreCase))
                 {
                     if (double.TryParse(args[++i], NumberStyles.Float, CultureInfo.InvariantCulture, out var speed))
@@ -466,17 +475,7 @@ public static class WallpaperPlayerProcess
                 var width = rc.Right - rc.Left;
                 var height = rc.Bottom - rc.Top;
 
-                var renderer = new WebView2WallpaperRenderer();
-                await renderer.InitializeAsync(hostWin.Hwnd, 0, 0, width, height);
-                await renderer.LoadAsync(item);
-                await renderer.SetFitModeAsync(_fitMode);
-                await renderer.SetVolumeAsync(_volume);
-                await renderer.SetMutedAsync(_isMuted);
-                await renderer.SetPlaybackRateAsync(_playbackSpeed);
-
-                _renderers.Add(renderer);
-
-                // Dock into desktop layer behind icons
+                // Dock into desktop layer behind icons first so --wid / WebView2 renders into the attached HWND
                 bool attached;
                 if (_layoutMode == WallpaperLayoutMode.SpanAllMonitors || monitors.Count == 0)
                 {
@@ -498,6 +497,36 @@ public static class WallpaperPlayerProcess
                     Console.Out.Flush();
                     return;
                 }
+
+                var useMpv = WallpaperEngineSelector.ShouldUseMpv(path, _preferMpv, webViewFailed: false);
+                IWallpaperRenderer renderer;
+                if (useMpv)
+                {
+                    renderer = await CreateAndStartMpvRendererAsync(hostWin.Hwnd, item);
+                }
+                else
+                {
+                    try
+                    {
+                        var webRenderer = new WebView2WallpaperRenderer();
+                        await webRenderer.InitializeAsync(hostWin.Hwnd, 0, 0, width, height);
+                        await webRenderer.LoadAsync(item);
+                        await webRenderer.SetFitModeAsync(_fitMode);
+                        await webRenderer.SetVolumeAsync(_volume);
+                        await webRenderer.SetMutedAsync(_isMuted);
+                        await webRenderer.SetPlaybackRateAsync(_playbackSpeed);
+                        renderer = webRenderer;
+                    }
+                    catch (Exception webEx) when (WallpaperEngineSelector.ShouldUseMpv(path, _preferMpv, webViewFailed: true))
+                    {
+                        DesktopAttachHelper.LogAttach($"WebView2 playback failed ({webEx.Message}); falling back to mpv.");
+                        Console.WriteLine("NOTICE WebView2 could not play this file; switched to mpv.");
+                        Console.Out.Flush();
+                        renderer = await CreateAndStartMpvRendererAsync(hostWin.Hwnd, item);
+                    }
+                }
+
+                _renderers.Add(renderer);
             }
 
             _isPlaying = true;
@@ -531,8 +560,17 @@ public static class WallpaperPlayerProcess
         switch (verb)
         {
             case "LOAD":
+                _mpvRestartAttempted = false;
                 await LoadMediaAsync(arg);
                 await responseWriter.WriteLineAsync("OK LOAD");
+                break;
+
+            case "PREFER_MPV":
+                if (bool.TryParse(arg, out var preferMpv))
+                {
+                    _preferMpv = preferMpv;
+                }
+                await responseWriter.WriteLineAsync("OK PREFER_MPV");
                 break;
 
             case "PAUSE":
@@ -1157,6 +1195,49 @@ public static class WallpaperPlayerProcess
                 0
             );
         }
+    }
+
+    private static async Task<MpvWallpaperPlayer> CreateAndStartMpvRendererAsync(nint hostHwnd, WallpaperItem item)
+    {
+        var mpv = new MpvWallpaperPlayer();
+        mpv.Exited += OnMpvUnexpectedExit;
+        await mpv.InitializeAsync(hostHwnd, 0, 0, 0, 0);
+        await mpv.LoadAsync(item);
+        return mpv;
+    }
+
+    private static void OnMpvUnexpectedExit()
+    {
+        if (_isExiting)
+        {
+            return;
+        }
+
+        _syncContext?.Post(
+            async _ =>
+            {
+                if (_isExiting)
+                {
+                    return;
+                }
+
+                if (!_mpvRestartAttempted && !string.IsNullOrWhiteSpace(_mediaPath))
+                {
+                    _mpvRestartAttempted = true;
+                    DesktopAttachHelper.LogAttach("mpv exited unexpectedly; restarting once.");
+                    await LoadMediaAsync(_mediaPath);
+                    return;
+                }
+
+                DesktopAttachHelper.LogAttach("mpv crashed after retry; restoring desktop wallpaper.");
+                await CleanRenderersAsync();
+                CleanHostWindows();
+                DesktopAttachHelper.RestoreWallpaper(_originalWallpaperPath);
+                Console.WriteLine("ERROR mpv wallpaper player exited unexpectedly. Check that the video file is valid.");
+                Console.Out.Flush();
+            },
+            null
+        );
     }
 
     private static async Task CleanRenderersAsync()

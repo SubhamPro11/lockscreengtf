@@ -264,6 +264,11 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             if (IsPlayerProcessAlive())
             {
                 Logger.Info($"Sending LOAD command to existing player process: {effectiveSource}");
+                await SendCommandAsync(
+                    $"PREFER_MPV {(_performanceMonitor.Rules.PreferMpvForVideos ? "true" : "false")}",
+                    3000,
+                    cancellationToken
+                );
                 var response = await SendCommandAsync($"LOAD {effectiveSource}", timeoutMs: 5000, cancellationToken);
                 if (response != null && !response.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
                 {
@@ -305,6 +310,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 + $"--fit {item.FitMode} "
                 + $"--speed {item.PlaybackSpeed.ToString("F2", CultureInfo.InvariantCulture)} "
                 + $"--layout {_layoutMode} "
+                + $"--prefer-mpv {(_performanceMonitor.Rules.PreferMpvForVideos ? "true" : "false")} "
                 + $"--parent-pid {Environment.ProcessId}";
 
             var psi = new ProcessStartInfo
@@ -344,6 +350,12 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 {
                     readyLine = line;
                     break;
+                }
+                if (line.StartsWith("NOTICE", StringComparison.OrdinalIgnoreCase))
+                {
+                    _currentErrorMessage = line.Length > 6 ? line[6..].Trim() : line;
+                    Logger.Info($"Player notice: {_currentErrorMessage}");
+                    continue;
                 }
                 if (line.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
                 {

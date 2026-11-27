@@ -487,6 +487,11 @@
                                 <TextBlock Text="Lower decode quality" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
                                 <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.LowerDecodeQuality, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Lower decode quality" />
                             </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="Prefer mpv for videos" FontSize="13" Foreground="{ThemeResource GlassTextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.PreferMpvForVideos, Mode=TwoWay}" Style="{StaticResource GlassToggleSwitchStyle}" AutomationProperties.Name="Prefer mpv for videos" />
+                            </Grid>
                             <TextBlock Text="{x:Bind ViewModel.GpuDescriptionText, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
                             <TextBlock Text="{x:Bind ViewModel.BatteryImpactEstimate, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource GlassTextSecondaryBrush}" TextWrapping="Wrap" />
                         </StackPanel>
