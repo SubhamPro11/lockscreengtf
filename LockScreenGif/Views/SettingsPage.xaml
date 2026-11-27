@@ -67,7 +67,7 @@
                                         Click="ThemeOption_Click"
                                         Tag="Light"
                                         CornerRadius="999"
-                                        Height="34"
+                                        Height="36"
                                         Padding="14,0"
                                         Style="{StaticResource MaterialTextButtonStyle}"
                                         AutomationProperties.Name="Switch to Light theme">
@@ -80,7 +80,7 @@
                                         Click="ThemeOption_Click"
                                         Tag="Dark"
                                         CornerRadius="999"
-                                        Height="34"
+                                        Height="36"
                                         Padding="14,0"
                                         Style="{StaticResource MaterialTextButtonStyle}"
                                         AutomationProperties.Name="Switch to Dark theme">
@@ -93,7 +93,7 @@
                                         Click="ThemeOption_Click"
                                         Tag="Default"
                                         CornerRadius="999"
-                                        Height="34"
+                                        Height="36"
                                         Padding="14,0"
                                         Style="{StaticResource MaterialTextButtonStyle}"
                                         AutomationProperties.Name="Use Windows system theme">

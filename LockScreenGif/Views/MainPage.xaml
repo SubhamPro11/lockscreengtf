@@ -180,7 +180,7 @@
                                             CornerRadius="999"
                                             Padding="8,6">
                                         <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                                            <Button x:Name="SelectionStartButton" Click="SkipToSelectionBoundary_Click" Width="40" Height="40" Padding="0"
+                                            <Button x:Name="SelectionStartButton" Click="SkipToSelectionBoundary_Click" Width="46" Height="46" Padding="0"
                                                     Style="{StaticResource MaterialTextButtonStyle}"
                                                     AccessKey="["
                                                     AutomationProperties.Name="Jump to start of selection"
@@ -192,7 +192,7 @@
                                                     AccessKey="P"
                                                     AutomationProperties.Name="Play or pause selected clip"
                                                     ToolTipService.ToolTip="Play or pause the selected clip (P). Loops automatically." />
-                                            <Button x:Name="SelectionEndButton" Click="SkipToSelectionBoundary_Click" Width="40" Height="40" Padding="0"
+                                            <Button x:Name="SelectionEndButton" Click="SkipToSelectionBoundary_Click" Width="46" Height="46" Padding="0"
                                                     Style="{StaticResource MaterialTextButtonStyle}"
                                                     AccessKey="]"
                                                     AutomationProperties.Name="Jump to end of selection"
@@ -635,7 +635,7 @@
                                         Style="{StaticResource MaterialTonalButtonStyle}"
                                         AutomationProperties.Name="Open Diagnostics page"
                                         Visibility="Collapsed" />
-                                <Button x:Name="HelpButton" Width="40" Height="40" Padding="0"
+                                <Button x:Name="HelpButton" Width="46" Height="46" Padding="0"
                                         Style="{StaticResource MaterialTonalButtonStyle}"
                                         ToolTipService.ToolTip="Lock-screen help and FAQ" AutomationProperties.Name="Lock-screen help and FAQ">
                                     <FontIcon FontSize="15" Glyph="&#xE897;" />
@@ -679,7 +679,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Click="RecentFileButton_Click" Tag="{Binding Path}"
-                                                Background="Transparent" BorderThickness="0" Padding="0"
+                                                Style="{StaticResource GlassCardButtonStyle}"
                                                 Height="98" CornerRadius="14"
                                                 AutomationProperties.Name="{Binding FileName}"
                                                 ToolTipService.ToolTip="{Binding FileName}">

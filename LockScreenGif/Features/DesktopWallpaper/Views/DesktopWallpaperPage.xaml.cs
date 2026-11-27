@@ -52,11 +52,11 @@ public sealed partial class DesktopWallpaperPage : Page
     {
         if (
             Application.Current.Resources.TryGetValue(
-                ViewModel.IsMediaLoaded ? "GlassPrimaryButtonStyle" : "GlassButtonStyle",
+                ViewModel.IsMediaLoaded ? "MaterialFilledButtonLargeStyle" : "MaterialTonalButtonLargeStyle",
                 out var applyStyle
             )
             && Application.Current.Resources.TryGetValue(
-                ViewModel.IsMediaLoaded ? "GlassButtonStyle" : "GlassPrimaryButtonStyle",
+                ViewModel.IsMediaLoaded ? "MaterialTonalButtonLargeStyle" : "MaterialFilledButtonLargeStyle",
                 out var chooseStyle
             )
         )
