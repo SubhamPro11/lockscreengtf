@@ -15,7 +15,7 @@ namespace LockscreenGif.Views;
 public sealed partial class ShellPage : Page
 {
     private readonly INavigationService _navigationService;
-    private bool _synchronizingSelection;
+    private string _activeTabTag = "Lockscreen";
     private bool _analyticsReady;
     private Storyboard? _driftStoryboard;
     private bool _isAmbientLoaded;
@@ -34,19 +34,28 @@ public sealed partial class ShellPage : Page
         ActualThemeChanged += ShellPage_ActualThemeChanged;
     }
 
-    private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void NavTab_Click(object sender, RoutedEventArgs e)
     {
-        if (_synchronizingSelection || _navigationService is null)
+        if (sender is Button btn && btn.Tag is string tag)
+        {
+            NavigateToTab(tag);
+        }
+    }
+
+    private void NavigateToTab(string tag)
+    {
+        if (_navigationService is null)
         {
             return;
         }
 
-        var viewModel =
-            ReferenceEquals(args.SelectedItem, SettingsItem) ? typeof(SettingsViewModel)
-            : ReferenceEquals(args.SelectedItem, DiagnosticsItem) ? typeof(DiagnosticsViewModel)
-            : ReferenceEquals(args.SelectedItem, WallpaperItem)
-                ? typeof(LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel)
-            : typeof(MainViewModel);
+        var viewModel = tag switch
+        {
+            "Settings" => typeof(SettingsViewModel),
+            "Diagnostics" => typeof(DiagnosticsViewModel),
+            "Wallpaper" => typeof(LockscreenGif.Features.DesktopWallpaper.ViewModels.DesktopWallpaperViewModel),
+            _ => typeof(MainViewModel),
+        };
         _navigationService.NavigateTo(viewModel.FullName!, clearNavigation: true);
     }
 
@@ -56,16 +65,50 @@ public sealed partial class ShellPage : Page
         {
             AnalyticsNotice.IsOpen = false;
         }
-        _synchronizingSelection = true;
-        Navigation.SelectedItem =
-            args.SourcePageType == typeof(SettingsPage) ? SettingsItem
-            : args.SourcePageType == typeof(DiagnosticsPage) ? DiagnosticsItem
-            : args.SourcePageType == typeof(LockscreenGif.Features.DesktopWallpaper.Views.DesktopWallpaperPage) ? WallpaperItem
-            : LockscreenItem;
-        _synchronizingSelection = false;
+
+        _activeTabTag =
+            args.SourcePageType == typeof(SettingsPage) ? "Settings"
+            : args.SourcePageType == typeof(DiagnosticsPage) ? "Diagnostics"
+            : args.SourcePageType == typeof(LockscreenGif.Features.DesktopWallpaper.Views.DesktopWallpaperPage) ? "Wallpaper"
+            : "Lockscreen";
+
+        UpdateNavCapsuleVisuals();
+
         if (_analyticsReady)
         {
             TrackCurrentPage();
+        }
+    }
+
+    private void UpdateNavCapsuleVisuals()
+    {
+        var activeBg = Application.Current.Resources["GlassSecondaryContainerBrush"] as Microsoft.UI.Xaml.Media.Brush;
+        var activeFg = Application.Current.Resources["GlassOnSecondaryContainerBrush"] as Microsoft.UI.Xaml.Media.Brush;
+        var inactiveFg = Application.Current.Resources["GlassTextSecondaryBrush"] as Microsoft.UI.Xaml.Media.Brush;
+        var transparent = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+
+        var tabs = new (Button Btn, FontIcon Icon, TextBlock Text, string Tag)[]
+        {
+            (LockscreenNavButton, LockscreenNavIcon, LockscreenNavText, "Lockscreen"),
+            (WallpaperNavButton, WallpaperNavIcon, WallpaperNavText, "Wallpaper"),
+            (DiagnosticsNavButton, DiagnosticsNavIcon, DiagnosticsNavText, "Diagnostics"),
+            (SettingsNavButton, SettingsNavIcon, SettingsNavText, "Settings"),
+        };
+
+        foreach (var (btn, icon, text, tag) in tabs)
+        {
+            if (btn == null)
+            {
+                continue;
+            }
+            var isActive = string.Equals(_activeTabTag, tag, StringComparison.Ordinal);
+            btn.Background = isActive ? activeBg : transparent;
+            var fg = isActive ? activeFg : inactiveFg;
+            if (fg != null)
+            {
+                icon.Foreground = fg;
+                text.Foreground = fg;
+            }
         }
     }
 
@@ -104,6 +147,7 @@ public sealed partial class ShellPage : Page
             };
         }
         TitleBarHelper.ApplySystemThemeToCaptionButtons();
+        UpdateNavCapsuleVisuals();
 
         if (!_isAmbientLoaded)
         {
@@ -292,28 +336,28 @@ public sealed partial class ShellPage : Page
         switch (e.Key)
         {
             case Windows.System.VirtualKey.Number1:
-                Navigation.SelectedItem = LockscreenItem;
+                NavigateToTab("Lockscreen");
                 e.Handled = true;
                 break;
             case Windows.System.VirtualKey.Number2:
-                Navigation.SelectedItem = WallpaperItem;
+                NavigateToTab("Wallpaper");
                 e.Handled = true;
                 break;
             case Windows.System.VirtualKey.Number3:
-                Navigation.SelectedItem = DiagnosticsItem;
+                NavigateToTab("Diagnostics");
                 e.Handled = true;
                 break;
             case Windows.System.VirtualKey.Number4:
-                Navigation.SelectedItem = SettingsItem;
+                NavigateToTab("Settings");
                 e.Handled = true;
                 break;
             case Windows.System.VirtualKey.Tab:
-                var items = new[] { LockscreenItem, WallpaperItem, DiagnosticsItem, SettingsItem };
-                var index = Array.IndexOf(items, Navigation.SelectedItem);
+                var tabs = new[] { "Lockscreen", "Wallpaper", "Diagnostics", "Settings" };
+                var index = Array.IndexOf(tabs, _activeTabTag);
                 if (index >= 0)
                 {
-                    var nextIndex = shift ? (index - 1 + items.Length) % items.Length : (index + 1) % items.Length;
-                    Navigation.SelectedItem = items[nextIndex];
+                    var nextIndex = shift ? (index - 1 + tabs.Length) % tabs.Length : (index + 1) % tabs.Length;
+                    NavigateToTab(tabs[nextIndex]);
                     e.Handled = true;
                 }
                 break;
@@ -323,7 +367,9 @@ public sealed partial class ShellPage : Page
     private void ShellPage_ActualThemeChanged(FrameworkElement sender, object args)
     {
         TitleBarHelper.ApplySystemThemeToCaptionButtons();
+        UpdateNavCapsuleVisuals();
         UpdateAmbientColors();
+        UpdateNavCapsuleVisuals();
     }
 
     private void UpdateAmbientColors()

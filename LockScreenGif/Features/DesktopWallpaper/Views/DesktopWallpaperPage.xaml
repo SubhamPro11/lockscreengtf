@@ -10,8 +10,8 @@
     UseLayoutRounding="True">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel MaxWidth="1040"
-                    Margin="28,20,28,80"
+        <StackPanel MaxWidth="1280"
+                    Margin="48,20,48,60"
                     Spacing="24"
                     HorizontalAlignment="Stretch">
 
@@ -19,7 +19,7 @@
             <StackPanel Spacing="6">
                 <TextBlock Text="Desktop Wallpaper"
                            FontFamily="{StaticResource GlassFontDisplay}"
-                           FontSize="28"
+                           FontSize="32"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource GlassTextPrimaryBrush}" />
                 <TextBlock Text="Render live animated videos, interactive web pages, or media behind your desktop icons."

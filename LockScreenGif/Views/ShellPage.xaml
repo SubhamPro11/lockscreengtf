@@ -46,70 +46,123 @@
                     Background="{ThemeResource GlassTopVignetteBrush}" />
         </Grid>
 
-        <!-- 2. Windows 11 Unified Top Navigation & Custom Title Bar (Height ~46px, single row) -->
-        <NavigationView x:Name="Navigation"
-                        PaneDisplayMode="Top"
-                        IsBackButtonVisible="Collapsed"
-                        IsSettingsVisible="False"
-                        IsPaneToggleButtonVisible="False"
-                        IsTitleBarAutoPaddingEnabled="False"
-                        AlwaysShowHeader="False"
-                        SelectionChanged="Navigation_SelectionChanged">
+        <!-- 2. Figma Custom Title Bar: Brand + Floating Glass Navigation Capsule + Draggable Client Space -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <NavigationView.Resources>
-                <x:Double x:Key="NavigationViewTopPaneHeight">46</x:Double>
-                <Thickness x:Key="NavigationViewTopPaneMargin">0,0,0,0</Thickness>
-                <Thickness x:Key="NavigationViewHeaderMargin">0,0,0,0</Thickness>
-                <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
-            </NavigationView.Resources>
+            <Grid Grid.Row="0" Padding="20,0,0,0" ColumnSpacing="24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <NavigationView.PaneHeader>
-                <StackPanel Orientation="Horizontal"
-                            Spacing="8"
-                            Margin="16,0,14,0"
+                <!-- Brand Mark -->
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            Spacing="10"
                             VerticalAlignment="Center"
-                            Height="46"
                             ToolTipService.ToolTip="{x:Bind helpers:BuildInfo.BuildStamp, Mode=OneTime}">
-                    <Image Source="ms-appx:///Assets/WindowIcon.png" Width="18" Height="18" VerticalAlignment="Center" />
+                    <Border Width="24"
+                            Height="24"
+                            CornerRadius="8"
+                            Background="{ThemeResource GlassPrimaryBrush}">
+                        <FontIcon Glyph="&#xE72E;"
+                                  FontSize="12"
+                                  Foreground="{ThemeResource GlassOnPrimaryBrush}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                    </Border>
                     <TextBlock Text="LockscreenGif"
-                               FontWeight="SemiBold"
+                               FontFamily="{StaticResource GlassFontUi}"
+                               FontWeight="Medium"
                                FontSize="13"
                                Foreground="{ThemeResource GlassTextPrimaryBrush}"
                                VerticalAlignment="Center" />
                 </StackPanel>
-            </NavigationView.PaneHeader>
 
-            <NavigationView.PaneCustomContent>
-                <!-- Draggable Client Space between Tabs and Caption Buttons -->
-                <Grid x:Name="AppTitleBar" Background="Transparent" MinWidth="48" HorizontalAlignment="Stretch" Height="46" />
-            </NavigationView.PaneCustomContent>
+                <!-- Floating Glass Navigation Capsule -->
+                <Border Grid.Column="1"
+                        Height="40"
+                        Padding="4"
+                        CornerRadius="999"
+                        VerticalAlignment="Center"
+                        Background="{ThemeResource GlassTrayFillBrush}"
+                        BorderBrush="{ThemeResource GlassTrayBorderBrush}"
+                        BorderThickness="1">
+                    <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+                        <Button x:Name="LockscreenNavButton"
+                                Click="NavTab_Click"
+                                Tag="Lockscreen"
+                                Height="30"
+                                Padding="14,0"
+                                CornerRadius="999"
+                                BorderThickness="0"
+                                Style="{StaticResource MaterialTextButtonStyle}"
+                                AutomationProperties.Name="Lockscreen tab">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon x:Name="LockscreenNavIcon" Glyph="&#xE72E;" FontSize="14" VerticalAlignment="Center" />
+                                <TextBlock x:Name="LockscreenNavText" Text="Lockscreen" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="WallpaperNavButton"
+                                Click="NavTab_Click"
+                                Tag="Wallpaper"
+                                Height="30"
+                                Padding="14,0"
+                                CornerRadius="999"
+                                BorderThickness="0"
+                                Style="{StaticResource MaterialTextButtonStyle}"
+                                AutomationProperties.Name="Desktop Wallpaper tab">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon x:Name="WallpaperNavIcon" Glyph="&#xE7F8;" FontSize="14" VerticalAlignment="Center" />
+                                <TextBlock x:Name="WallpaperNavText" Text="Desktop wallpaper" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="DiagnosticsNavButton"
+                                Click="NavTab_Click"
+                                Tag="Diagnostics"
+                                Height="30"
+                                Padding="14,0"
+                                CornerRadius="999"
+                                BorderThickness="0"
+                                Style="{StaticResource MaterialTextButtonStyle}"
+                                AutomationProperties.Name="Diagnostics tab">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon x:Name="DiagnosticsNavIcon" Glyph="&#xE9D9;" FontSize="14" VerticalAlignment="Center" />
+                                <TextBlock x:Name="DiagnosticsNavText" Text="Diagnostics" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="SettingsNavButton"
+                                Click="NavTab_Click"
+                                Tag="Settings"
+                                Height="30"
+                                Padding="14,0"
+                                CornerRadius="999"
+                                BorderThickness="0"
+                                Style="{StaticResource MaterialTextButtonStyle}"
+                                AutomationProperties.Name="Settings tab">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon x:Name="SettingsNavIcon" Glyph="&#xE713;" FontSize="14" VerticalAlignment="Center" />
+                                <TextBlock x:Name="SettingsNavText" Text="Settings" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
 
-            <NavigationView.PaneFooter>
+                <!-- Draggable Client Space between Capsule and Caption Buttons -->
+                <Grid Grid.Column="2" x:Name="AppTitleBar" Background="Transparent" MinWidth="48" HorizontalAlignment="Stretch" Height="48" />
+
                 <!-- Reserved space for Windows system caption buttons (minimize, maximize, close) -->
-                <Grid x:Name="CaptionButtonSpacer" Width="140" Height="46" Background="Transparent" />
-            </NavigationView.PaneFooter>
-
-            <NavigationView.MenuItems>
-                <NavigationViewItem x:Name="LockscreenItem" Content="Lockscreen" Tag="Lockscreen"
-                                    AutomationProperties.Name="Lockscreen tab">
-                    <NavigationViewItem.Icon><SymbolIcon Symbol="Pictures" /></NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Name="WallpaperItem" Content="Desktop Wallpaper" Tag="Wallpaper"
-                                    AutomationProperties.Name="Desktop Wallpaper tab">
-                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE7F8;" /></NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Name="DiagnosticsItem" Content="Diagnostics" Tag="Diagnostics"
-                                    AutomationProperties.Name="Diagnostics tab">
-                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE9D9;" /></NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Name="SettingsItem" Content="Settings" Tag="Settings"
-                                    AutomationProperties.Name="Settings tab">
-                    <NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></NavigationViewItem.Icon>
-                </NavigationViewItem>
-            </NavigationView.MenuItems>
+                <Grid Grid.Column="3" x:Name="CaptionButtonSpacer" Width="140" Height="48" Background="Transparent" />
+            </Grid>
 
             <!-- Content Area: InfoBars and Content Frame -->
-            <Grid Margin="0,0,0,0">
+            <Grid Grid.Row="1" Margin="0,0,0,0">
                 <Grid.RowDefinitions>
                     <!-- Analytics Notification -->
                     <RowDefinition Height="Auto" />
@@ -142,6 +195,6 @@
                 <!-- Content Frame -->
                 <Frame Grid.Row="2" x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
             </Grid>
-        </NavigationView>
+        </Grid>
     </Grid>
 </Page>

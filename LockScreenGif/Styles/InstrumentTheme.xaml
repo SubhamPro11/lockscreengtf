@@ -15,6 +15,9 @@
             <SolidColorBrush x:Key="GlassRaisedBrush" Color="{StaticResource GlassRaisedColor}" />
             <SolidColorBrush x:Key="GlassSubtleBrush" Color="{StaticResource GlassSubtleColor}" />
             <SolidColorBrush x:Key="GlassHairlineBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassStageSurfaceBrush" Color="#140C0B" />
+            <SolidColorBrush x:Key="GlassTrayFillBrush" Color="#12FFFFFF" />
+            <SolidColorBrush x:Key="GlassTrayBorderBrush" Color="#73FFFFFF" />
 
             <!-- Material 3 Red Dark Core Tokens -->
             <Color x:Key="GlassPrimaryColor">#FFA79B</Color>
@@ -164,6 +167,9 @@
             <SolidColorBrush x:Key="GlassRaisedBrush" Color="{StaticResource GlassRaisedColor}" />
             <SolidColorBrush x:Key="GlassSubtleBrush" Color="{StaticResource GlassSubtleColor}" />
             <SolidColorBrush x:Key="GlassHairlineBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassStageSurfaceBrush" Color="#140C0B" />
+            <SolidColorBrush x:Key="GlassTrayFillBrush" Color="#12FFFFFF" />
+            <SolidColorBrush x:Key="GlassTrayBorderBrush" Color="#73FFFFFF" />
 
             <!-- Material 3 Red Dark Core Tokens -->
             <Color x:Key="GlassPrimaryColor">#FFA79B</Color>
@@ -312,6 +318,9 @@
             <SolidColorBrush x:Key="GlassRaisedBrush" Color="{StaticResource GlassRaisedColor}" />
             <SolidColorBrush x:Key="GlassSubtleBrush" Color="{StaticResource GlassSubtleColor}" />
             <SolidColorBrush x:Key="GlassHairlineBrush" Color="{StaticResource GlassHairlineColor}" />
+            <SolidColorBrush x:Key="GlassStageSurfaceBrush" Color="#F7EEEC" />
+            <SolidColorBrush x:Key="GlassTrayFillBrush" Color="#E6FFFFFF" />
+            <SolidColorBrush x:Key="GlassTrayBorderBrush" Color="#26000000" />
 
             <Color x:Key="GlassPrimaryColor">#904A42</Color>
             <Color x:Key="GlassOnPrimaryColor">#FFFFFF</Color>
@@ -444,6 +453,9 @@
             <SolidColorBrush x:Key="GlassRaisedBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="GlassSubtleBrush" Color="Transparent" />
             <SolidColorBrush x:Key="GlassHairlineBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <SolidColorBrush x:Key="GlassStageSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="GlassTrayFillBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="GlassTrayBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
 
             <SolidColorBrush x:Key="GlassPrimaryBrush" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="GlassOnPrimaryBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />

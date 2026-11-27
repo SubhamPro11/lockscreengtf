@@ -111,7 +111,7 @@ public sealed partial class MainPage
                 PrerequisitesHeaderIcon.Glyph = "\uE73E";
                 PrerequisitesHeaderIcon.Foreground = (Microsoft.UI.Xaml.Media.Brush)
                     Application.Current.Resources["GlassStatusSuccessBrush"];
-                PrerequisitesHeaderText.Text = "System Prerequisites · All set";
+                PrerequisitesHeaderText.Text = "Windows is ready";
             }
             else
             {

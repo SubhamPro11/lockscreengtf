@@ -76,15 +76,15 @@ public sealed partial class MainPage
 
         StageHeading.Text = stage switch
         {
-            MainFlowStage.Choose => "Choose your animation",
-            MainFlowStage.Edit => "Edit your video",
+            MainFlowStage.Choose => "What should your lock screen play?",
+            MainFlowStage.Edit => "Trim your clip",
             MainFlowStage.Set => "Ready to set",
             _ => "Applied successfully",
         };
         StageDescription.Text = stage switch
         {
-            MainFlowStage.Choose => "Start with a video or an existing GIF.",
-            MainFlowStage.Edit => "Choose your clip, then continue to preview the generated GIF.",
+            MainFlowStage.Choose => "A short clip or a GIF. We’ll trim it and do the rest.",
+            MainFlowStage.Edit => "Choose the part you want on your lock screen. It loops on its own.",
             MainFlowStage.Set => "Review the animation before setting your lock screen.",
             _ => "The lock-screen files were updated. Lock your PC to check the animation.",
         };
