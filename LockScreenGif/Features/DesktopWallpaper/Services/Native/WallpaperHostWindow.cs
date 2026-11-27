@@ -126,18 +126,6 @@ internal sealed class WallpaperHostWindow : IDisposable
 
         try
         {
-            var insertAfter = target.InsertAfterHwnd != 0 ? target.InsertAfterHwnd : DesktopNativeMethods.HWND_BOTTOM;
-            var previousParent = DesktopNativeMethods.SetParent(_hwnd, target.ParentHwnd);
-            var setParentErr = Marshal.GetLastWin32Error();
-            DesktopAttachHelper.LogAttach(
-                $"AttachToDesktop: chosenParent=0x{target.ParentHwnd:X8} ({target.Description}), insertAfter=0x{insertAfter:X}, SetParent={previousParent:X8}, SetParentLastError={setParentErr}"
-            );
-
-            if (previousParent == 0 && setParentErr != 0)
-            {
-                return false;
-            }
-
             const uint wsBorder = 0x00800000;
             var style = (long)DesktopNativeMethods.GetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_STYLE);
             style &= ~(
@@ -157,7 +145,32 @@ internal sealed class WallpaperHostWindow : IDisposable
 
             var exStyle = (long)DesktopNativeMethods.GetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_EXSTYLE);
             exStyle |= DesktopNativeMethods.WS_EX_TOOLWINDOW | DesktopNativeMethods.WS_EX_NOACTIVATE;
+            if (target.IsRaisedDesktop)
+            {
+                exStyle |= DesktopNativeMethods.WS_EX_LAYERED;
+            }
             DesktopNativeMethods.SetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_EXSTYLE, new nint(exStyle));
+
+            if (target.IsRaisedDesktop)
+            {
+                var layeredOk = DesktopNativeMethods.SetLayeredWindowAttributes(_hwnd, 0, 255, DesktopNativeMethods.LWA_ALPHA);
+                var layeredErr = Marshal.GetLastWin32Error();
+                DesktopAttachHelper.LogAttach($"SetLayeredWindowAttributes(alpha=255) -> ok={layeredOk}, lastError={layeredErr}");
+            }
+
+            var insertAfter = target.InsertAfterHwnd != 0 ? target.InsertAfterHwnd : DesktopNativeMethods.HWND_BOTTOM;
+            var previousParent = DesktopNativeMethods.SetParent(_hwnd, target.ParentHwnd);
+            var setParentErr = Marshal.GetLastWin32Error();
+            var actualParent = DesktopNativeMethods.GetParent(_hwnd);
+            var parentVerified = actualParent == target.ParentHwnd;
+            DesktopAttachHelper.LogAttach(
+                $"AttachToDesktop: chosenParent=0x{target.ParentHwnd:X8} ({target.Description}), raisedDesktop={target.IsRaisedDesktop}, insertAfter=0x{insertAfter:X}, prevParent=0x{previousParent:X8}, actualParent=0x{actualParent:X8}, parentVerified={parentVerified}, SetParentLastError={setParentErr}"
+            );
+
+            if (!parentVerified)
+            {
+                return false;
+            }
 
             // Convert screen coordinates to parent window client coordinates (handles negative multi-monitor coordinates)
             var pt = new DesktopNativeMethods.POINT { X = left, Y = top };
@@ -175,6 +188,7 @@ internal sealed class WallpaperHostWindow : IDisposable
             var swpErr = Marshal.GetLastWin32Error();
 
             DesktopNativeMethods.ShowWindow(_hwnd, DesktopNativeMethods.SW_SHOWNOACTIVATE);
+            DesktopAttachHelper.EnsureWorkerWZOrder(target);
 
             DesktopNativeMethods.GetWindowRect(_hwnd, out var finalRect);
             var isVisible = DesktopNativeMethods.IsWindowVisible(_hwnd);

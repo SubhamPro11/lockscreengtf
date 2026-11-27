@@ -918,6 +918,37 @@ public static class WallpaperPlayerProcess
     }
 
     private static readonly uint _wmTaskbarCreated = DesktopNativeMethods.RegisterWindowMessage("TaskbarCreated");
+    private static uint _prevExplorerPid = GetTaskbarExplorerPid();
+    private static DateTime _lastExplorerRestartUtc = DateTime.MinValue;
+
+    private static uint GetTaskbarExplorerPid()
+    {
+        var taskbar = DesktopNativeMethods.FindWindow("Shell_TrayWnd", null);
+        if (taskbar == 0)
+        {
+            return 0;
+        }
+        DesktopNativeMethods.GetWindowThreadProcessId(taskbar, out var pid);
+        return pid;
+    }
+
+    private static void ReattachOrReloadOnDesktop(int delayMs)
+    {
+        _syncContext?.Post(
+            async _ =>
+            {
+                if (delayMs > 0)
+                {
+                    await Task.Delay(delayMs);
+                }
+                if (!string.IsNullOrWhiteSpace(_mediaPath))
+                {
+                    await LoadMediaAsync(_mediaPath);
+                }
+            },
+            null
+        );
+    }
 
     private static nint MessageWindowProc(nint hWnd, uint msg, nint wParam, nint lParam)
     {
@@ -929,18 +960,33 @@ public static class WallpaperPlayerProcess
 
         if (msg == _wmTaskbarCreated && _wmTaskbarCreated != 0)
         {
-            // Explorer restarted: Re-attach to new WorkerW on the STA thread
-            _syncContext?.Post(
-                async _ =>
+            var newExplorerPid = GetTaskbarExplorerPid();
+            if (newExplorerPid != 0 && newExplorerPid != _prevExplorerPid)
+            {
+                var now = DateTime.UtcNow;
+                var inCrashLoop = _lastExplorerRestartUtc != DateTime.MinValue && (now - _lastExplorerRestartUtc).TotalSeconds < 30;
+                DesktopAttachHelper.LogAttach(
+                    $"WM_TASKBARCREATED: Explorer PID changed {_prevExplorerPid} -> {newExplorerPid} (crashLoop={inCrashLoop})"
+                );
+                _prevExplorerPid = newExplorerPid;
+                _lastExplorerRestartUtc = now;
+
+                if (inCrashLoop)
                 {
-                    await Task.Delay(1000);
-                    if (!string.IsNullOrWhiteSpace(_mediaPath))
-                    {
-                        await LoadMediaAsync(_mediaPath);
-                    }
-                },
-                null
-            );
+                    _syncContext?.Post(
+                        async _ =>
+                        {
+                            await CleanRenderersAsync();
+                            CleanHostWindows();
+                        },
+                        null
+                    );
+                }
+                else
+                {
+                    ReattachOrReloadOnDesktop(1000);
+                }
+            }
             return 0;
         }
 
@@ -954,6 +1000,7 @@ public static class WallpaperPlayerProcess
                     break;
                 case DesktopNativeMethods.WTS_SESSION_UNLOCK:
                     _isSessionLocked = false;
+                    ReattachOrReloadOnDesktop(300);
                     break;
                 case DesktopNativeMethods.WTS_REMOTE_CONNECT:
                     _isRemoteSession = true;
@@ -996,18 +1043,8 @@ public static class WallpaperPlayerProcess
             || msg == 0x02E0 /* WM_DPICHANGED */
         )
         {
-            // Display configuration changed: Refresh layout on the STA thread
-            _syncContext?.Post(
-                async _ =>
-                {
-                    await Task.Delay(500);
-                    if (!string.IsNullOrWhiteSpace(_mediaPath))
-                    {
-                        await LoadMediaAsync(_mediaPath);
-                    }
-                },
-                null
-            );
+            // Display or DPI configuration changed: Re-place/refresh layout on the STA thread
+            ReattachOrReloadOnDesktop(500);
             return 0;
         }
 

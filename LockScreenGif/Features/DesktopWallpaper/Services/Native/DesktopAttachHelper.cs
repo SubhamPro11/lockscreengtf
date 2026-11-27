@@ -8,7 +8,14 @@ namespace LockscreenGif.Features.DesktopWallpaper.Services.Native;
 /// <summary>
 /// Result of finding the desktop wallpaper attachment host.
 /// </summary>
-internal sealed record DesktopAttachTarget(nint ParentHwnd, bool IsDirectProgmanParent, string Description, nint InsertAfterHwnd = 0);
+internal sealed record DesktopAttachTarget(
+    nint ParentHwnd,
+    bool IsDirectProgmanParent,
+    string Description,
+    nint InsertAfterHwnd = 0,
+    bool IsRaisedDesktop = false,
+    nint WorkerWHwnd = 0
+);
 
 /// <summary>
 /// Handles finding and preparing the desktop host window (Progman / WorkerW)
@@ -56,7 +63,9 @@ internal static class DesktopAttachHelper
             return null;
         }
 
-        LogAttach($"FindDesktopHost: Progman=0x{progman:X}");
+        var progmanExStyle = (long)DesktopNativeMethods.GetWindowLongPtr(progman, DesktopNativeMethods.GWL_EXSTYLE);
+        var isRaisedDesktop = (progmanExStyle & DesktopNativeMethods.WS_EX_NOREDIRECTIONBITMAP) != 0;
+        LogAttach($"FindDesktopHost: Progman=0x{progman:X}, raisedDesktop={isRaisedDesktop} (exStyle=0x{progmanExStyle:X})");
 
         // 2. Prompt Progman to spawn the WorkerW background layer (0x052C)
         foreach (
@@ -123,14 +132,17 @@ internal static class DesktopAttachHelper
             var defViewInProgman = DesktopNativeMethods.FindWindowEx(progman, 0, "SHELLDLL_DefView", null);
             if (defViewInProgman != 0)
             {
+                var workerWInProgman = DesktopNativeMethods.FindWindowEx(progman, 0, "WorkerW", null);
                 LogAttach(
-                    $"Detected Progman-hosted layout: attaching directly to Progman=0x{progman:X} below SHELLDLL_DefView=0x{defViewInProgman:X}"
+                    $"Layout detected: Progman-hosted (raisedDesktop={isRaisedDesktop}), parent=0x{progman:X}, insertAfter=SHELLDLL_DefView(0x{defViewInProgman:X}), progmanWorkerW=0x{workerWInProgman:X}"
                 );
                 return new DesktopAttachTarget(
                     progman,
                     IsDirectProgmanParent: true,
                     "Progman direct parent (below SHELLDLL_DefView)",
-                    InsertAfterHwnd: defViewInProgman
+                    InsertAfterHwnd: defViewInProgman,
+                    IsRaisedDesktop: isRaisedDesktop,
+                    WorkerWHwnd: workerWInProgman
                 );
             }
 
@@ -171,12 +183,14 @@ internal static class DesktopAttachHelper
 
         if (workerTarget != 0)
         {
-            LogAttach($"Detected Classic WorkerW layout: parenting to top-level WorkerW=0x{workerTarget:X}");
+            LogAttach($"Layout detected: Classic WorkerW, parent=0x{workerTarget:X}, raisedDesktop={isRaisedDesktop}");
             return new DesktopAttachTarget(
                 workerTarget,
                 IsDirectProgmanParent: false,
                 "Classic WorkerW background layer (Behind desktop icons)",
-                InsertAfterHwnd: DesktopNativeMethods.HWND_BOTTOM
+                InsertAfterHwnd: DesktopNativeMethods.HWND_BOTTOM,
+                IsRaisedDesktop: isRaisedDesktop,
+                WorkerWHwnd: workerTarget
             );
         }
 
@@ -313,6 +327,42 @@ internal static class DesktopAttachHelper
     }
 
     /// <summary>
+    /// On Windows 11 24H2+/26H2 raised-desktop, keeps Progman's WorkerW child at HWND_BOTTOM
+    /// behind our wallpaper window and SHELLDLL_DefView.
+    /// </summary>
+    public static void EnsureWorkerWZOrder(DesktopAttachTarget target)
+    {
+        if (!target.IsRaisedDesktop || target.WorkerWHwnd == 0)
+        {
+            return;
+        }
+
+        var pushed = DesktopNativeMethods.SetWindowPos(
+            target.WorkerWHwnd,
+            DesktopNativeMethods.HWND_BOTTOM,
+            0,
+            0,
+            0,
+            0,
+            DesktopNativeMethods.SWP_NOMOVE | DesktopNativeMethods.SWP_NOSIZE | DesktopNativeMethods.SWP_NOACTIVATE
+        );
+        var err = global::System.Runtime.InteropServices.Marshal.GetLastWin32Error();
+        LogAttach($"EnsureWorkerWZOrder: WorkerW=0x{target.WorkerWHwnd:X} -> HWND_BOTTOM ok={pushed}, lastError={err}");
+    }
+
+    public static bool IsRaisedDesktopActive()
+    {
+        var progman = DesktopNativeMethods.FindWindow("Progman", null);
+        if (progman == 0)
+        {
+            return false;
+        }
+
+        var exStyle = (long)DesktopNativeMethods.GetWindowLongPtr(progman, DesktopNativeMethods.GWL_EXSTYLE);
+        return (exStyle & DesktopNativeMethods.WS_EX_NOREDIRECTIONBITMAP) != 0;
+    }
+
+    /// <summary>
     /// Restores the Windows desktop wallpaper and forces the shell to redraw.
     /// Never throws.
     /// </summary>
@@ -322,12 +372,35 @@ internal static class DesktopAttachHelper
         {
             Logger.Info($"Restoring desktop wallpaper: {originalPath ?? "Default/Refresh"}");
 
-            DesktopNativeMethods.SystemParametersInfo(
-                DesktopNativeMethods.SPI_SETDESKWALLPAPER,
-                0,
-                originalPath,
-                DesktopNativeMethods.SPIF_UPDATEINIFILE | DesktopNativeMethods.SPIF_SENDCHANGE
-            );
+            if (IsRaisedDesktopActive())
+            {
+                // On 24H2+/26H2 raised desktop, calling SPI_SETDESKWALLPAPER with null destroys WorkerW.
+                if (!string.IsNullOrWhiteSpace(originalPath))
+                {
+                    if (!SetStaticWallpaperViaCom(originalPath))
+                    {
+                        DesktopNativeMethods.SystemParametersInfo(
+                            DesktopNativeMethods.SPI_SETDESKWALLPAPER,
+                            0,
+                            originalPath,
+                            DesktopNativeMethods.SPIF_UPDATEINIFILE | DesktopNativeMethods.SPIF_SENDCHANGE
+                        );
+                    }
+                }
+                else
+                {
+                    LogAttach("RestoreWallpaper: skipped null SPI_SETDESKWALLPAPER on raised desktop to preserve WorkerW.");
+                }
+            }
+            else
+            {
+                DesktopNativeMethods.SystemParametersInfo(
+                    DesktopNativeMethods.SPI_SETDESKWALLPAPER,
+                    0,
+                    originalPath,
+                    DesktopNativeMethods.SPIF_UPDATEINIFILE | DesktopNativeMethods.SPIF_SENDCHANGE
+                );
+            }
 
             // Invalidate the desktop to clear any residual frames
             var progman = DesktopNativeMethods.FindWindow("Progman", null);
