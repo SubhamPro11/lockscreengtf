@@ -126,30 +126,63 @@ internal sealed class WallpaperHostWindow : IDisposable
 
         try
         {
+            var insertAfter = target.InsertAfterHwnd != 0 ? target.InsertAfterHwnd : DesktopNativeMethods.HWND_BOTTOM;
             var previousParent = DesktopNativeMethods.SetParent(_hwnd, target.ParentHwnd);
-            Logger.Info($"SetParent to 0x{target.ParentHwnd:X8} (previous parent: 0x{previousParent:X8}) - {target.Description}");
+            var setParentErr = Marshal.GetLastWin32Error();
+            DesktopAttachHelper.LogAttach(
+                $"AttachToDesktop: chosenParent=0x{target.ParentHwnd:X8} ({target.Description}), insertAfter=0x{insertAfter:X}, SetParent={previousParent:X8}, SetParentLastError={setParentErr}"
+            );
 
+            if (previousParent == 0 && setParentErr != 0)
+            {
+                return false;
+            }
+
+            const uint wsBorder = 0x00800000;
             var style = (long)DesktopNativeMethods.GetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_STYLE);
-            style &= ~DesktopNativeMethods.WS_POPUP;
-            style |= DesktopNativeMethods.WS_CHILD;
+            style &= ~(
+                (long)DesktopNativeMethods.WS_POPUP
+                | DesktopNativeMethods.WS_CAPTION
+                | DesktopNativeMethods.WS_THICKFRAME
+                | DesktopNativeMethods.WS_MINIMIZEBOX
+                | DesktopNativeMethods.WS_MAXIMIZEBOX
+                | wsBorder
+            );
+            style |=
+                DesktopNativeMethods.WS_CHILD
+                | DesktopNativeMethods.WS_VISIBLE
+                | DesktopNativeMethods.WS_CLIPCHILDREN
+                | DesktopNativeMethods.WS_CLIPSIBLINGS;
             DesktopNativeMethods.SetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_STYLE, new nint(style));
 
-            // Convert screen coordinates to parent window client coordinates
+            var exStyle = (long)DesktopNativeMethods.GetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_EXSTYLE);
+            exStyle |= DesktopNativeMethods.WS_EX_TOOLWINDOW | DesktopNativeMethods.WS_EX_NOACTIVATE;
+            DesktopNativeMethods.SetWindowLongPtr(_hwnd, DesktopNativeMethods.GWL_EXSTYLE, new nint(exStyle));
+
+            // Convert screen coordinates to parent window client coordinates (handles negative multi-monitor coordinates)
             var pt = new DesktopNativeMethods.POINT { X = left, Y = top };
             DesktopNativeMethods.ScreenToClient(target.ParentHwnd, ref pt);
 
-            DesktopNativeMethods.SetWindowPos(
+            var swpOk = DesktopNativeMethods.SetWindowPos(
                 _hwnd,
-                DesktopNativeMethods.HWND_BOTTOM,
+                insertAfter,
                 pt.X,
                 pt.Y,
                 width,
                 height,
-                DesktopNativeMethods.SWP_NOACTIVATE | DesktopNativeMethods.SWP_SHOWWINDOW
+                DesktopNativeMethods.SWP_NOACTIVATE | DesktopNativeMethods.SWP_SHOWWINDOW | DesktopNativeMethods.SWP_FRAMECHANGED
             );
+            var swpErr = Marshal.GetLastWin32Error();
 
             DesktopNativeMethods.ShowWindow(_hwnd, DesktopNativeMethods.SW_SHOWNOACTIVATE);
-            return true;
+
+            DesktopNativeMethods.GetWindowRect(_hwnd, out var finalRect);
+            var isVisible = DesktopNativeMethods.IsWindowVisible(_hwnd);
+            var dpi = DesktopNativeMethods.GetDpiForWindow(_hwnd);
+            DesktopAttachHelper.LogAttach(
+                $"AttachToDesktop result: SetWindowPos={swpOk} (lastError={swpErr}), clientOrigin=({pt.X},{pt.Y}), finalRect=({finalRect.Left},{finalRect.Top},{finalRect.Right},{finalRect.Bottom}), visible={isVisible}, dpi={dpi}"
+            );
+            return swpOk && isVisible;
         }
         catch (Exception ex)
         {

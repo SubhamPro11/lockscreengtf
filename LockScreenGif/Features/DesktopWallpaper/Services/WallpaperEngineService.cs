@@ -348,6 +348,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 {
                     _currentErrorMessage = line.Length > 5 ? line[5..].Trim() : line;
                     Logger.Error($"Player reported error: {_currentErrorMessage}");
+                    await TryApplyStaticFallbackAsync(effectiveSource);
                     Status = WallpaperEngineStatus.Error;
                     return false;
                 }
@@ -359,6 +360,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                     ? $"Wallpaper player process exited prematurely with code {proc.ExitCode}."
                     : "Timed out waiting for wallpaper player process to initialize.";
                 Logger.Error(_currentErrorMessage);
+                await TryApplyStaticFallbackAsync(effectiveSource);
                 Status = WallpaperEngineStatus.Error;
                 return false;
             }
@@ -517,6 +519,21 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             Logger.Error("Error stopping wallpaper engine", ex);
             Status = WallpaperEngineStatus.Error;
         }
+    }
+
+    private static async Task TryApplyStaticFallbackAsync(string mediaPath)
+    {
+        try
+        {
+            var thumb = await WallpaperMediaHelper.GenerateThumbnailAsync(mediaPath);
+            if (!string.IsNullOrWhiteSpace(thumb) && DesktopAttachHelper.SetStaticWallpaperViaCom(thumb))
+            {
+                return;
+            }
+        }
+        catch { }
+
+        DesktopAttachHelper.RestoreWallpaper(DesktopAttachHelper.GetCurrentWallpaperPath());
     }
 
     private async Task TerminateExistingPlayerAsync()

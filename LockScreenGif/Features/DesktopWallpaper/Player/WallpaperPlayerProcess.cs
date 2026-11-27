@@ -460,15 +460,26 @@ public static class WallpaperPlayerProcess
                 _renderers.Add(renderer);
 
                 // Dock into desktop layer behind icons
+                bool attached;
                 if (_layoutMode == WallpaperLayoutMode.SpanAllMonitors || monitors.Count == 0)
                 {
                     var (left, top, spanW, spanH) = DesktopAttachHelper.GetVirtualScreenBounds();
-                    hostWin.AttachToDesktop(hostTarget, left, top, spanW, spanH);
+                    attached = hostWin.AttachToDesktop(hostTarget, left, top, spanW, spanH);
                 }
                 else
                 {
                     var monitor = monitors[Math.Min(i, monitors.Count - 1)];
-                    hostWin.AttachToDesktop(hostTarget, monitor.Left, monitor.Top, monitor.Width, monitor.Height);
+                    attached = hostWin.AttachToDesktop(hostTarget, monitor.Left, monitor.Top, monitor.Width, monitor.Height);
+                }
+
+                if (!attached)
+                {
+                    await CleanRenderersAsync();
+                    CleanHostWindows();
+                    DesktopAttachHelper.RestoreWallpaper(_originalWallpaperPath);
+                    Console.WriteLine("ERROR Failed to attach wallpaper host window to the desktop layer.");
+                    Console.Out.Flush();
+                    return;
                 }
             }
 

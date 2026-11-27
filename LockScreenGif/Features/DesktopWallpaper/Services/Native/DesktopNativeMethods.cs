@@ -191,6 +191,9 @@ internal static class DesktopNativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWindowVisible(nint hWnd);
 
+    [DllImport("user32.dll")]
+    public static extern uint GetDpiForWindow(nint hWnd);
+
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool DestroyWindow(nint hWnd);
 

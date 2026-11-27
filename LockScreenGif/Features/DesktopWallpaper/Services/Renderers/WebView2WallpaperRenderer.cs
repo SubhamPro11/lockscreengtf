@@ -39,11 +39,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
     );
 
     private CoreWebView2Environment? _environment;
-    private CoreWebView2CompositionController? _compController;
     private CoreWebView2Controller? _controller;
-    private Windows.UI.Composition.Compositor? _compositor;
-    private Windows.UI.Composition.Desktop.DesktopWindowTarget? _desktopWindowTarget;
-    private Windows.UI.Composition.ContainerVisual? _rootVisual;
     private nint _hostHwnd;
     private bool _isPlaying;
     private WallpaperItem? _currentItem;
@@ -93,52 +89,13 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
 
         _environment = await CoreWebView2Environment.CreateWithOptionsAsync(null, UserDataFolder, options);
 
+        // Bind WebView2 directly to the plain Win32 HWND (avoids DesktopWindowTarget composition black screen on 24H2/26H2)
+        EnsureWindowsDispatcherQueue();
         var winRef = CoreWebView2ControllerWindowReference.CreateFromWindowHandle((ulong)hostHwnd);
-        var compCtrl = await _environment.CreateCoreWebView2CompositionControllerAsync(winRef);
-        _compController = compCtrl;
-        _controller = compCtrl;
+        _controller = await _environment.CreateCoreWebView2ControllerAsync(winRef);
 
-        // Bridge composition visual to Win32 host HWND
-        try
-        {
-            EnsureWindowsDispatcherQueue();
-            _compositor = new Windows.UI.Composition.Compositor();
-            nint pUnk = ((WinRT.IWinRTObject)_compositor).NativeObject.ThisPtr;
-            Guid iid = new Guid("29E691FA-4567-4DCA-B319-D0F207EB6807");
-            int hr = Marshal.QueryInterface(pUnk, in iid, out nint pInterop);
-            if (hr == 0 && pInterop != 0)
-            {
-                try
-                {
-                    nint vtable = Marshal.ReadIntPtr(pInterop);
-                    nint methodPtr = Marshal.ReadIntPtr(vtable, 3 * nint.Size);
-                    var createTarget = Marshal.GetDelegateForFunctionPointer<CreateDesktopWindowTargetDelegate>(methodPtr);
-                    hr = createTarget(pInterop, hostHwnd, true, out nint rawTarget);
-                    if (hr == 0 && rawTarget != 0)
-                    {
-                        _desktopWindowTarget = Windows.UI.Composition.Desktop.DesktopWindowTarget.FromAbi(rawTarget);
-                        Marshal.Release(rawTarget);
-
-                        _rootVisual = _compositor.CreateContainerVisual();
-                        _rootVisual.RelativeSizeAdjustment = new global::System.Numerics.Vector2(1.0f, 1.0f);
-                        _desktopWindowTarget.Root = _rootVisual;
-
-                        compCtrl.RootVisualTarget = _rootVisual;
-                    }
-                }
-                finally
-                {
-                    Marshal.Release(pInterop);
-                }
-            }
-        }
-        catch (Exception exBridge)
-        {
-            global::System.Diagnostics.Debug.WriteLine($"Failed to bridge composition target: {exBridge.Message}");
-        }
-
-        _controller.DefaultBackgroundColor = Windows.UI.Color.FromArgb(255, 0, 0, 0);
-        _controller.Bounds = new Windows.Foundation.Rect(left, top, width, height);
+        _controller.DefaultBackgroundColor = Windows.UI.Color.FromArgb(255, 24, 24, 24);
+        _controller.Bounds = new Windows.Foundation.Rect(0, 0, Math.Max(1, width), Math.Max(1, height));
         _controller.IsVisible = true;
 
         var settings = _controller.CoreWebView2.Settings;
@@ -321,7 +278,7 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
     {
         if (_controller != null)
         {
-            _controller.Bounds = new Windows.Foundation.Rect(left, top, width, height);
+            _controller.Bounds = new Windows.Foundation.Rect(0, 0, Math.Max(1, width), Math.Max(1, height));
         }
         return Task.CompletedTask;
     }
@@ -463,26 +420,11 @@ public sealed class WebView2WallpaperRenderer : IWallpaperRenderer
     public Task CloseAsync()
     {
         _isPlaying = false;
-        if (_compController != null)
-        {
-            try
-            {
-                _compController.RootVisualTarget = null;
-            }
-            catch { }
-            _compController = null;
-        }
         if (_controller != null)
         {
             _controller.Close();
             _controller = null;
         }
-        _rootVisual?.Dispose();
-        _rootVisual = null;
-        _desktopWindowTarget?.Dispose();
-        _desktopWindowTarget = null;
-        _compositor?.Dispose();
-        _compositor = null;
         return Task.CompletedTask;
     }
 
