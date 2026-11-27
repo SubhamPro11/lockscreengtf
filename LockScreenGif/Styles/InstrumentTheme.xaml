@@ -144,10 +144,27 @@
             <SolidColorBrush x:Key="GlassSolidBorderBrush" Color="#534341" />
 
             <!-- Button Visual State Brushes -->
-            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#6B4A45" />
-            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#503532" />
+            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#483431" />
+            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#322321" />
             <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="#3B2C2A" />
             <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="#7A6663" />
+
+            <SolidColorBrush x:Key="GlassBtnPrimaryBgBrush" Color="#FFB4A8" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryFgBrush" Color="#3B1812" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHoverBgBrush" Color="#FFC0B6" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryPressedBgBrush" Color="#F0A195" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryBorderBrush" Color="#33FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightBrush" Color="#73FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightHoverBrush" Color="#8CFFFFFF" />
+
+            <SolidColorBrush x:Key="GlassBtnSecondaryBgBrush" Color="#3B2A28" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryFgBrush" Color="#F5DFDC" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBgBrush" Color="#483431" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryPressedBgBrush" Color="#322321" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryBorderBrush" Color="#38FFB4A8" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBorderBrush" Color="#70FFB4A8" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightBrush" Color="#14FFD2C8" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightHoverBrush" Color="#24FFD2C8" />
 
             <LinearGradientBrush x:Key="GlassTopVignetteBrush" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#501A1110" Offset="0.0" />
@@ -296,10 +313,27 @@
             <SolidColorBrush x:Key="GlassSolidBorderBrush" Color="#534341" />
 
             <!-- Button Visual State Brushes -->
-            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#6B4A45" />
-            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#503532" />
+            <SolidColorBrush x:Key="GlassTonalHoverBrush" Color="#483431" />
+            <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="#322321" />
             <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="#3B2C2A" />
             <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="#7A6663" />
+
+            <SolidColorBrush x:Key="GlassBtnPrimaryBgBrush" Color="#FFB4A8" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryFgBrush" Color="#3B1812" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHoverBgBrush" Color="#FFC0B6" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryPressedBgBrush" Color="#F0A195" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryBorderBrush" Color="#33FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightBrush" Color="#73FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightHoverBrush" Color="#8CFFFFFF" />
+
+            <SolidColorBrush x:Key="GlassBtnSecondaryBgBrush" Color="#3B2A28" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryFgBrush" Color="#F5DFDC" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBgBrush" Color="#483431" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryPressedBgBrush" Color="#322321" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryBorderBrush" Color="#38FFB4A8" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBorderBrush" Color="#70FFB4A8" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightBrush" Color="#14FFD2C8" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightHoverBrush" Color="#24FFD2C8" />
 
             <LinearGradientBrush x:Key="GlassTopVignetteBrush" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#501A1110" Offset="0.0" />
@@ -441,6 +475,23 @@
             <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="#E5DDD9" />
             <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="#A4928F" />
 
+            <SolidColorBrush x:Key="GlassBtnPrimaryBgBrush" Color="#904A42" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryFgBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHoverBgBrush" Color="#A2564D" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryPressedBgBrush" Color="#7E3E37" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryBorderBrush" Color="#22FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightBrush" Color="#40FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightHoverBrush" Color="#59FFFFFF" />
+
+            <SolidColorBrush x:Key="GlassBtnSecondaryBgBrush" Color="#F5ECE9" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryFgBrush" Color="#2C1512" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBgBrush" Color="#EADAD6" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryPressedBgBrush" Color="#DFC8C3" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryBorderBrush" Color="#33904A42" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBorderBrush" Color="#66904A42" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightBrush" Color="#80FFFFFF" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightHoverBrush" Color="#B3FFFFFF" />
+
             <LinearGradientBrush x:Key="GlassTopVignetteBrush" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#14000000" Offset="0.0" />
                 <GradientStop Color="#00000000" Offset="1.0" />
@@ -538,6 +589,23 @@
             <SolidColorBrush x:Key="GlassTonalPressedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="GlassButtonDisabledBackgroundBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
             <SolidColorBrush x:Key="GlassButtonDisabledForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+
+            <SolidColorBrush x:Key="GlassBtnPrimaryBgBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHoverBgBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryPressedBgBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="GlassBtnPrimaryHighlightHoverBrush" Color="Transparent" />
+
+            <SolidColorBrush x:Key="GlassBtnSecondaryBgBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryFgBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBgBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryPressedBgBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHoverBorderBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="GlassBtnSecondaryHighlightHoverBrush" Color="Transparent" />
 
             <SolidColorBrush x:Key="GlassTopVignetteBrush" Color="Transparent" />
         </ResourceDictionary>
@@ -814,42 +882,78 @@
     <!-- MATERIAL 3 BUTTON SYSTEM (CONTROL TEMPLATES)                              -->
     <!-- ========================================================================= -->
 
-    <!-- 1. Material 3 Filled Button Template -->
+    <!-- 1. Material 3 Filled / Primary Button Template -->
     <ControlTemplate x:Key="MaterialFilledButtonTemplate" TargetType="Button">
         <Grid x:Name="RootGrid" Background="Transparent">
             <Border x:Name="OuterBorder"
-                    Background="{ThemeResource GlassPrimaryBrush}"
-                    BorderThickness="0"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                <ContentPresenter x:Name="ContentPresenter"
-                                  Content="{TemplateBinding Content}"
-                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                  Padding="{TemplateBinding Padding}"
-                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                  Foreground="{ThemeResource GlassOnPrimaryBrush}"
-                                  FontWeight="{TemplateBinding FontWeight}"
-                                  FontSize="{TemplateBinding FontSize}"
-                                  AutomationProperties.AccessibilityView="Raw" />
+                    Background="{ThemeResource GlassBtnPrimaryBgBrush}"
+                    BorderBrush="{ThemeResource GlassBtnPrimaryBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <CompositeTransform x:Name="BtnTransform" />
+                </Border.RenderTransform>
+                <Grid>
+                    <Border x:Name="TopHighlight"
+                            Height="1"
+                            VerticalAlignment="Top"
+                            Margin="14,0"
+                            CornerRadius="1"
+                            Background="{ThemeResource GlassBtnPrimaryHighlightBrush}"
+                            IsHitTestVisible="False" />
+                    <ContentPresenter x:Name="ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Foreground="{ThemeResource GlassBtnPrimaryFgBrush}"
+                                      FontWeight="{TemplateBinding FontWeight}"
+                                      FontSize="{TemplateBinding FontSize}"
+                                      AutomationProperties.AccessibilityView="Raw" />
+                </Grid>
             </Border>
 
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CommonStates">
-                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Normal">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.18" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.18" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.18" />
+                        </Storyboard>
+                    </VisualState>
                     <VisualState x:Name="PointerOver">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="TranslateY" To="-2" Duration="0:0:0.2">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.15" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.15" />
+                        </Storyboard>
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassEmberHoverBrush}" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassBtnPrimaryHoverBgBrush}" />
+                            <Setter Target="TopHighlight.Background" Value="{ThemeResource GlassBtnPrimaryHighlightHoverBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.08" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleX" To="0.98" Duration="0:0:0.08" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleY" To="0.98" Duration="0:0:0.08" />
+                        </Storyboard>
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassEmberPressedBrush}" />
-                            <Setter Target="OuterBorder.Margin" Value="0,1,0,-1" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassBtnPrimaryPressedBgBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassButtonDisabledBackgroundBrush}" />
+                            <Setter Target="OuterBorder.BorderBrush" Value="Transparent" />
+                            <Setter Target="TopHighlight.Opacity" Value="0" />
                             <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassButtonDisabledForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
@@ -858,42 +962,79 @@
         </Grid>
     </ControlTemplate>
 
-    <!-- 2. Material 3 Tonal Button Template -->
+    <!-- 2. Material 3 Tonal / Secondary Button Template -->
     <ControlTemplate x:Key="MaterialTonalButtonTemplate" TargetType="Button">
         <Grid x:Name="RootGrid" Background="Transparent">
             <Border x:Name="OuterBorder"
-                    Background="{ThemeResource GlassSecondaryContainerBrush}"
-                    BorderThickness="0"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                <ContentPresenter x:Name="ContentPresenter"
-                                  Content="{TemplateBinding Content}"
-                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                  Padding="{TemplateBinding Padding}"
-                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                  Foreground="{ThemeResource GlassOnSecondaryContainerBrush}"
-                                  FontWeight="{TemplateBinding FontWeight}"
-                                  FontSize="{TemplateBinding FontSize}"
-                                  AutomationProperties.AccessibilityView="Raw" />
+                    Background="{ThemeResource GlassBtnSecondaryBgBrush}"
+                    BorderBrush="{ThemeResource GlassBtnSecondaryBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <CompositeTransform x:Name="BtnTransform" />
+                </Border.RenderTransform>
+                <Grid>
+                    <Border x:Name="TopHighlight"
+                            Height="1"
+                            VerticalAlignment="Top"
+                            Margin="14,0"
+                            CornerRadius="1"
+                            Background="{ThemeResource GlassBtnSecondaryHighlightBrush}"
+                            IsHitTestVisible="False" />
+                    <ContentPresenter x:Name="ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Foreground="{ThemeResource GlassBtnSecondaryFgBrush}"
+                                      FontWeight="{TemplateBinding FontWeight}"
+                                      FontSize="{TemplateBinding FontSize}"
+                                      AutomationProperties.AccessibilityView="Raw" />
+                </Grid>
             </Border>
 
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CommonStates">
-                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Normal">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.18" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.18" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.18" />
+                        </Storyboard>
+                    </VisualState>
                     <VisualState x:Name="PointerOver">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="TranslateY" To="-2" Duration="0:0:0.2">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.15" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.15" />
+                        </Storyboard>
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassTonalHoverBrush}" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassBtnSecondaryHoverBgBrush}" />
+                            <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource GlassBtnSecondaryHoverBorderBrush}" />
+                            <Setter Target="TopHighlight.Background" Value="{ThemeResource GlassBtnSecondaryHighlightHoverBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Pressed">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.08" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleX" To="0.98" Duration="0:0:0.08" />
+                            <DoubleAnimation Storyboard.TargetName="BtnTransform" Storyboard.TargetProperty="ScaleY" To="0.98" Duration="0:0:0.08" />
+                        </Storyboard>
                         <VisualState.Setters>
-                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassTonalPressedBrush}" />
-                            <Setter Target="OuterBorder.Margin" Value="0,1,0,-1" />
+                            <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassBtnSecondaryPressedBgBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Target="OuterBorder.Background" Value="{ThemeResource GlassButtonDisabledBackgroundBrush}" />
+                            <Setter Target="OuterBorder.BorderBrush" Value="Transparent" />
+                            <Setter Target="TopHighlight.Opacity" Value="0" />
                             <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource GlassButtonDisabledForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
@@ -1010,14 +1151,14 @@
     <!-- MATERIAL 3 BUTTON STYLES (PILL GEOMETRY)                                  -->
     <!-- ========================================================================= -->
 
-    <!-- Material 3 Filled Button (Default height 40) -->
+    <!-- Material 3 Filled / Primary Button (Height 46, Padding 24,0) -->
     <Style x:Key="MaterialFilledButtonStyle" TargetType="Button">
         <Setter Property="Template" Value="{StaticResource MaterialFilledButtonTemplate}" />
         <Setter Property="CornerRadius" Value="999" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Padding" Value="20,0" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Padding" Value="24,0" />
         <Setter Property="FontFamily" Value="{StaticResource GlassFontUI}" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="14.5" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -1027,18 +1168,18 @@
     <!-- Material 3 Filled Large CTA Button (Height 56, FontSize 16) -->
     <Style x:Key="MaterialFilledButtonLargeStyle" TargetType="Button" BasedOn="{StaticResource MaterialFilledButtonStyle}">
         <Setter Property="Height" Value="56" />
-        <Setter Property="Padding" Value="24,0" />
+        <Setter Property="Padding" Value="26,0" />
         <Setter Property="FontSize" Value="16" />
     </Style>
 
-    <!-- Material 3 Tonal Button (Default height 40) -->
+    <!-- Material 3 Tonal / Secondary Button (Height 46, Padding 24,0) -->
     <Style x:Key="MaterialTonalButtonStyle" TargetType="Button">
         <Setter Property="Template" Value="{StaticResource MaterialTonalButtonTemplate}" />
         <Setter Property="CornerRadius" Value="999" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Padding" Value="20,0" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Padding" Value="24,0" />
         <Setter Property="FontFamily" Value="{StaticResource GlassFontUI}" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="14.5" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -1048,25 +1189,25 @@
     <!-- Material 3 Tonal Large Button (Height 56, FontSize 16) -->
     <Style x:Key="MaterialTonalButtonLargeStyle" TargetType="Button" BasedOn="{StaticResource MaterialTonalButtonStyle}">
         <Setter Property="Height" Value="56" />
-        <Setter Property="Padding" Value="24,0" />
+        <Setter Property="Padding" Value="26,0" />
         <Setter Property="FontSize" Value="16" />
     </Style>
 
-    <!-- Material 3 Outlined Button (Default height 40) -->
+    <!-- Material 3 Outlined Button (Height 46) -->
     <Style x:Key="MaterialOutlinedButtonStyle" TargetType="Button">
         <Setter Property="Template" Value="{StaticResource MaterialOutlinedButtonTemplate}" />
         <Setter Property="CornerRadius" Value="999" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Padding" Value="20,0" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Padding" Value="24,0" />
         <Setter Property="FontFamily" Value="{StaticResource GlassFontUI}" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="14.5" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="UseLayoutRounding" Value="True" />
     </Style>
 
-    <!-- Material 3 Text Button (Default height 40) -->
+    <!-- Material 3 Text Button (Height 40) -->
     <Style x:Key="MaterialTextButtonStyle" TargetType="Button">
         <Setter Property="Template" Value="{StaticResource MaterialTextButtonTemplate}" />
         <Setter Property="CornerRadius" Value="999" />

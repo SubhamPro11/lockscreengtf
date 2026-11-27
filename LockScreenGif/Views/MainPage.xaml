@@ -98,7 +98,7 @@
                                                     AutomationProperties.Name="Choose video file to animate"
                                                     AccessKey="V" ToolTipService.ToolTip="Select a video file to trim and animate (Alt+V)">
                                                 <StackPanel Orientation="Horizontal" Spacing="10">
-                                                    <FontIcon Glyph="&#xE714;" FontSize="16" Foreground="{ThemeResource GlassOnPrimaryBrush}" />
+                                                    <FontIcon Glyph="&#xE714;" FontSize="16" Foreground="{ThemeResource GlassBtnPrimaryFgBrush}" />
                                                     <TextBlock Text="Browse videos…" FontWeight="SemiBold" FontSize="15" />
                                                 </StackPanel>
                                             </Button>
@@ -106,7 +106,7 @@
                                                     AutomationProperties.Name="Choose existing GIF file to animate"
                                                     AccessKey="G" ToolTipService.ToolTip="Select an existing animated GIF file (Alt+G)">
                                                 <StackPanel Orientation="Horizontal" Spacing="10">
-                                                    <FontIcon Glyph="&#xEB9F;" FontSize="16" Foreground="{ThemeResource GlassOnSecondaryContainerBrush}" />
+                                                    <FontIcon Glyph="&#xEB9F;" FontSize="16" Foreground="{ThemeResource GlassBtnSecondaryFgBrush}" />
                                                     <TextBlock Text="Browse GIFs…" FontWeight="SemiBold" FontSize="15" />
                                                 </StackPanel>
                                             </Button>
