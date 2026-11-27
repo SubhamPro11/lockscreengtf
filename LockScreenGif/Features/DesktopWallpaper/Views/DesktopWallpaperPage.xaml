@@ -54,7 +54,14 @@
                          IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
                          Severity="Error"
                          Title="Desktop wallpaper notice"
-                         Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
+                         Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}">
+                    <InfoBar.ActionButton>
+                        <Button Content="Retry"
+                                Command="{x:Bind ViewModel.ApplyWallpaperCommand}"
+                                Style="{StaticResource MaterialTonalButtonStyle}"
+                                AutomationProperties.Name="Retry applying wallpaper" />
+                    </InfoBar.ActionButton>
+                </InfoBar>
 
                 <InfoBar x:Name="SyncNoticeBanner"
                          IsOpen="{x:Bind ViewModel.HasSyncNotice, Mode=OneWay}"
@@ -63,10 +70,14 @@
                          Message="{x:Bind ViewModel.SyncNotice, Mode=OneWay}"
                          IsClosable="True" />
 
-                <ProgressBar IsIndeterminate="True"
-                             Visibility="{x:Bind ViewModel.BusyVisibility, Mode=OneWay}"
-                             Foreground="{ThemeResource GlassPrimaryBrush}"
-                             HorizontalAlignment="Stretch" />
+                <StackPanel Spacing="6" Visibility="{x:Bind ViewModel.BusyVisibility, Mode=OneWay}">
+                    <ProgressBar IsIndeterminate="True"
+                                 Foreground="{ThemeResource GlassPrimaryBrush}"
+                                 HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Preparing and rendering wallpaper…"
+                               FontSize="12"
+                               Foreground="{ThemeResource GlassTextSecondaryBrush}" />
+                </StackPanel>
 
                 <!-- A: Drop Target State (Shown when no media loaded) -->
                 <Grid Visibility="{x:Bind ViewModel.MediaPlaceholderVisibility, Mode=OneWay}">

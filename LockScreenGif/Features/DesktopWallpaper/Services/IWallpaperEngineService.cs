@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.Models;
 
@@ -27,7 +28,7 @@ public interface IWallpaperEngineService
     bool IsRunning { get; }
 
     Task<bool> StartAsync();
-    Task<bool> ApplyWallpaperAsync(WallpaperItem item);
+    Task<bool> ApplyWallpaperAsync(WallpaperItem item, CancellationToken cancellationToken = default);
     Task RestartAsync();
     Task StopAsync();
     Task PauseAsync();

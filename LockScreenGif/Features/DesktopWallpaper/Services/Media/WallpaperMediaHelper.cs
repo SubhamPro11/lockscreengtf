@@ -3,22 +3,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.Services.Native;
 
 namespace LockscreenGif.Features.DesktopWallpaper.Services.Media;
 
 /// <summary>
-/// Helper for media format validation, remuxing unsupported containers (MKV/AVI/MOV) via FFmpeg,
+/// Helper for media format validation, caching, remuxing unsupported containers (MKV/AVI/MOV) via FFmpeg,
 /// and thumbnail generation for the wallpaper library.
 /// </summary>
 public static class WallpaperMediaHelper
 {
-    private static readonly string CacheDirectory = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "LockscreenGif",
-        "WallpaperCache"
-    );
+    public static string WallpaperCacheDirectory { get; } =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LockscreenGif", "wallpaper-cache");
+
+    private static string CacheDirectory => WallpaperCacheDirectory;
 
     internal static Func<string>? FfmpegPathResolver { get; set; }
 
@@ -67,10 +67,73 @@ public static class WallpaperMediaHelper
     }
 
     /// <summary>
+    /// Copies a local source file into %LocalAppData%\LockscreenGif\wallpaper-cache using read-only
+    /// shared access so the user's original file is never locked during rendering or FFmpeg processing.
+    /// </summary>
+    public static async Task<string> CopySourceToWallpaperCacheAsync(string sourcePath, CancellationToken cancellationToken = default)
+    {
+        if (
+            string.IsNullOrWhiteSpace(sourcePath)
+            || sourcePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || sourcePath.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            || !File.Exists(sourcePath)
+        )
+        {
+            return sourcePath;
+        }
+
+        var fullSource = Path.GetFullPath(sourcePath);
+        var fullCacheDir = Path.GetFullPath(CacheDirectory);
+        if (fullSource.StartsWith(fullCacheDir, StringComparison.OrdinalIgnoreCase))
+        {
+            return sourcePath;
+        }
+
+        Directory.CreateDirectory(CacheDirectory);
+
+        var fileHash = ComputeFileHash(sourcePath);
+        var ext = Path.GetExtension(sourcePath);
+        var cachedPath = Path.Combine(CacheDirectory, $"src_{fileHash}{ext}");
+
+        if (File.Exists(cachedPath) && new FileInfo(cachedPath).Length > 0)
+        {
+            return cachedPath;
+        }
+
+        var tempPath = $"{cachedPath}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            await using (
+                var src = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 81920, useAsync: true)
+            )
+            await using (
+                var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true)
+            )
+            {
+                await src.CopyToAsync(dst, cancellationToken);
+            }
+
+            File.Move(tempPath, cachedPath, overwrite: true);
+            return cachedPath;
+        }
+        finally
+        {
+            try
+            {
+                if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
+            }
+            catch { }
+        }
+    }
+
+    /// <summary>
     /// Remuxes or converts an unsupported container (e.g. MKV/AVI/MOV) into an MP4 loop file
     /// in the local wallpaper cache directory.
     /// </summary>
-    public static async Task<string> PrepareMediaForPlaybackAsync(string inputFilePath)
+    public static async Task<string> PrepareMediaForPlaybackAsync(string inputFilePath, CancellationToken cancellationToken = default)
     {
         if (!NeedsRemuxOrConversion(inputFilePath))
         {
@@ -96,79 +159,89 @@ public static class WallpaperMediaHelper
 
         Logger.Info($"Remuxing/transcoding {inputFilePath} to {cachedMp4} using FFmpeg...");
 
-        var tempOutputFile = cachedMp4 + ".tmp";
-        if (File.Exists(tempOutputFile))
+        var tempOutputFile = $"{cachedMp4}.{Guid.NewGuid():N}.tmp.mp4";
+        try
         {
-            File.Delete(tempOutputFile);
+            // Try fast remux first (-c copy)
+            var fastRemuxSuccess = await RunFfmpegAsync(
+                ffmpeg,
+                (string[])["-y", "-i", inputFilePath, "-c", "copy", "-movflags", "+faststart", tempOutputFile],
+                cancellationToken
+            );
+
+            if (fastRemuxSuccess && File.Exists(tempOutputFile) && new FileInfo(tempOutputFile).Length > 1024)
+            {
+                File.Move(tempOutputFile, cachedMp4, true);
+                Logger.Info($"Fast remux succeeded: {cachedMp4}");
+                return cachedMp4;
+            }
+
+            // Fallback: Transcode video to H.264 (downscaling to display native resolution if higher) and audio to AAC
+            Logger.Info("Fast remux failed or codec incompatible; transcoding to H.264/AAC with smart display scaling...");
+
+            var screenW = DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_CXSCREEN);
+            var screenH = DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_CYSCREEN);
+            if (screenW <= 0)
+            {
+                screenW = 1920;
+            }
+            if (screenH <= 0)
+            {
+                screenH = 1080;
+            }
+
+            var scaleFilter =
+                $"scale='min({screenW},iw)':'min({screenH},ih)':force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2";
+
+            var transcodeSuccess = await RunFfmpegAsync(
+                ffmpeg,
+                (string[])
+                    [
+                        "-y",
+                        "-i",
+                        inputFilePath,
+                        "-c:v",
+                        "libx264",
+                        "-preset",
+                        "ultrafast",
+                        "-crf",
+                        "22",
+                        "-vf",
+                        scaleFilter,
+                        "-pix_fmt",
+                        "yuv420p",
+                        "-c:a",
+                        "aac",
+                        "-b:a",
+                        "192k",
+                        "-movflags",
+                        "+faststart",
+                        tempOutputFile,
+                    ],
+                cancellationToken
+            );
+
+            if (transcodeSuccess && File.Exists(tempOutputFile))
+            {
+                File.Move(tempOutputFile, cachedMp4, true);
+                Logger.Info($"Transcode succeeded: {cachedMp4}");
+                return cachedMp4;
+            }
+
+            Logger.Warn("Transcode failed; falling back to original file.");
+            return inputFilePath;
         }
-
-        // Try fast remux first (-c copy)
-        var fastRemuxSuccess = await RunFfmpegAsync(
-            ffmpeg,
-            (string[])["-y", "-i", inputFilePath, "-c", "copy", "-movflags", "+faststart", tempOutputFile]
-        );
-
-        if (fastRemuxSuccess && File.Exists(tempOutputFile) && new FileInfo(tempOutputFile).Length > 1024)
+        finally
         {
-            File.Move(tempOutputFile, cachedMp4, true);
-            Logger.Info($"Fast remux succeeded: {cachedMp4}");
-            return cachedMp4;
+            try
+            {
+                if (File.Exists(tempOutputFile))
+                {
+                    File.Delete(tempOutputFile);
+                }
+            }
+            catch { }
         }
-
-        // Fallback: Transcode video to H.264 (downscaling to display native resolution if higher) and audio to AAC
-        Logger.Info("Fast remux failed or codec incompatible; transcoding to H.264/AAC with smart display scaling...");
-
-        // Smart native display scaling: cap at monitor resolution so 4K videos on 1080p monitors don't waste 75% GPU/CPU
-        var screenW = DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_CXSCREEN);
-        var screenH = DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_CYSCREEN);
-        if (screenW <= 0)
-        {
-            screenW = 1920;
-        }
-        if (screenH <= 0)
-        {
-            screenH = 1080;
-        }
-
-        var scaleFilter =
-            $"scale='min({screenW},iw)':'min({screenH},ih)':force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2";
-
-        var transcodeSuccess = await RunFfmpegAsync(
-            ffmpeg,
-            (string[])
-                [
-                    "-y",
-                    "-i",
-                    inputFilePath,
-                    "-c:v",
-                    "libx264",
-                    "-preset",
-                    "ultrafast",
-                    "-crf",
-                    "22",
-                    "-vf",
-                    scaleFilter,
-                    "-pix_fmt",
-                    "yuv420p",
-                    "-c:a",
-                    "aac",
-                    "-b:a",
-                    "192k",
-                    "-movflags",
-                    "+faststart",
-                    tempOutputFile,
-                ]
-        );
-
-        if (transcodeSuccess && File.Exists(tempOutputFile))
-        {
-            File.Move(tempOutputFile, cachedMp4, true);
-            Logger.Info($"Transcode succeeded: {cachedMp4}");
-            return cachedMp4;
-        }
-
-        Logger.Warn("Transcode failed; falling back to original file.");
-        return inputFilePath;
     }
 
     /// <summary>
@@ -210,7 +283,7 @@ public static class WallpaperMediaHelper
         return success && File.Exists(thumbPath) ? thumbPath : null;
     }
 
-    private static async Task<bool> RunFfmpegAsync(string ffmpegExe, string[] arguments)
+    private static async Task<bool> RunFfmpegAsync(string ffmpegExe, string[] arguments, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -233,8 +306,24 @@ public static class WallpaperMediaHelper
                 return false;
             }
 
-            await process.WaitForExitAsync();
+            using var reg = cancellationToken.Register(() =>
+            {
+                try
+                {
+                    if (!process.HasExited)
+                    {
+                        process.Kill(true);
+                    }
+                }
+                catch { }
+            });
+
+            await process.WaitForExitAsync(cancellationToken);
             return process.ExitCode == 0;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

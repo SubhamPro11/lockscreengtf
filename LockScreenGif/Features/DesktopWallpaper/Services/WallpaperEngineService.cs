@@ -6,11 +6,13 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LockscreenGif.Features.DesktopWallpaper.Models;
 using LockscreenGif.Features.DesktopWallpaper.Player;
 using LockscreenGif.Features.DesktopWallpaper.Services.Audio;
 using LockscreenGif.Features.DesktopWallpaper.Services.Input;
+using LockscreenGif.Features.DesktopWallpaper.Services.Media;
 using LockscreenGif.Features.DesktopWallpaper.Services.Native;
 using LockscreenGif.Features.DesktopWallpaper.Services.Performance;
 
@@ -25,11 +27,11 @@ namespace LockscreenGif.Features.DesktopWallpaper.Services;
 public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposable
 {
     private readonly object _lock = new();
+    private readonly SemaphoreSlim _renderGate = new(1, 1);
+    private readonly SemaphoreSlim _ipcGate = new(1, 1);
     private readonly DesktopInputForwarder _inputForwarder = new();
 
     private Process? _playerProcess;
-    private StreamWriter? _playerStdin;
-    private StreamReader? _playerStdout;
 
     private readonly string _pidFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -132,31 +134,40 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         CheckExistingPlayerProcess();
     }
 
+    private static string? ReadPidFileText(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var reader = new StreamReader(fs, Encoding.UTF8);
+        return reader.ReadToEnd().Trim();
+    }
+
     private void CheckExistingPlayerProcess()
     {
         try
         {
-            if (File.Exists(_pidFilePath))
+            var content = ReadPidFileText(_pidFilePath);
+            if (!string.IsNullOrEmpty(content) && int.TryParse(content, out var pid))
             {
-                var content = File.ReadAllText(_pidFilePath).Trim();
-                if (int.TryParse(content, out var pid))
+                try
                 {
-                    try
+                    var proc = Process.GetProcessById(pid);
+                    if (!proc.HasExited && proc.ProcessName.Contains("LockscreenGif", StringComparison.OrdinalIgnoreCase))
                     {
-                        var proc = Process.GetProcessById(pid);
-                        if (!proc.HasExited && proc.ProcessName.Contains("LockscreenGif", StringComparison.OrdinalIgnoreCase))
-                        {
-                            _playerProcess = proc;
-                            Status = WallpaperEngineStatus.Running;
-                            _performanceMonitor.Start();
-                            Logger.Info($"Detected active background wallpaper player process (PID {pid}).");
-                        }
+                        _playerProcess = proc;
+                        Status = WallpaperEngineStatus.Running;
+                        _performanceMonitor.Start();
+                        Logger.Info($"Detected active background wallpaper player process (PID {pid}).");
                     }
-                    catch (ArgumentException)
-                    {
-                        // Stale PID file
-                        File.Delete(_pidFilePath);
-                    }
+                }
+                catch (ArgumentException)
+                {
+                    // Stale PID file
+                    File.Delete(_pidFilePath);
                 }
             }
         }
@@ -200,7 +211,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         return false;
     }
 
-    public async Task<bool> ApplyWallpaperAsync(WallpaperItem item)
+    public async Task<bool> ApplyWallpaperAsync(WallpaperItem item, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(item);
 
@@ -211,12 +222,21 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             );
         }
 
-        _currentWallpaper = item;
-        Status = WallpaperEngineStatus.Starting;
-        _currentErrorMessage = null;
-
+        await _renderGate.WaitAsync(cancellationToken);
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            _currentWallpaper = item;
+            Status = WallpaperEngineStatus.Starting;
+            _currentErrorMessage = null;
+
+            var effectiveSource = item.SourcePathOrUrl;
+            if (item.Type != WallpaperType.Application)
+            {
+                effectiveSource = await WallpaperMediaHelper.CopySourceToWallpaperCacheAsync(item.SourcePathOrUrl, cancellationToken);
+            }
+
             if (!_originalWallpaperRecorded)
             {
                 _originalWallpaperPath = DesktopAttachHelper.GetCurrentWallpaperPath();
@@ -235,18 +255,22 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
 
             _activeTargetDescription = target.Description;
 
-            // If an isolated player is already alive, send LOAD command
+            // If an isolated player is already alive, send LOAD command over synchronized named pipe
             if (IsPlayerProcessAlive())
             {
-                Logger.Info($"Sending LOAD command to existing player process: {item.SourcePathOrUrl}");
-                var response = await SendCommandAsync($"LOAD {item.SourcePathOrUrl}", timeoutMs: 5000);
+                Logger.Info($"Sending LOAD command to existing player process: {effectiveSource}");
+                var response = await SendCommandAsync($"LOAD {effectiveSource}", timeoutMs: 5000, cancellationToken);
                 if (response != null && !response.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
                 {
-                    await SendCommandAsync($"VOLUME {item.Volume.ToString("F2", CultureInfo.InvariantCulture)}");
-                    await SendCommandAsync($"MUTE {(item.IsMuted ? "true" : "false")}");
-                    await SendCommandAsync($"LOOP {(item.Loop ? "true" : "false")}");
-                    await SendCommandAsync($"FIT {item.FitMode}");
-                    await SendCommandAsync($"SPEED {item.PlaybackSpeed.ToString("F2", CultureInfo.InvariantCulture)}");
+                    await SendCommandAsync($"VOLUME {item.Volume.ToString("F2", CultureInfo.InvariantCulture)}", 3000, cancellationToken);
+                    await SendCommandAsync($"MUTE {(item.IsMuted ? "true" : "false")}", 3000, cancellationToken);
+                    await SendCommandAsync($"LOOP {(item.Loop ? "true" : "false")}", 3000, cancellationToken);
+                    await SendCommandAsync($"FIT {item.FitMode}", 3000, cancellationToken);
+                    await SendCommandAsync(
+                        $"SPEED {item.PlaybackSpeed.ToString("F2", CultureInfo.InvariantCulture)}",
+                        3000,
+                        cancellationToken
+                    );
 
                     Status = WallpaperEngineStatus.Running;
                     _performanceMonitor.Start();
@@ -255,8 +279,9 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             }
 
             // Otherwise, spawn new isolated player process
-            Logger.Info($"Launching isolated wallpaper player process for: {item.SourcePathOrUrl}");
+            Logger.Info($"Launching isolated wallpaper player process for: {effectiveSource}");
             await TerminateExistingPlayerAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
             var exePath = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName;
             if (string.IsNullOrWhiteSpace(exePath) || !File.Exists(exePath))
@@ -268,7 +293,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             }
 
             var args =
-                $"--wallpaper-player --path \"{item.SourcePathOrUrl}\" "
+                $"--wallpaper-player --path \"{effectiveSource}\" "
                 + $"--volume {item.Volume.ToString("F2", CultureInfo.InvariantCulture)} "
                 + $"--muted {(item.IsMuted ? "true" : "false")} "
                 + $"--loop {(item.Loop ? "true" : "false")} "
@@ -281,7 +306,6 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
                 FileName = exePath,
                 Arguments = args,
                 UseShellExecute = false,
-                RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
                 WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
@@ -297,36 +321,30 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             }
 
             _playerProcess = proc;
-            _playerStdin = proc.StandardInput;
-            _playerStdout = proc.StandardOutput;
 
-            // Wait up to 15 seconds for READY notification
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+            using var stdout = proc.StandardOutput;
             string? readyLine = null;
-            while (!cts.IsCancellationRequested)
+            while (!linkedCts.IsCancellationRequested)
             {
-                var readTask = _playerStdout.ReadLineAsync(cts.Token).AsTask();
-                var completedTask = await Task.WhenAny(readTask, Task.Delay(1000, cts.Token));
-                if (completedTask == readTask)
+                var line = await stdout.ReadLineAsync(linkedCts.Token);
+                if (line == null)
                 {
-                    var line = await readTask;
-                    if (line == null)
-                    {
-                        break;
-                    }
-                    line = line.Trim();
-                    if (line.Equals("READY", StringComparison.OrdinalIgnoreCase))
-                    {
-                        readyLine = line;
-                        break;
-                    }
-                    if (line.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
-                    {
-                        _currentErrorMessage = line.Length > 5 ? line[5..].Trim() : line;
-                        Logger.Error($"Player reported error: {_currentErrorMessage}");
-                        Status = WallpaperEngineStatus.Error;
-                        return false;
-                    }
+                    break;
+                }
+                line = line.Trim();
+                if (line.Equals("READY", StringComparison.OrdinalIgnoreCase))
+                {
+                    readyLine = line;
+                    break;
+                }
+                if (line.StartsWith("ERROR", StringComparison.OrdinalIgnoreCase))
+                {
+                    _currentErrorMessage = line.Length > 5 ? line[5..].Trim() : line;
+                    Logger.Error($"Player reported error: {_currentErrorMessage}");
+                    Status = WallpaperEngineStatus.Error;
+                    return false;
                 }
             }
 
@@ -345,12 +363,30 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
             Logger.Info($"Wallpaper '{item.Title}' applied and playing via isolated background process.");
             return true;
         }
+        catch (OperationCanceledException)
+        {
+            await TerminateExistingPlayerAsync();
+            Status = WallpaperEngineStatus.Stopped;
+            throw;
+        }
+        catch (IOException ex)
+        {
+            _currentErrorMessage =
+                "Could not read or access the wallpaper file because it is in use by another program. Close any program using the file and try again.";
+            Logger.Error(_currentErrorMessage, ex);
+            Status = WallpaperEngineStatus.Error;
+            return false;
+        }
         catch (Exception ex)
         {
             _currentErrorMessage = $"Failed to render wallpaper: {ex.Message}";
             Logger.Error(_currentErrorMessage, ex);
             Status = WallpaperEngineStatus.Error;
             return false;
+        }
+        finally
+        {
+            _renderGate.Release();
         }
     }
 
@@ -363,28 +399,25 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
 
         try
         {
-            if (File.Exists(_pidFilePath))
+            var content = ReadPidFileText(_pidFilePath);
+            if (!string.IsNullOrEmpty(content) && int.TryParse(content, out var pid))
             {
-                var content = File.ReadAllText(_pidFilePath).Trim();
-                if (int.TryParse(content, out var pid))
+                try
+                {
+                    var proc = Process.GetProcessById(pid);
+                    if (!proc.HasExited && proc.ProcessName.Contains("LockscreenGif", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _playerProcess = proc;
+                        return true;
+                    }
+                }
+                catch (ArgumentException)
                 {
                     try
                     {
-                        var proc = Process.GetProcessById(pid);
-                        if (!proc.HasExited && proc.ProcessName.Contains("LockscreenGif", StringComparison.OrdinalIgnoreCase))
-                        {
-                            _playerProcess = proc;
-                            return true;
-                        }
+                        File.Delete(_pidFilePath);
                     }
-                    catch (ArgumentException)
-                    {
-                        try
-                        {
-                            File.Delete(_pidFilePath);
-                        }
-                        catch { }
-                    }
+                    catch { }
                 }
             }
         }
@@ -396,56 +429,43 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         return false;
     }
 
-    private async Task<string?> SendCommandAsync(string command, int timeoutMs = 3000)
+    private async Task<string?> SendCommandAsync(string command, int timeoutMs = 3000, CancellationToken cancellationToken = default)
     {
-        // 1. Stdin
-        if (_playerStdin != null && _playerProcess != null && !_playerProcess.HasExited)
-        {
-            try
-            {
-                await _playerStdin.WriteLineAsync(command);
-                await _playerStdin.FlushAsync();
-                if (_playerStdout != null)
-                {
-                    var readTask = _playerStdout.ReadLineAsync();
-                    if (await Task.WhenAny(readTask, Task.Delay(timeoutMs)) == readTask)
-                    {
-                        return await readTask;
-                    }
-                }
-                return "OK";
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn($"Failed to send command via stdin: {ex.Message}");
-            }
-        }
-
-        // 2. Named pipe fallback
+        await _ipcGate.WaitAsync(cancellationToken);
         try
         {
-            using var pipe = new NamedPipeClientStream(".", WallpaperPlayerProcess.NamedPipeName, PipeDirection.InOut);
-            var connectTask = pipe.ConnectAsync(timeoutMs);
-            if (await Task.WhenAny(connectTask, Task.Delay(timeoutMs)) == connectTask)
-            {
-                using var writer = new StreamWriter(pipe, Encoding.UTF8, 1024, leaveOpen: true) { AutoFlush = true };
-                using var reader = new StreamReader(pipe, Encoding.UTF8, false, 1024, leaveOpen: true);
+            await using var pipe = new NamedPipeClientStream(
+                ".",
+                WallpaperPlayerProcess.NamedPipeName,
+                PipeDirection.InOut,
+                PipeOptions.Asynchronous
+            );
+            using var timeoutCts = new CancellationTokenSource(timeoutMs);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
-                await writer.WriteLineAsync(command);
-                var responseTask = reader.ReadLineAsync();
-                if (await Task.WhenAny(responseTask, Task.Delay(timeoutMs)) == responseTask)
-                {
-                    return await responseTask;
-                }
-                return "OK";
-            }
+            await pipe.ConnectAsync(linkedCts.Token);
+
+            await using var writer = new StreamWriter(pipe, Encoding.UTF8, 1024, leaveOpen: true) { AutoFlush = true };
+            using var reader = new StreamReader(pipe, Encoding.UTF8, false, 1024, leaveOpen: true);
+
+            await writer.WriteLineAsync(command.AsMemory(), linkedCts.Token);
+            var response = await reader.ReadLineAsync(linkedCts.Token);
+            return response ?? "OK";
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            Logger.Warn($"Timed out sending command '{command}' via named pipe.");
+            return null;
         }
         catch (Exception ex)
         {
             Logger.Warn($"Failed to send command via named pipe: {ex.Message}");
+            return null;
         }
-
-        return null;
+        finally
+        {
+            _ipcGate.Release();
+        }
     }
 
     public async Task RestartAsync()
@@ -494,38 +514,46 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         }
     }
 
-    private Task TerminateExistingPlayerAsync()
+    private async Task TerminateExistingPlayerAsync()
     {
         try
         {
-            if (_playerProcess != null && !_playerProcess.HasExited)
+            if (_playerProcess != null)
             {
-                if (!_playerProcess.WaitForExit(1000))
+                if (!_playerProcess.HasExited)
                 {
-                    _playerProcess.Kill(true);
+                    using var waitCts = new CancellationTokenSource(1000);
+                    try
+                    {
+                        await _playerProcess.WaitForExitAsync(waitCts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        _playerProcess.Kill(true);
+                    }
                 }
                 _playerProcess.Dispose();
                 _playerProcess = null;
             }
 
-            if (File.Exists(_pidFilePath))
+            var content = ReadPidFileText(_pidFilePath);
+            if (!string.IsNullOrEmpty(content) && int.TryParse(content, out var pid))
             {
-                var content = File.ReadAllText(_pidFilePath).Trim();
-                if (int.TryParse(content, out var pid))
+                try
                 {
-                    try
+                    var proc = Process.GetProcessById(pid);
+                    if (!proc.HasExited)
                     {
-                        var proc = Process.GetProcessById(pid);
-                        if (!proc.HasExited)
-                        {
-                            proc.Kill(true);
-                        }
-                    }
-                    catch
-                    {
-                        // Already exited
+                        proc.Kill(true);
                     }
                 }
+                catch
+                {
+                    // Already exited
+                }
+            }
+            if (File.Exists(_pidFilePath))
+            {
                 File.Delete(_pidFilePath);
             }
         }
@@ -533,8 +561,6 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
         {
             Logger.Warn($"Failed to cleanly terminate existing player process: {ex.Message}");
         }
-
-        return Task.CompletedTask;
     }
 
     public async Task PauseAsync()
@@ -620,7 +646,7 @@ public sealed class WallpaperEngineService : IWallpaperEngineService, IDisposabl
 
         // Note: Closing the main app does NOT kill the player process.
         // As per the Lively Wallpaper model, the wallpaper keeps playing!
-        _playerStdin?.Dispose();
-        _playerStdout?.Dispose();
+        _renderGate.Dispose();
+        _ipcGate.Dispose();
     }
 }

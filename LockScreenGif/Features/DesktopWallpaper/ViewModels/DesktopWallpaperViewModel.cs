@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,6 +26,8 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
     private readonly IWallpaperLibraryService _libraryService;
     private readonly ILockscreenService _lockscreenService;
     private readonly DispatcherQueue _dispatcherQueue;
+    private readonly SemaphoreSlim _applyGate = new(1, 1);
+    private CancellationTokenSource? _renderCts;
 
     private string _statusText = "Stopped";
     public string StatusText
@@ -963,12 +966,32 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
         OnPropertyChanged(nameof(MediaPlaceholderVisibility));
     }
 
-    public void LoadSource(string pathOrUrl)
+    public void CancelPendingRender()
+    {
+        var cts = _renderCts;
+        _renderCts = null;
+        if (cts != null)
+        {
+            try
+            {
+                cts.Cancel();
+            }
+            catch { }
+            finally
+            {
+                cts.Dispose();
+            }
+        }
+    }
+
+    public async Task LoadSourceAsync(string pathOrUrl)
     {
         if (string.IsNullOrWhiteSpace(pathOrUrl))
         {
             return;
         }
+
+        CancelPendingRender();
 
         pathOrUrl = WallpaperItem.NormalizePathOrUrl(pathOrUrl);
 
@@ -1017,8 +1040,13 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
 
         if (IsRunning)
         {
-            _ = ApplyWallpaperAsync();
+            await ApplyWallpaperAsync();
         }
+    }
+
+    public void LoadSource(string pathOrUrl)
+    {
+        _ = LoadSourceAsync(pathOrUrl);
     }
 
     public async Task ApplyWallpaperAsync()
@@ -1028,12 +1056,20 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             return;
         }
 
+        CancelPendingRender();
+        var cts = new CancellationTokenSource();
+        _renderCts = cts;
+        var token = cts.Token;
+
+        await _applyGate.WaitAsync(token);
         IsBusy = true;
         ErrorMessage = null;
         HasError = false;
 
         try
         {
+            token.ThrowIfCancellationRequested();
+
             UpdateEngineLayoutMode();
             _engineService.SelectedMonitor = SelectedMonitor;
 
@@ -1068,10 +1104,10 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                 IsAdvancedExecutable = type == WallpaperType.Application,
             };
 
-            var success = await _engineService.ApplyWallpaperAsync(item);
+            var success = await _engineService.ApplyWallpaperAsync(item, token);
             if (!success)
             {
-                ErrorMessage = _engineService.CurrentErrorMessage ?? "Failed to apply wallpaper.";
+                ErrorMessage = _engineService.CurrentErrorMessage ?? "Failed to apply wallpaper. Please try again.";
                 HasError = true;
             }
             else if (SelectedMonitor != null)
@@ -1082,6 +1118,17 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
                     await _libraryService.SetMonitorSelectionAsync(SelectedMonitor.DeviceName, entry.Id);
                 }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            // Superseded by a newer file selection or cancellation
+        }
+        catch (IOException ex)
+        {
+            Logger.Error("Wallpaper file access error", ex);
+            ErrorMessage =
+                "Could not read or access the wallpaper file because it is in use by another program. Close any program using the file and click Retry.";
+            HasError = true;
         }
         catch (Exception ex)
         {
@@ -1097,12 +1144,19 @@ public sealed class DesktopWallpaperViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = $"Could not apply wallpaper: {ex.Message}";
+                ErrorMessage = "Could not apply wallpaper. Please check the file and click Retry.";
+                Logger.Error("Unexpected error applying wallpaper", ex);
             }
             HasError = true;
         }
         finally
         {
+            if (ReferenceEquals(_renderCts, cts))
+            {
+                _renderCts = null;
+            }
+            cts.Dispose();
+            _applyGate.Release();
             IsBusy = false;
             RefreshFromEngine();
         }

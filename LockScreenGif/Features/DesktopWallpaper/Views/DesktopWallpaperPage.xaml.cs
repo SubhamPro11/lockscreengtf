@@ -102,7 +102,7 @@ public sealed partial class DesktopWallpaperPage : Page
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                ViewModel.LoadSource(file.Path);
+                await ViewModel.LoadSourceAsync(file.Path);
             }
         }
         catch (Exception ex)
@@ -111,7 +111,7 @@ public sealed partial class DesktopWallpaperPage : Page
         }
     }
 
-    private void LoadUrl_Click(object sender, RoutedEventArgs e)
+    private async void LoadUrl_Click(object sender, RoutedEventArgs e)
     {
         var text = UrlInputBox.Text?.Trim();
         if (string.IsNullOrWhiteSpace(text))
@@ -122,7 +122,7 @@ public sealed partial class DesktopWallpaperPage : Page
         // If user entered or pasted a local file path, don't prepend https://
         if (File.Exists(text) || Path.IsPathRooted(text) || text.Contains(@":\") || text.StartsWith(@"\\"))
         {
-            ViewModel.LoadSource(text);
+            await ViewModel.LoadSourceAsync(text);
             return;
         }
 
@@ -133,7 +133,7 @@ public sealed partial class DesktopWallpaperPage : Page
         {
             text = "https://" + text;
         }
-        ViewModel.LoadSource(text);
+        await ViewModel.LoadSourceAsync(text);
     }
 
     private void DropTarget_DragOver(object sender, DragEventArgs e)
@@ -171,7 +171,7 @@ public sealed partial class DesktopWallpaperPage : Page
                 var items = await e.DataView.GetStorageItemsAsync();
                 if (items.Count > 0 && items[0] is StorageFile file)
                 {
-                    ViewModel.LoadSource(file.Path);
+                    await ViewModel.LoadSourceAsync(file.Path);
                 }
             }
             catch (Exception ex)
