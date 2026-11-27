@@ -447,4 +447,73 @@ internal static class DesktopNativeMethods
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+    public const uint WM_WTSSESSION_CHANGE = 0x02B1;
+    public const int NOTIFY_FOR_THIS_SESSION = 0;
+    public const int WTS_CONSOLE_CONNECT = 0x1;
+    public const int WTS_CONSOLE_DISCONNECT = 0x2;
+    public const int WTS_REMOTE_CONNECT = 0x3;
+    public const int WTS_REMOTE_DISCONNECT = 0x4;
+    public const int WTS_SESSION_LOCK = 0x7;
+    public const int WTS_SESSION_UNLOCK = 0x8;
+
+    public const uint WM_POWERBROADCAST = 0x0218;
+    public const int PBT_APMSUSPEND = 0x0004;
+    public const int PBT_APMRESUMESUSPEND = 0x0007;
+    public const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
+    public const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+    public const int PBT_POWERSETTINGCHANGE = 0x8013;
+
+    public static readonly Guid GUID_CONSOLE_DISPLAY_STATE = new("6FE69556-704A-47A0-8F24-C28D936FDA47");
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POWERBROADCAST_SETTING
+    {
+        public Guid PowerSetting;
+        public uint DataLength;
+        public byte Data;
+    }
+
+    [DllImport("wtsapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool WTSRegisterSessionNotification(nint hWnd, int dwFlags);
+
+    [DllImport("wtsapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool WTSUnRegisterSessionNotification(nint hWnd);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern nint RegisterPowerSettingNotification(nint hRecipient, ref Guid PowerSettingGuid, int Flags);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnregisterPowerSettingNotification(nint Handle);
+
+    public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+    public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
+
+    public delegate void WinEventDelegate(
+        nint hWinEventHook,
+        uint eventType,
+        nint hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime
+    );
+
+    [DllImport("user32.dll")]
+    public static extern nint SetWinEventHook(
+        uint eventMin,
+        uint eventMax,
+        nint hmodWinEventProc,
+        WinEventDelegate lpfnWinEventProc,
+        uint idProcess,
+        uint idThread,
+        uint dwFlags
+    );
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnhookWinEvent(nint hWinEventHook);
 }

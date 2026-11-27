@@ -43,15 +43,22 @@ public static class WallpaperPlayerProcess
     private static bool _isPlaying;
     private static bool _isPaused;
     private static bool _isAutoPaused;
+    private static bool _isSessionLocked;
+    private static bool _isDisplayOff;
+    private static bool _isSuspended;
+    private static bool _isRemoteSession;
     private static bool _isExiting;
     private static string? _originalWallpaperPath;
     private static uint _msgThreadId;
     private static nint _msgHwnd;
-    private static Timer? _perfRuleTimer;
+    private static nint _powerNotifyHandle;
+    private static nint _winEventHook;
+    private static bool _wtsRegistered;
     private static StaSynchronizationContext? _syncContext;
 
-    // Retain static delegate reference to prevent garbage collection crash in Win32 wndproc
+    // Retain static delegate references to prevent garbage collection crash in Win32 callbacks
     private static readonly DesktopNativeMethods.WndProc _wndProcDelegate = MessageWindowProc;
+    private static readonly DesktopNativeMethods.WinEventDelegate _winEventDelegate = OnForegroundWindowChanged;
 
     public const string NamedPipeName = "LockscreenGif_WallpaperPlayer_Pipe";
     private static readonly string PidFilePath = Path.Combine(
@@ -232,8 +239,8 @@ public static class WallpaperPlayerProcess
             // Setup named pipe server listener
             _ = Task.Run(ListenNamedPipeAsync);
 
-            // Setup auto-pause rule monitor (every 1.5 seconds)
-            _perfRuleTimer = new Timer(EvaluatePerformanceRules, null, 1500, 1500);
+            // Event-driven system/power/session/foreground monitors (zero idle polling timer)
+            RegisterEventDrivenMonitors();
 
             // If an initial media path was supplied in args, post load immediately to the STA thread
             if (!string.IsNullOrWhiteSpace(_mediaPath))
@@ -469,6 +476,8 @@ public static class WallpaperPlayerProcess
             _isPaused = false;
             _isAutoPaused = false;
 
+            EvaluatePerformanceRules();
+
             Console.WriteLine("READY");
             Console.Out.Flush();
         }
@@ -693,41 +702,85 @@ public static class WallpaperPlayerProcess
         }
     }
 
-    private static void EvaluatePerformanceRules(object? state)
+    private static void RegisterEventDrivenMonitors()
+    {
+        if (_msgHwnd != 0)
+        {
+            _wtsRegistered = DesktopNativeMethods.WTSRegisterSessionNotification(_msgHwnd, DesktopNativeMethods.NOTIFY_FOR_THIS_SESSION);
+            var displayGuid = DesktopNativeMethods.GUID_CONSOLE_DISPLAY_STATE;
+            _powerNotifyHandle = DesktopNativeMethods.RegisterPowerSettingNotification(_msgHwnd, ref displayGuid, 0);
+        }
+
+        _winEventHook = DesktopNativeMethods.SetWinEventHook(
+            DesktopNativeMethods.EVENT_SYSTEM_FOREGROUND,
+            DesktopNativeMethods.EVENT_SYSTEM_FOREGROUND,
+            0,
+            _winEventDelegate,
+            0,
+            0,
+            DesktopNativeMethods.WINEVENT_OUTOFCONTEXT
+        );
+
+        try
+        {
+            Windows.System.Power.PowerManager.EnergySaverStatusChanged += OnPowerManagerChanged;
+            Windows.System.Power.PowerManager.PowerSupplyStatusChanged += OnPowerManagerChanged;
+        }
+        catch { }
+    }
+
+    private static void OnPowerManagerChanged(object? sender, object e) => EvaluatePerformanceRules();
+
+    private static void OnForegroundWindowChanged(
+        nint hWinEventHook,
+        uint eventType,
+        nint hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime
+    ) => EvaluatePerformanceRules();
+
+    private static void EvaluatePerformanceRules()
     {
         if (!_isPlaying || _isPaused || _isExiting)
         {
             return;
         }
 
-        var shouldPause = false;
+        var shouldPause =
+            _isSuspended
+            || _isSessionLocked
+            || _isDisplayOff
+            || _isRemoteSession
+            || DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_REMOTESESSION) != 0;
 
-        // 1. RDP Remote Desktop Session
-        if (DesktopNativeMethods.GetSystemMetrics(DesktopNativeMethods.SM_REMOTESESSION) != 0)
-        {
-            shouldPause = true;
-        }
-
-        // 2. Battery / Energy Saver
+        // Battery / Energy Saver
         if (!shouldPause)
         {
             try
             {
-                if (Windows.System.Power.PowerManager.EnergySaverStatus == Windows.System.Power.EnergySaverStatus.On)
+                if (
+                    Windows.System.Power.PowerManager.EnergySaverStatus == Windows.System.Power.EnergySaverStatus.On
+                    || Windows.System.Power.PowerManager.PowerSupplyStatus != Windows.System.Power.PowerSupplyStatus.Adequate
+                )
                 {
                     shouldPause = true;
                 }
             }
             catch
             {
-                if (DesktopNativeMethods.GetSystemPowerStatus(out var powerStatus) && powerStatus.SystemStatusFlag == 1)
+                if (
+                    DesktopNativeMethods.GetSystemPowerStatus(out var powerStatus)
+                    && (powerStatus.SystemStatusFlag == 1 || powerStatus.ACLineStatus == 0)
+                )
                 {
                     shouldPause = true;
                 }
             }
         }
 
-        // 3. Fullscreen Application or Game
+        // Fullscreen Application or Game
         if (!shouldPause && IsForegroundAppFullscreen())
         {
             shouldPause = true;
@@ -880,6 +933,53 @@ public static class WallpaperPlayerProcess
             return 0;
         }
 
+        if (msg == DesktopNativeMethods.WM_WTSSESSION_CHANGE)
+        {
+            var reason = wParam.ToInt32();
+            switch (reason)
+            {
+                case DesktopNativeMethods.WTS_SESSION_LOCK:
+                    _isSessionLocked = true;
+                    break;
+                case DesktopNativeMethods.WTS_SESSION_UNLOCK:
+                    _isSessionLocked = false;
+                    break;
+                case DesktopNativeMethods.WTS_REMOTE_CONNECT:
+                    _isRemoteSession = true;
+                    break;
+                case DesktopNativeMethods.WTS_REMOTE_DISCONNECT:
+                case DesktopNativeMethods.WTS_CONSOLE_CONNECT:
+                    _isRemoteSession = false;
+                    break;
+            }
+            EvaluatePerformanceRules();
+            return 0;
+        }
+
+        if (msg == DesktopNativeMethods.WM_POWERBROADCAST)
+        {
+            var pbt = wParam.ToInt32();
+            switch (pbt)
+            {
+                case DesktopNativeMethods.PBT_APMSUSPEND:
+                    _isSuspended = true;
+                    break;
+                case DesktopNativeMethods.PBT_APMRESUMEAUTOMATIC:
+                case DesktopNativeMethods.PBT_APMRESUMESUSPEND:
+                    _isSuspended = false;
+                    break;
+                case DesktopNativeMethods.PBT_POWERSETTINGCHANGE when lParam != 0:
+                    var setting = Marshal.PtrToStructure<DesktopNativeMethods.POWERBROADCAST_SETTING>(lParam);
+                    if (setting.PowerSetting == DesktopNativeMethods.GUID_CONSOLE_DISPLAY_STATE)
+                    {
+                        _isDisplayOff = setting.Data == 0;
+                    }
+                    break;
+            }
+            EvaluatePerformanceRules();
+            return 0;
+        }
+
         if (
             msg == 0x007E /* WM_DISPLAYCHANGE */
             || msg == 0x02E0 /* WM_DPICHANGED */
@@ -959,8 +1059,30 @@ public static class WallpaperPlayerProcess
 
     private static void Cleanup()
     {
-        _perfRuleTimer?.Dispose();
-        _perfRuleTimer = null;
+        try
+        {
+            Windows.System.Power.PowerManager.EnergySaverStatusChanged -= OnPowerManagerChanged;
+            Windows.System.Power.PowerManager.PowerSupplyStatusChanged -= OnPowerManagerChanged;
+        }
+        catch { }
+
+        if (_winEventHook != 0)
+        {
+            DesktopNativeMethods.UnhookWinEvent(_winEventHook);
+            _winEventHook = 0;
+        }
+
+        if (_powerNotifyHandle != 0)
+        {
+            DesktopNativeMethods.UnregisterPowerSettingNotification(_powerNotifyHandle);
+            _powerNotifyHandle = 0;
+        }
+
+        if (_wtsRegistered && _msgHwnd != 0)
+        {
+            DesktopNativeMethods.WTSUnRegisterSessionNotification(_msgHwnd);
+            _wtsRegistered = false;
+        }
 
         CleanRenderersAsync().GetAwaiter().GetResult();
         CleanHostWindows();

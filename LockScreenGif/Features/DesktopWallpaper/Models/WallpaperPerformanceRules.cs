@@ -7,7 +7,7 @@ public sealed class WallpaperPerformanceRules
 {
     public bool PauseWhenFullscreenAppActive { get; set; } = true;
     public bool PauseWhenDesktopCovered { get; set; } = true;
-    public bool PauseOnBattery { get; set; }
+    public bool PauseOnBattery { get; set; } = true;
     public bool PauseInBatterySaver { get; set; } = true;
     public bool PauseWhenLockedOrDisplayOff { get; set; } = true;
     public int TargetFps { get; set; } = 60;

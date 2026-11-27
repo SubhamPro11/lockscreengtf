@@ -32,7 +32,20 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
     public bool IsAutoPaused => _isAutoPaused;
     public string? CurrentAutoPauseReason => _currentAutoPauseReason;
 
-    public event EventHandler<WallpaperResourceUsage>? ResourceUsageUpdated;
+    private EventHandler<WallpaperResourceUsage>? _resourceUsageUpdated;
+    public event EventHandler<WallpaperResourceUsage>? ResourceUsageUpdated
+    {
+        add
+        {
+            _resourceUsageUpdated += value;
+            UpdateMetricsTimerState();
+        }
+        remove
+        {
+            _resourceUsageUpdated -= value;
+            UpdateMetricsTimerState();
+        }
+    }
     public event EventHandler<(bool IsPaused, string? Reason)>? AutoPauseStateChanged;
 
     public WallpaperPerformanceMonitor(IWallpaperEngineService engineService)
@@ -45,8 +58,8 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
 
         try
         {
-            Windows.System.Power.PowerManager.EnergySaverStatusChanged += (s, e) => EvaluateRules();
-            Windows.System.Power.PowerManager.PowerSupplyStatusChanged += (s, e) => EvaluateRules();
+            Windows.System.Power.PowerManager.EnergySaverStatusChanged += OnPowerStateChanged;
+            Windows.System.Power.PowerManager.PowerSupplyStatusChanged += OnPowerStateChanged;
         }
         catch { }
     }
@@ -63,8 +76,10 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
             _isMonitoring = true;
             _lastCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
             _lastCpuSampleTime = DateTime.UtcNow;
-            _timer.Change(1000, 1000);
+            UpdateMetricsTimerState();
         }
+
+        EvaluateRules();
     }
 
     public void Stop()
@@ -83,12 +98,20 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         }
     }
 
+    private void UpdateMetricsTimerState()
+    {
+        // Zero background polling while idle: only sample live CPU/RAM when a UI subscriber is listening.
+        var shouldSample = _isMonitoring && _resourceUsageUpdated != null && !_disposed;
+        _timer.Change(shouldSample ? 1000 : Timeout.Infinite, shouldSample ? 1000 : Timeout.Infinite);
+    }
+
+    private void OnPowerStateChanged(object? sender, object e) => EvaluateRules();
+
     private void OnTimerTick(object? state)
     {
         try
         {
             UpdateResourceUsage();
-            EvaluateRules();
         }
         catch (Exception ex)
         {
@@ -143,7 +166,7 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
 
             LastResourceUsage = new WallpaperResourceUsage(Math.Round(cpuPercent, 1), memoryMb, decoderDesc);
 
-            ResourceUsageUpdated?.Invoke(this, LastResourceUsage);
+            _resourceUsageUpdated?.Invoke(this, LastResourceUsage);
         }
         catch
         {
@@ -438,6 +461,12 @@ public sealed class WallpaperPerformanceMonitor : IDisposable
         _disposed = true;
 
         Stop();
+        try
+        {
+            Windows.System.Power.PowerManager.EnergySaverStatusChanged -= OnPowerStateChanged;
+            Windows.System.Power.PowerManager.PowerSupplyStatusChanged -= OnPowerStateChanged;
+        }
+        catch { }
         _timer.Dispose();
     }
 }
