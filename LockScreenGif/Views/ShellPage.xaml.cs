@@ -31,6 +31,7 @@ public sealed partial class ShellPage : Page
 
         Loaded += ShellPage_Loaded;
         Unloaded += ShellPage_Unloaded;
+        SizeChanged += (_, _) => UpdateCaptionButtonSpacer();
         ActualThemeChanged += ShellPage_ActualThemeChanged;
     }
 

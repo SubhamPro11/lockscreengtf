@@ -48,16 +48,44 @@
     <Grid Background="Transparent">
         <ScrollViewer x:Name="StageScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,8,0,48">
             <ContentControl x:Name="PageContent" HorizontalContentAlignment="Stretch">
-                <Grid HorizontalAlignment="Center" MaxWidth="1280" Padding="48,20,48,32" ColumnSpacing="48">
+                <Grid x:Name="LayoutRootGrid" HorizontalAlignment="Center" MaxWidth="1280" Padding="36,20,36,32" ColumnSpacing="36">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup>
+                            <VisualState x:Name="WideLayoutState">
+                                <VisualState.StateTriggers>
+                                    <AdaptiveTrigger MinWindowWidth="980" />
+                                </VisualState.StateTriggers>
+                            </VisualState>
+                            <VisualState x:Name="CompactLayoutState">
+                                <VisualState.StateTriggers>
+                                    <AdaptiveTrigger MinWindowWidth="0" />
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="LayoutRootGrid.Padding" Value="20,16,20,32" />
+                                    <Setter Target="LayoutRootGrid.ColumnSpacing" Value="0" />
+                                    <Setter Target="LeftColumnDef.Width" Value="*" />
+                                    <Setter Target="RightColumnDef.Width" Value="0" />
+                                    <Setter Target="WorkingPanel.(Grid.Column)" Value="0" />
+                                    <Setter Target="WorkingPanel.(Grid.Row)" Value="1" />
+                                    <Setter Target="WorkingPanel.Margin" Value="0,24,0,0" />
+                                    <Setter Target="DropTargetCard.MinHeight" Value="300" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.65*" MinWidth="440" />
-                        <ColumnDefinition Width="*" MinWidth="340" MaxWidth="430" />
+                        <ColumnDefinition x:Name="LeftColumnDef" Width="1.6*" />
+                        <ColumnDefinition x:Name="RightColumnDef" Width="*" MaxWidth="420" />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
                     <!-- =================================================================== -->
                     <!-- LEFT COLUMN: MAIN MEDIA STAGE                                       -->
                     <!-- =================================================================== -->
-                    <StackPanel Grid.Column="0" Spacing="16">
+                    <StackPanel x:Name="StageColumn" Grid.Column="0" Grid.Row="0" Spacing="16">
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition IsStaggeringEnabled="False" />
@@ -79,7 +107,7 @@
                                 <Border x:Name="DropTargetCard"
                                         Background="{ThemeResource GlassStageSurfaceBrush}"
                                         CornerRadius="28"
-                                        MinHeight="437"
+                                        MinHeight="360"
                                         AllowDrop="True" DragOver="DropTarget_DragOver" DragLeave="DropTarget_DragLeave" Drop="DropTarget_Drop"
                                         AutomationProperties.Name="Drop zone for video or GIF file"
                                         Padding="36,48" HorizontalAlignment="Stretch">
@@ -481,7 +509,7 @@
                     <!-- =================================================================== -->
                     <!-- RIGHT COLUMN: WORKING PANEL (Heading, Progress, Actions, Recent)    -->
                     <!-- =================================================================== -->
-                    <StackPanel Grid.Column="1" Spacing="24">
+                    <StackPanel x:Name="WorkingPanel" Grid.Column="1" Grid.Row="0" Spacing="24">
 
                         <!-- 1. Fraunces Heading & Subtitle -->
                         <StackPanel Spacing="10">
@@ -641,7 +669,8 @@
                                        FontFamily="{StaticResource GlassFontUi}"
                                        FontSize="11" FontWeight="SemiBold" CharacterSpacing="80"
                                        Foreground="{ThemeResource GlassTextSecondaryBrush}" />
-                            <ItemsControl x:Name="RecentFilesItemsControl">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                <ItemsControl x:Name="RecentFilesItemsControl">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" Spacing="12" />
@@ -671,6 +700,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            </ScrollViewer>
                         </StackPanel>
 
                         <!-- 6. Collapsible System Prerequisites Card (Figma 5:1272) -->

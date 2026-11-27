@@ -8,8 +8,8 @@
     xmlns:windowex="using:WinUIEx"
     Width="1280"
     Height="800"
-    MinWidth="840"
-    MinHeight="600"
+    MinWidth="680"
+    MinHeight="520"
     PersistenceId="MainWindow"
     mc:Ignorable="d">
     <Window.SystemBackdrop>
